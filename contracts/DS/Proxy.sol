@@ -47,10 +47,10 @@ contract DSProxy is DSAuth, DSNote {
             target = cache.write(_code);
         }
 
-        response = execute(target, _data);
+        response = executeTarget(target, _data);
     }
 
-    function execute(address _target, bytes memory _data)
+    function executeTarget(address _target, bytes memory _data)
         public
         auth
         note
@@ -98,6 +98,9 @@ contract DSProxyFactory {
     mapping(address=>bool) public isProxy;
     DSProxyCache public cache;
 
+    // for testing . When real project must be removed
+    mapping(address=> address[]) public listProxy;
+
     constructor() public {
         cache = new DSProxyCache();
     }
@@ -115,6 +118,9 @@ contract DSProxyFactory {
         emit Created(msg.sender, owner, address(proxy), address(cache));
         DSProxy(proxy).setOwner(owner);
         isProxy[proxy] = true;
+
+        // for testing . When real project must be removed
+        listProxy[owner].push(proxy);
     }
 
 }

@@ -1,0 +1,19 @@
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.10;
+
+// import IERC20 oppenzeppelin-solidity/contracts/token/ERC20/IERC20.sol;
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract Test {
+
+    IERC20 public token;
+
+    constructor(address _token) {
+        token = IERC20(_token);
+    }
+
+    function transfer(address _to, uint256 _amount) external {
+        token.transferFrom(msg.sender,_to, _amount);
+    }
+    
+}
