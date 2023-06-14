@@ -67,6 +67,7 @@ contract DSGuard is DSAuth, DSAuthority, DSGuardEvents {
     function permit(address src, address dst, bytes32 sig) public {
         permitAuth(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
     }
+    
     function forbid(address src, address dst, bytes32 sig) public {
         forbidAuth(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
     }
