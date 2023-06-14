@@ -59,5 +59,16 @@ describe("DSProxyFactory", () => {
     ]);
 
     await dsProxy.executeTarget(test.address, calldata);
+
+    // test excute but don't work :)
+    // calldata = await test.interface.encodeFunctionData("transferToken", [
+    //   user2.address,
+    //   ethers.utils.parseEther("2"),
+    // ]);
+
+    // // get test contract bytecode
+    // const TestBytecode = await ethers.provider.getCode(test.address);
+    // console.log("TestBytecode", TestBytecode);
+    // await dsProxy.execute(TestBytecode, calldata);
   });
 });
