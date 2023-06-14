@@ -7,16 +7,6 @@ import "./MainnetTravaAddresses.sol";
 
 /// @title Utility functions and data used in trava actions
 contract TravaHelper is MainnetTravaAddresses {
-    uint16 public constant TRAVA_REFERRAL_CODE = 64;
-
-    uint256 public constant STABLE_ID = 1;
-    uint256 public constant VARIABLE_ID = 2;
-
-    bytes32 public constant DATA_PROVIDER_ID =
-        0x0100000000000000000000000000000000000000000000000000000000000000;
-    
-    ITravaIncentivesController constant public TravaIncentivesController = ITravaIncentivesController(STAKED_CONTROLLER_ADDR);
-
     /// @notice Enable/Disable a token as collateral for the specified Trava market
     function enableAsCollateral(
         uint256 _providerId,
