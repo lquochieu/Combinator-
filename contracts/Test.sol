@@ -12,8 +12,15 @@ contract Test {
         token = IERC20(_token);
     }
 
-    function transfer(address _to, uint256 _amount) external {
+    function transferToken(address _to, uint256 _amount) external {
         token.transferFrom(msg.sender,_to, _amount);
     }
-    
+
+    function setToken(address _token) external {
+        token = IERC20(_token);
+    }
+
+    function getToken() external view returns (address) {
+        return address(token);
+    }
 }

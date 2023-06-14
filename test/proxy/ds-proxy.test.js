@@ -45,13 +45,19 @@ describe("DSProxyFactory", () => {
     dsProxy = await ethers.getContractAt("DSProxy", user1Proxy);
     console.log("dsProxy", dsProxy.address);
 
-    await test.transfer(user2.address, ethers.utils.parseEther("1"));
+    // approve proxy to spend token
+    await token.approve(dsProxy.address, ethers.utils.parseEther("100"));
+    // await test.transfer(user2.address, ethers.utils.parseEther("1"));
+    let calldata = await test.interface.encodeFunctionData("setToken", [
+      token.address,
+    ]);
+    await dsProxy.executeTarget(test.address, calldata);
 
-    let calldata = await test.interface.encodeFunctionData("transfer", [
+    calldata = await test.interface.encodeFunctionData("transferToken", [
       user2.address,
       ethers.utils.parseEther("1"),
     ]);
 
-    console.log("calldata", calldata);
+    await dsProxy.executeTarget(test.address, calldata);
   });
 });
