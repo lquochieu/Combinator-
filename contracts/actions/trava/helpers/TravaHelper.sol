@@ -7,6 +7,8 @@ import "./MainnetTravaAddresses.sol";
 
 /// @title Utility functions and data used in trava actions
 contract TravaHelper is MainnetTravaAddresses {
+    uint16 public constant TRAVA_REFERRAL_CODE = 64;
+
     /// @notice Enable/Disable a token as collateral for the specified Trava market
     function enableAsCollateral(
         uint256 _providerId,
