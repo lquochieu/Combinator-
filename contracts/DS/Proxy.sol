@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // proxy.sol - execute actions atomically through the proxy's identity
 
 // Copyright (C) 2017  DappHub, LLC
@@ -15,7 +16,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity >=0.5.0 <0.6.0 || 0.8.4;
+pragma solidity 0.8.4;
 
 import "./Auth.sol";
 import "./DSNote.sol";
@@ -28,7 +29,7 @@ import "./DSNote.sol";
 contract DSProxy is DSAuth, DSNote {
     DSProxyCache public cache;  // global cache for contracts
 
-    constructor(address _cacheAddr) public {
+    constructor(address _cacheAddr)  {
         setCache(_cacheAddr);
     }
 
@@ -101,7 +102,7 @@ contract DSProxyFactory {
     // for testing . When real project must be removed
     mapping(address=> address[]) public listProxy;
 
-    constructor() public {
+    constructor() {
         cache = new DSProxyCache();
     }
 
