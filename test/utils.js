@@ -11,26 +11,26 @@ const { deployAsOwner, deployContract } = require('../scripts/utils/deployer');
 
 const strategyStorageBytecode = require('../artifacts/contracts/core/strategy/StrategyStorage.sol/StrategyStorage.json').deployedBytecode;
 const subStorageBytecode = require('../artifacts/contracts/core/strategy/SubStorage.sol/SubStorage.json').deployedBytecode;
-const subStorageBytecodeL2 = require('../artifacts/contracts/core/l2/SubStorageL2.sol/SubStorageL2.json').deployedBytecode;
+// const subStorageBytecodeL2 = require('../artifacts/contracts/core/l2/SubStorageL2.sol/SubStorageL2.json').deployedBytecode;
 const bundleStorageBytecode = require('../artifacts/contracts/core/strategy/BundleStorage.sol/BundleStorage.json').deployedBytecode;
 const recipeExecutorBytecode = require('../artifacts/contracts/core/RecipeExecutor.sol/RecipeExecutor.json').deployedBytecode;
 const proxyAuthBytecode = require('../artifacts/contracts/core/strategy/ProxyAuth.sol/ProxyAuth.json').deployedBytecode;
-const mockChainlinkFeedRegistryBytecode = require('../artifacts/contracts/mocks/MockChainlinkFeedRegistry.sol/MockChainlinkFeedRegistry.json').deployedBytecode;
+// const mockChainlinkFeedRegistryBytecode = require('../artifacts/contracts/mocks/MockChainlinkFeedRegistry.sol/MockChainlinkFeedRegistry.json').deployedBytecode;
 
-require("dotenv").config();
+require('dotenv-safe').config();
 
 const addrs = {
     testnet: {
-        // PROXY_REGISTRY: '0x4678f0a6958e4D2Bc4F1BAF7Bc52E8F3564f3fE4',
-        // REGISTRY_ADDR: '0x287778F121F134C66212FB16c9b53eC991D32f5b',
+        PROXY_REGISTRY: process.env.DS_PROXY_REGISTRY_ADDRESS,
+        REGISTRY_ADDR: process.env.DFS_REGISTRY_ADDRESS,
         // PROXY_AUTH_ADDR: '0x149667b6FAe2c63D1B4317C716b0D0e4d3E2bD70',
         OWNER_ACC: process.env.PUBLIC_KEY,
-        // WETH_ADDRESS: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+        WETH_ADDRESS: process.env.WETH_ADDRESS,
         // DAI_ADDRESS: '0x6b175474e89094c44da98b954eedeac495271d0f',
         // ETH_ADDR: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
         // TOKEN_GROUP_REGISTRY: '0xcA49e64FE1FE8be40ED30F682edA1b27a6c8611c',
         // FEE_RECEIVER: '0x6467e807dB1E71B9Ef04E0E3aFb962E4B0900B2B',
-        // USDC_ADDR: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+        USDC_ADDR: process.env.USDC_ADDRESS,
         // EXCHANGE_OWNER_ADDR: process.env.PUCLIC_KEY,
         // SAVER_EXCHANGE_ADDR: '0x25dd3F51e0C3c3Ff164DDC02A8E4D65Bb9cBB12D',
         // StrategyProxy: '0x0822902D30CC9c77404e6eB140dC1E98aF5b559A',
@@ -43,20 +43,19 @@ const addrs = {
         // COMET_USDC_REWARDS_ADDR: '0x1B0e765F6224C21223AeA2af16c1C46E38885a40',
         // COMP_ADDR: '0xc00e94Cb662C3520282E6f5717214004A7f26888',
         // CHICKEN_BONDS_VIEW: '0x809a93fd4a0d7d7906Ef6176f0b5518b418Da08f',
-        // AAVE_MARKET: '0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e',
+        TRAVA_MARKET: '0x6df52f798740504c24ccd374cf7ce81b28ce8330',
         // AAVE_V3_VIEW: '0xf4B715BB788cC4071061bd67dC8B56681460A2fF',
         // ZRX_ALLOWLIST_ADDR: '0x4BA1f38427b33B8ab7Bb0490200dAE1F1C36823F',
         // ZRX_ALLOWLIST_OWNER: process.env.PUCLIC_KEY,
         // AAVE_SUB_PROXY: '0xb9F73625AA64D46A9b2f0331712e9bEE19e4C3f7',
-        // ADMIN_VAULT: '0xCCf3d848e08b94478Ed8f46fFead3008faF581fD',
+        ADMIN_VAULT: process.env.ADMIN_VAULT,
         // ADMIN_ACC: '0x25eFA336886C74eA8E282ac466BdCd0199f85BB9',
         // DFS_REG_CONTROLLER: '0x6F6DaE1bCB60F67B2Cb939dBE565e8fD03F6F002',
-        // AVG_GAS_PRICE: 100,
+        AVG_GAS_PRICE: 100,
     },
 };
 
-const REGISTRY_ADDR = '0x287778F121F134C66212FB16c9b53eC991D32f5b';
-require('dotenv-safe').config();
+const REGISTRY_ADDR = process.env.DFS_REGISTRY_ADDRESS;
 
 const config = require('../hardhat.config');
 
@@ -74,7 +73,7 @@ const nullAddress = '0x0000000000000000000000000000000000000000';
 // const LOGGER_ADDR = '0xcE7a977Cac4a481bc84AC06b2Da0df614e621cf3';
 // const UNIV3ROUTER_ADDR = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
 // const UNIV3POSITIONMANAGER_ADDR = '0xC36442b4a4522E871399CD717aBDD847Ab11FE88';
-// const AAVE_MARKET = '0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5';
+const TRAVA_MARKET = '0x6df52f798740504c24ccd374cf7ce81b28ce8330';
 // const YEARN_REGISTRY_ADDRESS = '0x50c1a2eA0a861A967D9d0FFE2AE4012c2E053804';
 // const STETH_ADDRESS = '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84';
 // const WSTETH_ADDRESS = '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0';
@@ -85,7 +84,7 @@ const nullAddress = '0x0000000000000000000000000000000000000000';
 // const BOND_NFT_ADDR = '0xa8384862219188a8f03c144953Cf21fc124029Ee';
 
 // optimism aave V3
-// const AAVE_MARKET_OPTIMISM = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
+// const TRAVA_MARKET_OPTIMISM = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
 
 // // Dfs sdk won't accept 0x0 and we need some rand addr for testing
 // const placeHolderAddr = '0x0000000000000000000000000000000000000001';
@@ -209,6 +208,7 @@ const coinGeckoHelper = {
     SUSHI: 'sushi',
     bLUSD: 'boosted-lusd',
     wstETH: 'wrapped-steth',
+    WBNB: 'wbnb'
 };
 
 const BN2Float = hre.ethers.utils.formatUnits;
@@ -582,7 +582,9 @@ const redeployCore = async (isL2 = false) => {
 
     const subStorageAddr = await getAddrFromRegistry('SubStorage', addrs[network].REGISTRY_ADDR);
 
-    if (isL2) await setCode(subStorageAddr, subStorageBytecodeL2);
+    if (isL2) {
+        // await setCode(subStorageAddr, subStorageBytecodeL2);
+    }
     else await setCode(subStorageAddr, subStorageBytecode);
 
     const bundleStorageAddr = await getAddrFromRegistry('BundleStorage', addrs[network].REGISTRY_ADDR);
@@ -1120,14 +1122,14 @@ const resetForkToBlock = async (block) => {
     await setForkForTesting();
 };
 
-const mockChainlinkPriceFeed = async () => {
-    await setCode(addrs[network].FEED_REGISTRY, mockChainlinkFeedRegistryBytecode);
+// const mockChainlinkPriceFeed = async () => {
+//     await setCode(addrs[network].FEED_REGISTRY, mockChainlinkFeedRegistryBytecode);
 
-    const registryInstance = await hre.ethers.getContractFactory('MockChainlinkFeedRegistry');
-    const registry = await registryInstance.attach(addrs[network].FEED_REGISTRY);
+//     const registryInstance = await hre.ethers.getContractFactory('MockChainlinkFeedRegistry');
+//     const registry = await registryInstance.attach(addrs[network].FEED_REGISTRY);
 
-    return registry;
-};
+//     return registry;
+// };
 
 const setMockPrice = async (mockContract, roundId, token, price) => {
     const USD_QUOTE = '0x0000000000000000000000000000000000000348';
@@ -1191,7 +1193,7 @@ module.exports = {
     BN2Float,
     Float2BN,
     callDataCost,
-    mockChainlinkPriceFeed,
+    // mockChainlinkPriceFeed,
     setMockPrice,
     getNftOwner,
     addrs,
@@ -1207,6 +1209,7 @@ module.exports = {
     ADMIN_ACC,
     USDC_ADDR,
     TRAVA_ADDR,
+    TRAVA_MARKET,
     MAX_UINT,
     MAX_UINT128,
     LOGGER_ADDR,

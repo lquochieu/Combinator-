@@ -7,12 +7,12 @@ import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 import "./helpers/TravaHelper.sol";
 
-/// @title Withdraw a token from an Trava market based on providerId
+/// @title Withdraw a token from an Trava market based on market
 contract TravaWithdraw is ActionBase, TravaHelper {
     using TokenUtils for address;
 
     struct Params {
-        uint256 providerId;
+        address market;
         address tokenAddr;
         uint256 amount;
         address to;
@@ -27,8 +27,8 @@ contract TravaWithdraw is ActionBase, TravaHelper {
     ) public payable virtual override returns (bytes32) {
         Params memory params = parseInputs(_callData);
 
-        params.providerId = _parseParamUint(
-            params.providerId,
+        params.market = _parseParamAddr(
+            params.market,
             _paramMapping[0],
             _subData,
             _returnValues
@@ -53,7 +53,7 @@ contract TravaWithdraw is ActionBase, TravaHelper {
         );
 
         (uint256 withdrawnAmount, bytes memory logData) = _withdraw(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.to
@@ -68,7 +68,7 @@ contract TravaWithdraw is ActionBase, TravaHelper {
     ) public payable override {
         Params memory params = parseInputs(_callData);
         (, bytes memory logData) = _withdraw(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.to
@@ -84,17 +84,17 @@ contract TravaWithdraw is ActionBase, TravaHelper {
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
     /// @notice User withdraws tokens from the Trava protocol
-    /// @param _providerId id of provider for specific providerId
+    /// @param _market id of provider for specific market
     /// @param _tokenAddr The address of the token to be withdrawn
     /// @param _amount Amount of tokens to be withdrawn -> send type(uint).max for whole amount
     /// @param _to Where the withdrawn tokens will be sent
     function _withdraw(
-        uint256 _providerId,
+        address _market,
         address _tokenAddr,
         uint256 _amount,
         address _to
     ) internal returns (uint256, bytes memory) {
-        ILendingPool lendingPool = getLendingPool(_providerId);
+        ILendingPool lendingPool = ILendingPool(_market);
         uint256 tokenBefore;
 
         // only need to remember this is _amount is max, no need to waste gas otherwise
@@ -111,7 +111,7 @@ contract TravaWithdraw is ActionBase, TravaHelper {
         }
 
         bytes memory logData = abi.encode(
-            _providerId,
+            _market,
             _tokenAddr,
             _amount,
             _to

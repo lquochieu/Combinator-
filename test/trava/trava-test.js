@@ -11,14 +11,18 @@ const {
     VARIABLE_RATE,
     STABLE_RATE,
     travaV2assetsDefaultMarket,
+    getTravaFactoryRegistry,
+    getTravaProviderFactory,
+    getLendingAddressByProviderId,
+    getLendingPool,
 } = require('../utils-trava');
 
 const {
     getProxy,
     balanceOf,
     fetchAmountinUSDPrice,
-    AAVE_MARKET,
-    WETH_ADDRESS,
+    TRAVA_MARKET,
+    WETH_ADDR,
     WBNB_ADDR,
     timeTravel,
     getAddrFromRegistry,
@@ -35,16 +39,16 @@ const {
     claimStkTrava,
 } = require('../actions');
 
-const travaSupplyTest = async (testLength) => {
+const travaSupplyTest = async (testLength, lendingPoolAddress) => {
     describe('Trava-Supply', function () {
         this.timeout(150000);
 
-        let senderAcc; let proxy; let dataProvider;
+        let senderAcc; let proxy; let lendingPool;
 
         before(async () => {
             senderAcc = (await hre.ethers.getSigners())[0];
             proxy = await getProxy(senderAcc.address);
-            dataProvider = await getTravaDataProvider();
+            lendingPool = await getLendingPool(lendingPoolAddress);
         });
 
         for (let i = 0; i < testLength; i++) {
@@ -66,7 +70,7 @@ const travaSupplyTest = async (testLength) => {
                 );
 
                 const balanceBefore = await balanceOf(aToken, proxy.address);
-                await supplyTrava(proxy, AAVE_MARKET, amount, assetInfo.address, senderAcc.address);
+                await supplyTrava(proxy, TRAVA_MARKET, amount, assetInfo.address, senderAcc.address);
 
                 const balanceAfter = await balanceOf(aToken, proxy.address);
 
@@ -119,7 +123,7 @@ const travaBorrowTest = async (testLength) => {
                 }
 
                 // eth bada bing bada bum
-                await supplyTrava(proxy, AAVE_MARKET, hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18), WETH_ADDRESS, senderAcc.address);
+                await supplyTrava(proxy, TRAVA_MARKET, hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18), WETH_ADDRESS, senderAcc.address);
 
                 const balanceBefore = await balanceOf(assetInfo.address, senderAcc.address);
                 const debtBalanceBefore = await balanceOf(
@@ -129,7 +133,7 @@ const travaBorrowTest = async (testLength) => {
 
                 await borrowTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     VARIABLE_RATE,
@@ -182,7 +186,7 @@ const travaBorrowTest = async (testLength) => {
                 }
 
                 // eth bada bing bada bum
-                await supplyTrava(proxy, AAVE_MARKET, hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18), WETH_ADDRESS, senderAcc.address);
+                await supplyTrava(proxy, TRAVA_MARKET, hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18), WETH_ADDRESS, senderAcc.address);
 
                 const balanceBefore = await balanceOf(assetInfo.address, senderAcc.address);
                 const debtBalanceBefore = await balanceOf(
@@ -191,7 +195,7 @@ const travaBorrowTest = async (testLength) => {
                 );
                 await borrowTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     STABLE_RATE,
@@ -212,16 +216,16 @@ const travaBorrowTest = async (testLength) => {
     });
 };
 
-const travaWithdrawTest = async (testLength) => {
+const travaWithdrawTest = async (testLength, lendingPoolAddress) => {
     describe('Trava-Withdraw', function () {
         this.timeout(150000);
 
-        let senderAcc; let proxy; let dataProvider;
+        let senderAcc; let proxy; let lendingPool;
 
         before(async () => {
             senderAcc = (await hre.ethers.getSigners())[0];
             proxy = await getProxy(senderAcc.address);
-            dataProvider = await getTravaDataProvider();
+            lendingPool = await getLendingPool(lendingPoolAddress);
         });
 
         for (let i = 0; i < testLength; ++i) {
@@ -237,24 +241,24 @@ const travaWithdrawTest = async (testLength) => {
                 }
 
                 const travaTokenInfo = await getTravaTokenInfo(dataProvider, assetInfo.address);
-                const aToken = travaTokenInfo.aTokenAddress;
+                const tToken = travaTokenInfo.tTokenAddress;
 
                 const amount = hre.ethers.utils.parseUnits(
                     fetchedAmountWithUSD,
                     assetInfo.decimals,
                 );
 
-                const aBalanceBefore = await balanceOf(aToken, proxy.address);
+                const tBalanceBefore = await balanceOf(tToken, proxy.address);
 
-                if (aBalanceBefore.lte(amount)) {
+                if (tBalanceBefore.lte(amount)) {
                     // eslint-disable-next-line max-len
-                    await supplyTrava(proxy, AAVE_MARKET, amount, assetInfo.address, senderAcc.address);
+                    await supplyTrava(proxy, TRAVA_MARKET, amount, assetInfo.address, senderAcc.address);
                 }
 
                 const balanceBefore = await balanceOf(assetInfo.address, senderAcc.address);
 
                 // eslint-disable-next-line max-len
-                await withdrawTrava(proxy, AAVE_MARKET, assetInfo.address, amount, senderAcc.address);
+                await withdrawTrava(proxy, TRAVA_MARKET, assetInfo.address, amount, senderAcc.address);
 
                 const balanceAfter = await balanceOf(assetInfo.address, senderAcc.address);
 
@@ -311,7 +315,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await supplyTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18),
                     WETH_ADDRESS,
                     senderAcc.address,
@@ -319,7 +323,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await borrowTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     VARIABLE_RATE,
@@ -333,7 +337,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await paybackTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     VARIABLE_RATE,
@@ -385,7 +389,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await supplyTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     hre.ethers.utils.parseUnits(fetchAmountinUSDPrice('WETH', '20000'), 18),
                     WETH_ADDRESS,
                     senderAcc.address,
@@ -393,7 +397,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await borrowTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     STABLE_RATE,
@@ -407,7 +411,7 @@ const travaPaybackTest = async (testLength) => {
 
                 await paybackTrava(
                     proxy,
-                    AAVE_MARKET,
+                    TRAVA_MARKET,
                     assetInfo.address,
                     amount,
                     STABLE_RATE,
@@ -455,7 +459,7 @@ const travaClaimStkTravaTest = async () => {
         it(`... should supply ${supplyAmount} ${tokenSymbol} to Trava`, async () => {
             const aTokenBalanceBefore = await balanceOf(aTokenInfo.aTokenAddress, proxyAddr);
             // eslint-disable-next-line max-len
-            await supplyTrava(proxy, AAVE_MARKET, hre.ethers.utils.parseUnits(supplyAmount, 18), WETH_ADDRESS, senderAcc.address);
+            await supplyTrava(proxy, TRAVA_MARKET, hre.ethers.utils.parseUnits(supplyAmount, 18), WETH_ADDRESS, senderAcc.address);
             const aTokenBalanceAfter = await balanceOf(aTokenInfo.aTokenAddress, proxyAddr);
 
             // eslint-disable-next-line max-len
@@ -467,7 +471,7 @@ const travaClaimStkTravaTest = async () => {
             await timeTravel(secondsInMonth);
 
             // eslint-disable-next-line max-len
-            await supplyTrava(proxy, AAVE_MARKET, hre.ethers.constants.One, WETH_ADDRESS, senderAcc.address);
+            await supplyTrava(proxy, TRAVA_MARKET, hre.ethers.constants.One, WETH_ADDRESS, senderAcc.address);
             // this is done so the getter function below returns accurate balance
 
             accruedRewards = await TravaView['getUserUnclaimedRewards(address)'](proxyAddr);

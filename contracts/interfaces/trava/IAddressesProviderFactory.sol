@@ -44,6 +44,18 @@ interface IAddressesProviderFactory {
         uint256
     );
 
+    function providerIdMap(
+        address poolAddress
+    ) external view returns(uint256);
+
+    function addressesProviders() external view returns(uint256[] memory);
+
+    function userProviders(address user) external view returns(uint256[] memory);
+
+    function isContained(address a, uint256 b) external view returns(bool);
+
+    function poolFactoryCollateralManager() external view returns(address);
+
     function setAddress(
         uint256 providerId,
         bytes32 id,

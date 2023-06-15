@@ -5,12 +5,12 @@ import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 import "./helpers/TravaHelper.sol";
 
-/// @title Borrow a token a from an Trava providerId
+/// @title Borrow a token a from an Trava market
 contract TravaBorrow is ActionBase, TravaHelper {
     using TokenUtils for address;
 
     struct Params {
-        uint256 providerId;
+        address market;
         address tokenAddr;
         uint256 amount;
         uint256 rateMode;
@@ -27,8 +27,8 @@ contract TravaBorrow is ActionBase, TravaHelper {
     ) public payable virtual override returns (bytes32) {
         Params memory params = parseInputs(_callData);
 
-        params.providerId = _parseParamUint(
-            params.providerId,
+        params.market = _parseParamAddr(
+            params.market,
             _paramMapping[0],
             _subData,
             _returnValues
@@ -65,7 +65,7 @@ contract TravaBorrow is ActionBase, TravaHelper {
         );
 
         (uint256 borrowAmount, bytes memory logData) = _borrow(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.to,
@@ -81,7 +81,7 @@ contract TravaBorrow is ActionBase, TravaHelper {
     ) public payable override {
         Params memory params = parseInputs(_callData);
         (, bytes memory logData) = _borrow(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.to,
@@ -98,19 +98,19 @@ contract TravaBorrow is ActionBase, TravaHelper {
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
     /// @notice User borrows tokens from the Trava protocol
-    /// @param _providerId Provider id for specific providerId
+    /// @param _market Provider id for specific market
     /// @param _tokenAddr The address of the token to be borrowed
     /// @param _amount Amount of tokens to be borrowed
     /// @param _to The address we are sending the borrowed tokens to
     /// @param _onBehalf From what user we are borrow the tokens, defaults to proxy
     function _borrow(
-        uint256 _providerId,
+        address _market,
         address _tokenAddr,
         uint256 _amount,
         address _to,
         address _onBehalf
     ) internal returns (uint256, bytes memory) {
-        ILendingPool lendingPool = getLendingPool(_providerId);
+        ILendingPool lendingPool = ILendingPool(_market);
         // defaults to onBehalf of proxy
         if (_onBehalf == address(0)) {
             _onBehalf = address(this);
@@ -126,7 +126,7 @@ contract TravaBorrow is ActionBase, TravaHelper {
         _amount = _tokenAddr.withdrawTokens(_to, _amount);
 
         bytes memory logData = abi.encode(
-            _providerId,
+            _market,
             _tokenAddr,
             _amount,
             _to,

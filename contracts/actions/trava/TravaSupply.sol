@@ -6,12 +6,12 @@ import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 import "./helpers/TravaHelper.sol";
 
-/// @title Supply a token to an Trava providerId
+/// @title Supply a token to an Trava market
 contract TravaSupply is ActionBase, TravaHelper {
     using TokenUtils for address;
 
     struct Params {
-        uint256 providerId;
+        address market;
         address tokenAddr;
         uint256 amount;
         address from;
@@ -28,8 +28,8 @@ contract TravaSupply is ActionBase, TravaHelper {
     ) public payable virtual override returns (bytes32) {
         Params memory params = parseInputs(_callData);
 
-        params.providerId = _parseParamUint(
-            params.providerId,
+        params.market = _parseParamAddr(
+            params.market,
             _paramMapping[0],
             _subData,
             _returnValues
@@ -60,7 +60,7 @@ contract TravaSupply is ActionBase, TravaHelper {
         );
 
         (uint256 supplyAmount, bytes memory logData) = _supply(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.from,
@@ -77,7 +77,7 @@ contract TravaSupply is ActionBase, TravaHelper {
     ) public payable override {
         Params memory params = parseInputs(_callData);
         (, bytes memory logData) = _supply(
-            params.providerId,
+            params.market,
             params.tokenAddr,
             params.amount,
             params.from,
@@ -96,21 +96,21 @@ contract TravaSupply is ActionBase, TravaHelper {
 
     /// @notice User deposits tokens to the Trava protocol
     /// @dev User needs to approve the DSProxy to pull the _tokenAddr tokens
-    /// @param _provider Provider Id for specific providerId
+    /// @param _market Provider Id for specific market
     /// @param _tokenAddr The address of the token to be deposited
     /// @param _amount Amount of tokens to be deposited
     /// @param _from Where are we pulling the supply tokens amount from
     /// @param _onBehalf For what user we are supplying the tokens, defaults to proxy
     /// @param _enableAsColl If the supply asset should be collateral
     function _supply(
-        uint256 _provider,
+        address _market,
         address _tokenAddr,
         uint256 _amount,
         address _from,
         address _onBehalf,
         bool _enableAsColl
     ) internal returns (uint256, bytes memory) {
-        ILendingPool lendingPool = getLendingPool(_provider);
+        ILendingPool lendingPool = ILendingPool(_market);
 
         // if amount is set to max, take the whole _from balance
         if (_amount == type(uint256).max) {
@@ -132,11 +132,11 @@ contract TravaSupply is ActionBase, TravaHelper {
         lendingPool.deposit(_tokenAddr, _amount, _onBehalf, TRAVA_REFERRAL_CODE);
 
         if (_enableAsColl) {
-            enableAsCollateral(_provider, _tokenAddr, true);
+            enableAsCollateral(_market, _tokenAddr, true);
         }
 
         bytes memory logData = abi.encode(
-            _provider,
+            _market,
             _tokenAddr,
             _amount,
             _from,

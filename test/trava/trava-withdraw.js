@@ -17,6 +17,6 @@ describe('Trava-Withdraw', function () {
         await redeploy('TravaSupply');
     });
     it('... should run full trava withdraw test', async () => {
-        await travaWithdrawTest(travaV2assetsDefaultMarket.length);
+        await travaWithdrawTest(travaV2assetsDefaultMarket.length, "0x6df52f798740504c24ccd374cf7ce81b28ce8330");
     });
 });

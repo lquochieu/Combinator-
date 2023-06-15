@@ -16,10 +16,18 @@ require("hardhat-interface-generator");
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
+  saveOnTenderly: false,
   solidity: {
+    version: '0.8.4',
     compilers: [
       {
         version: "0.8.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000,
+          },
+        },
         settings: {
           optimizer: {
             enabled: true,
@@ -156,5 +164,12 @@ module.exports = {
       ],
       gas: 1e7,
     },
+
+  },
+  wbnbAddress: {
+    Mainnet: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+    Testnet: process.env.WBNB_BSCTESTNET,
+    Arbitrum: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    Optimism: '0x4200000000000000000000000000000000000006',
   },
 };

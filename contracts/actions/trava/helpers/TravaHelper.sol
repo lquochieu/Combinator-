@@ -13,19 +13,10 @@ contract TravaHelper is MainnetTravaAddresses {
 
     /// @notice Enable/Disable a token as collateral for the specified Trava market
     function enableAsCollateral(
-        uint256 _providerId,
+        address _lendingPool,
         address _tokenAddr,
         bool _useAsCollateral
     ) public {
-        address provider_factory = IFactoryRegistry(FACTORY_REGISTY).getAddressesProviderFactory();
-        address lendingPool = IAddressesProviderFactory(provider_factory).getLendingPool(_providerId);
-
-        ILendingPool(lendingPool).setUserUseReserveAsCollateral(_tokenAddr, _useAsCollateral);
-    }
-
-    /// @notice Returns the lending pool contract of the specified market
-    function getLendingPool(uint256 _providerId) internal view returns (ILendingPool) {
-        address provider_factory = IFactoryRegistry(FACTORY_REGISTY).getAddressesProviderFactory();
-        return ILendingPool(IAddressesProviderFactory(provider_factory).getLendingPool(_providerId));
+        ILendingPool(_lendingPool).setUserUseReserveAsCollateral(_tokenAddr, _useAsCollateral);
     }
 }

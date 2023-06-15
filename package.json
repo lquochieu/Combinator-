@@ -12,12 +12,14 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-waffle": "^2.0.6",
-    "chai": "^4.3.6",
+    "chai": "^4.3.7",
     "ethereum-waffle": "^3.4.4",
     "hardhat": "^2.9.6"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
+    "@defisaver/sdk": "^1.0.23",
+    "@defisaver/tokens": "^1.4.43",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
@@ -27,8 +29,10 @@
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/hardhat-upgrades": "^1.28.0",
     "@truffle/hdwallet-provider": "^2.0.14",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "ethers": "^5.6.8",
+    "fs-extra": "^11.1.1",
     "hardhat-interface-generator": "^0.0.6"
   }
 }
