@@ -3,7 +3,7 @@ pragma solidity 0.8.4;
 
 import "../auth/AdminAuth.sol";
 import "../core/DFSRegistry.sol";
-import "../DS/DSProxy.sol";
+import "../DS/Proxy.sol";
 import "../utils/DefisaverLogger.sol";
 import "./utils/helpers/ActionsUtilHelper.sol";
 
