@@ -1,26 +1,45 @@
+/* eslint-disable import/no-extraneous-dependencies */
+require('dotenv-safe').config();
+require('@nomiclabs/hardhat-waffle');
+require('@nomiclabs/hardhat-etherscan');
+const tdly = require('@tenderly/hardhat-tenderly');
+require('@nomiclabs/hardhat-ethers');
+// require("hardhat-gas-reporter");
+require('hardhat-log-remover');
+
+const Dec = require('decimal.js');
+const dfs = require('@defisaver/sdk');
+
+tdly.setup({ automaticVerifications: false });
+
+dfs.configure({
+  testingMode: true,
+});
+
+Dec.set({
+  precision: 50,
+  rounding: 4,
+  toExpNeg: -7,
+  toExpPos: 21,
+  maxE: 9e15,
+  minE: -9e15,
+  modulo: 1,
+  crypto: false,
+});
+
+const MAX_NODE_COUNT = 22;
+const testNetworks = Object.fromEntries([...Array(MAX_NODE_COUNT).keys()].map((c, i) => [
+  `local${i}`, { url: `http://127.0.0.1:${8545 + i}`, timeout: 10000000, name: 'mainnet' },
+]));
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-require("@nomiclabs/hardhat-ethers");
-require("@nomiclabs/hardhat-waffle");
-require("@ethersproject/abstract-provider");
-require("@ethersproject/abstract-signer");
-require("@ethersproject/transactions");
-require("@ethersproject/bytes");
-require("@truffle/hdwallet-provider");
-require("@openzeppelin/hardhat-upgrades");
-require("dotenv").config();
-
-const INFURA_URL =
-  "https://rinkeby.infura.io/v3/05ef08be7bec4c9eb35821bd02018d19";
-const KOVAN_URL = "https://kovan.infura.io/v3/ba63b223746842d89619ef053b179319";
-const GOERLI =
-  "https://goerli.infura.io/v3/ba63b223746842d89619ef053b179319";
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
 module.exports = {
-  solidity: "0.8.4",
+  saveOnTenderly: false,
   defaultNetwork: "bscTestnet",
+  lightTesting: true,
   networks: {
+    ...testNetworks,
     bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
       chainId: 97,
@@ -39,4 +58,27 @@ module.exports = {
       accounts: [`0x${PRIVATE_KEY}`],
     },
   },
+  solidity: {
+    version: '0.8.4',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 10000,
+      },
+    },
+  },
+  paths: {
+    sources: './contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts',
+  },
+  mocha: {
+    timeout: 100000,
+  },
+  bnbAddress: {
+    Testnet: process.env.WBNB_BSCTESTNET,
+  },
 };
+
+require('./scripts/hardhat-tasks.js');
