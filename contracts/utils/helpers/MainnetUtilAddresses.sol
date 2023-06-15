@@ -30,24 +30,24 @@ contract MainnetUtilAddresses {
         0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
     address internal constant CHAINLINK_WBTC_ADDR =
         0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-    address internal constant DAI_ADDR =
-        0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    // address internal constant DAI_ADDR =
+    //     0x6B175474E89094C44Da98b954EedeAC495271d0F;
 
     address internal constant FEE_RECEIVER_ADMIN_ADDR =
-        0xA74e9791D7D66c6a14B2C571BdA0F2A1f6D64E06;
+        0x595622cBd0Fc4727DF476a1172AdA30A9dDf8F43;
 
-    address internal constant UNI_V3_ROUTER =
-        0xE592427A0AEce92De3Edee1F18E0157C05861564;
-    address internal constant UNI_V3_QUOTER =
-        0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6;
+    // address internal constant UNI_V3_ROUTER =
+    //     0xE592427A0AEce92De3Edee1F18E0157C05861564;
+    // address internal constant UNI_V3_QUOTER =
+    //     0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6;
 
     address internal constant FEE_RECIPIENT =
-        0x39C4a92Dc506300c3Ea4c67ca4CA611102ee6F2A;
+        0x595622cBd0Fc4727DF476a1172AdA30A9dDf8F43;
 
     // not needed on mainnet
     address internal constant DEFAULT_BOT =
         0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     address public constant CHAINLINK_FEED_REGISTRY =
-        0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf;
+        0x1647a10D50e1Ebf84FF6E38e4c8dd1298E0E69cC;
 }
