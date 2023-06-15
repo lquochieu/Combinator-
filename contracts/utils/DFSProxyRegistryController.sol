@@ -4,7 +4,7 @@ pragma solidity 0.8.4;
 
 import "./DFSProxyRegistry.sol";
 import "../interfaces/IDSProxy.sol";
-import "../DS/DSProxyFactoryInterface.sol";
+import "../DS/Proxy.sol";
 import "./helpers/UtilHelper.sol";
 
 /// @title User facing contract to manage new proxies (is owner of DFSProxyRegistry)
@@ -43,7 +43,7 @@ contract DFSProxyRegistryController is AdminAuth, UtilHelper {
     /// @notice Adds proxies to pool for users to later claim and save on gas
     function addToPool(uint256 _numNewProxies) public {
         for (uint256 i = 0; i < _numNewProxies; ++i) {
-            DSProxy newProxy = DSProxyFactoryInterface(PROXY_FACTORY_ADDR)
+            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
                 .build();
             proxyPool.push(address(newProxy));
         }
@@ -59,8 +59,8 @@ contract DFSProxyRegistryController is AdminAuth, UtilHelper {
 
             return newProxy;
         } else {
-            DSProxy newProxy = DSProxyFactoryInterface(PROXY_FACTORY_ADDR)
-                .build(_user);
+            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
+                .buildByAddress(_user);
             return address(newProxy);
         }
     }

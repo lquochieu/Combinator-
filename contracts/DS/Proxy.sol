@@ -108,20 +108,20 @@ contract DSProxyFactory {
 
     // deploys a new proxy instance
     // sets owner of proxy to caller
-    function build() public returns (address payable proxy) {
+    function build() public returns (DSProxy proxy) {
         proxy = buildByAddress(msg.sender);
     }
 
     // deploys a new proxy instance
     // sets custom owner of proxy
-    function buildByAddress(address owner) public returns (address payable proxy) {
-        proxy = payable(address(new DSProxy(address(cache))));
+    function buildByAddress(address owner) public returns (DSProxy proxy) {
+        proxy = new DSProxy(address(cache));
         emit Created(msg.sender, owner, address(proxy), address(cache));
         DSProxy(proxy).setOwner(owner);
-        isProxy[proxy] = true;
+        isProxy[address(proxy)] = true;
 
         // for testing . When real project must be removed
-        listProxy[owner].push(proxy);
+        listProxy[owner].push(address(proxy));
     }
 
 }

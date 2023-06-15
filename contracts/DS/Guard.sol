@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 // guard.sol -- simple whitelist implementation of DSAuthority
 
 // Copyright (C) 2017  DappHub, LLC
@@ -55,21 +54,22 @@ contract DSGuard is DSAuth, DSAuthority, DSGuardEvents {
             || acl[ANY][ANY][ANY];
     }
 
-    function permit(bytes32 src, bytes32 dst, bytes32 sig) public auth {
+    function permitAuth(bytes32 src, bytes32 dst, bytes32 sig) public auth {
         acl[src][dst][sig] = true;
         emit LogPermit(src, dst, sig);
     }
 
-    function forbid(bytes32 src, bytes32 dst, bytes32 sig) public auth {
+    function forbidAuth(bytes32 src, bytes32 dst, bytes32 sig) public auth {
         acl[src][dst][sig] = false;
         emit LogForbid(src, dst, sig);
     }
 
     function permit(address src, address dst, bytes32 sig) public {
-        permit(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
+        permitAuth(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
     }
+    
     function forbid(address src, address dst, bytes32 sig) public {
-        forbid(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
+        forbidAuth(bytes32(bytes20(src)), bytes32(bytes20(dst)), sig);
     }
 
 }
@@ -77,9 +77,15 @@ contract DSGuard is DSAuth, DSAuthority, DSGuardEvents {
 contract DSGuardFactory {
     mapping (address => bool)  public  isGuard;
 
+    // only for test . when deploy to mainnet, remove it
+    mapping (address=>address[]) public created;
+
     function newGuard() public returns (DSGuard guard) {
         guard = new DSGuard();
         guard.setOwner(msg.sender);
         isGuard[address(guard)] = true;
+
+        // only for test . when deploy to mainnet, remove it
+        created[msg.sender].push(address(guard));
     }
 }

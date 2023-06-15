@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.4;
 
-import "../DS/DSGuard.sol";
-import "../DS/DSAuth.sol";
+import "../DS/Guard.sol";
+import "../DS/Auth.sol";
 
 import "./helpers/AuthHelper.sol";
 
