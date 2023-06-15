@@ -156,3 +156,30 @@ contract DSProxyCache {
         cache[hash] = target;
     }
 }
+
+// ProxyRegistry
+// This Registry deploys new proxy instances through DSProxyFactory.build(address) and keeps a registry of owner => proxy
+contract ProxyRegistry {
+    mapping(address => address) public proxies;
+    DSProxyFactory factory;
+
+    constructor(DSProxyFactory factory_) public {
+        factory = factory_;
+    }
+
+    // deploys a new proxy instance
+    // sets owner of proxy to caller
+    function buildProxy() public returns (address proxy) {
+         proxy = build(msg.sender);
+    }
+
+    // deploys a new proxy instance
+    // sets custom owner of proxy
+    function build(address owner) public returns (address) {
+        require(proxies[owner] == address(DSProxy(address(0))) || DSProxy(proxies[owner]).owner() != owner); // Not allow new proxy if the user already has one and remains being the owner
+        DSProxy proxy = factory.buildByAddress(owner);
+        proxies[owner] = address(proxy);
+
+        return address(proxy);
+    }
+}
