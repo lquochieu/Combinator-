@@ -18,13 +18,13 @@ contract MainnetUtilAddresses {
     address internal constant DFS_PROXY_REGISTRY_ADDR =
         0x29474FdaC7142f9aB7773B8e38264FA15E3805ed;
 
-    address internal constant WETH_ADDR =
+    address internal constant WBNB_ADDR =
         0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address internal constant ETH_ADDR =
+    address internal constant BNB_ADDR =
         0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
-    address internal constant WSTETH_ADDR =
+    address internal constant WSTBNB_ADDR =
         0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0;
-    address internal constant STETH_ADDR =
+    address internal constant STBNB_ADDR =
         0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
     address internal constant WBTC_ADDR =
         0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
