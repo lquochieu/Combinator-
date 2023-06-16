@@ -5,7 +5,7 @@ require("dotenv").config();
 
 async function main() {
   const DSProxyRegistry = await ethers.getContractFactory("DSProxyRegistry");
-  const dsProxyRegistry = await DSProxyRegistry.deploy([process.env.DS_PROXY_FACTORY_ADDRESS]);
+  const dsProxyRegistry = await DSProxyRegistry.deploy(process.env.DS_PROXY_FACTORY_ADDRESS);
 
   await dsProxyRegistry.deployed();
   console.log("DSProxyRegistry deployed at: ", dsProxyRegistry.address);

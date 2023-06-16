@@ -1,9 +1,9 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-await-in-loop */
-const { default: curve } = require('@curvefi/api');
+const { default: curve } =  require('@curvefi/api');
 const hre = require('hardhat');
 const fs = require('fs');
-const { getAssetInfo, getAssetInfoByAddress } = require('@defisaver/tokens');
+const { getAssetInfo, getAssetInfoByAddress } = require('@zennomi/tokens');
 const { expect } = require('chai');
 const storageSlots = require('./storageSlots.json');
 
@@ -20,7 +20,7 @@ const proxyAuthBytecode = require('../artifacts/contracts/core/strategy/ProxyAut
 require('dotenv-safe').config();
 
 const addrs = {
-    testnet: {
+    bscTestnet: {
         PROXY_REGISTRY: process.env.DS_PROXY_REGISTRY_ADDRESS,
         REGISTRY_ADDR: process.env.DFS_REGISTRY_ADDRESS,
         // PROXY_AUTH_ADDR: '0x149667b6FAe2c63D1B4317C716b0D0e4d3E2bD70',
@@ -123,9 +123,10 @@ const dydxTokens = ['WETH', 'WBNB', 'USDC', 'TRAVA'];
 let network = hre.network.config.name;
 
 const chainIds = {
-    mainnet: 1,
-    optimism: 10,
-    arbitrum: 42161,
+    // mainnet: 1,
+    // optimism: 10,
+    // arbitrum: 42161,
+    bscTestnet: 97
 };
 
 const AAVE_FL_FEE = 0.09; // TODO: can we fetch this dynamically
@@ -389,7 +390,7 @@ const getLocalTokenPrice = (tokenSymbol) => {
 };
 
 const fetchAmountinUSDPrice = (tokenSymbol, amountUSD) => {
-    const { decimals } = getAssetInfo(tokenSymbol);
+    const { decimals } = getAssetInfo(tokenSymbol, 97);
     const tokenPrice = getLocalTokenPrice(tokenSymbol);
     return (amountUSD / tokenPrice).toFixed(decimals);
 };
@@ -473,21 +474,21 @@ const sendEther = async (signer, toAddress, amount) => {
 
 // eslint-disable-next-line max-len
 const redeploy = async (name, regAddr = addrs[getNetwork()].REGISTRY_ADDR, saveOnTenderly = config.saveOnTenderly, isFork = false, ...args) => {
-    if (!isFork) {
-        await hre.network.provider.send('hardhat_setBalance', [
-            getOwnerAddr(),
-            '0xC9F2C9CD04674EDEA40000000',
-        ]);
-        await hre.network.provider.send('hardhat_setNextBlockBaseFeePerGas', [
-            '0x1', // 1 wei
-        ]);
-        if (regAddr === addrs[getNetwork()].REGISTRY_ADDR) {
-            await impersonateAccount(getOwnerAddr());
-        }
+    // if (!isFork) {
+    //     await hre.network.provider.send('hardhat_setBalance', [
+    //         getOwnerAddr(),
+    //         '0xC9F2C9CD04674EDEA40000000',
+    //     ]);
+    //     await hre.network.provider.send('hardhat_setNextBlockBaseFeePerGas', [
+    //         '0x1', // 1 wei
+    //     ]);
+    //     if (regAddr === addrs[getNetwork()].REGISTRY_ADDR) {
+    //         await impersonateAccount(getOwnerAddr());
+    //     }
 
-        const ethSender = (await hre.ethers.getSigners())[0];
-        await sendEther(ethSender, getOwnerAddr(), '100');
-    }
+    //     const ethSender = (await hre.ethers.getSigners())[0];
+    //     await sendEther(ethSender, getOwnerAddr(), '100');
+    // }
 
     const signer = await hre.ethers.provider.getSigner(getOwnerAddr());
     const registryInstance = await hre.ethers.getContractFactory('contracts/core/DFSRegistry.sol:DFSRegistry', signer);
@@ -496,7 +497,7 @@ const redeploy = async (name, regAddr = addrs[getNetwork()].REGISTRY_ADDR, saveO
     registry = registry.connect(signer);
 
     const c = await deployAsOwner(name, undefined, ...args);
-
+    
     if (name === 'StrategyExecutor' || name === 'StrategyExecutorL2') {
         // eslint-disable-next-line no-param-reassign
         name = 'StrategyExecutorID';

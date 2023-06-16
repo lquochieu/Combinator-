@@ -226,44 +226,58 @@ const travaWithdrawTest = async (testLength, lendingPoolAddress) => {
             senderAcc = (await hre.ethers.getSigners())[0];
             proxy = await getProxy(senderAcc.address);
             lendingPool = await getLendingPool(lendingPoolAddress);
+            console.log("get infos to withdraw successed!")
         });
 
         for (let i = 0; i < testLength; ++i) {
+            console.log("----start withdraw----")
             const tokenSymbol = travaV2assetsDefaultMarket[i];
             const fetchedAmountWithUSD = fetchAmountinUSDPrice(tokenSymbol, '10000');
+            console.log("fetchedAmountWithUSD", fetchedAmountWithUSD);
 
             it(`... should withdraw ${fetchedAmountWithUSD} ${tokenSymbol} from Trava`, async () => {
                 const snapshot = await takeSnapshot();
+                console.log("snapshot ok");
                 const assetInfo = getAssetInfo(tokenSymbol);
-
+                console.log("assetInfo", assetInfo);
                 if (assetInfo.symbol === 'WBNB') {
                     assetInfo.address = WBNB_ADDR;
                 }
 
                 const travaTokenInfo = await getTravaTokenInfo(dataProvider, assetInfo.address);
+                console.log("travaTokenIfo");
+
                 const tToken = travaTokenInfo.tTokenAddress;
+                console.log("tToken", tToken);
 
                 const amount = hre.ethers.utils.parseUnits(
                     fetchedAmountWithUSD,
                     assetInfo.decimals,
                 );
+                console.log("amount", amount);
 
                 const tBalanceBefore = await balanceOf(tToken, proxy.address);
+                console.log("tBalanceBefore", tBalanceBefore);
 
                 if (tBalanceBefore.lte(amount)) {
                     // eslint-disable-next-line max-len
+                    console.log("let amount");
                     await supplyTrava(proxy, TRAVA_MARKET, amount, assetInfo.address, senderAcc.address);
                 }
 
                 const balanceBefore = await balanceOf(assetInfo.address, senderAcc.address);
-
+                console.log("balanceBefore", balanceBefore);
                 // eslint-disable-next-line max-len
                 await withdrawTrava(proxy, TRAVA_MARKET, assetInfo.address, amount, senderAcc.address);
+                console.log("withdrawTrava", withdrawTrava);
 
                 const balanceAfter = await balanceOf(assetInfo.address, senderAcc.address);
+                console.log("balanceAfter", balanceAfter);
 
                 expect(balanceAfter).to.be.gt(balanceBefore);
+                console.log("finished");
                 await revertToSnapshot(snapshot);
+                console.log("revert to snapshot ok!");
             });
         }
     });

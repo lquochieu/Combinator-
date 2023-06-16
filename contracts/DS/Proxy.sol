@@ -159,7 +159,7 @@ contract DSProxyCache {
 
 // ProxyRegistry
 // This Registry deploys new proxy instances through DSProxyFactory.build(address) and keeps a registry of owner => proxy
-contract ProxyRegistry {
+contract DSProxyRegistry {
     mapping(address => address) public proxies;
     DSProxyFactory factory;
 
