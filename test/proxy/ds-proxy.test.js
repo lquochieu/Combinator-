@@ -47,14 +47,14 @@ describe("DSProxyFactory", () => {
     let calldata = await test.interface.encodeFunctionData("setToken", [
       token.address,
     ]);
-    await dsProxy.executeTarget(test.address, calldata);
+    await dsProxy.execute(test.address, calldata);
 
     calldata = await test.interface.encodeFunctionData("transferToken", [
       user2.address,
       ethers.utils.parseEther("1"),
     ]);
 
-    await dsProxy.executeTarget(test.address, calldata);
+    await dsProxy.execute(test.address, calldata);
 
     // test excute but don't work :)
     // calldata = await test.interface.encodeFunctionData("transferToken", [

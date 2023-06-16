@@ -417,6 +417,7 @@ const getNameId = (name) => {
 };
 
 const getAddrFromRegistry = async (name, regAddr = addrs[network].REGISTRY_ADDR) => {
+    console.log("name::", name);
     const registryInstance = await hre.ethers.getContractFactory('DFSRegistry');
     const registry = registryInstance.attach(regAddr);
 
@@ -426,9 +427,11 @@ const getAddrFromRegistry = async (name, regAddr = addrs[network].REGISTRY_ADDR)
     // } if (name === 'SubProxy') {
     //     return addrs[network].SubProxy;
     // }
+    console.log("Id::", getNameId(name));
     const addr = await registry.getAddr(
         getNameId(name),
     );
+    console.log("addr::", addr);
     return addr;
 };
 
@@ -581,7 +584,6 @@ const redeployCore = async (isL2 = false) => {
     await setCode(strategyStorageAddr, strategyStorageBytecode);
 
     const subStorageAddr = await getAddrFromRegistry('SubStorage', addrs[network].REGISTRY_ADDR);
-
     if (isL2) await setCode(subStorageAddr, subStorageBytecodeL2);
     else await setCode(subStorageAddr, subStorageBytecode);
 

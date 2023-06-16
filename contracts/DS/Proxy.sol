@@ -48,10 +48,10 @@ contract DSProxy is DSAuth, DSNote {
             target = cache.write(_code);
         }
 
-        response = executeTarget(target, _data);
+        response = execute(target, _data);
     }
 
-    function executeTarget(address _target, bytes memory _data)
+    function execute(address _target, bytes memory _data)
         public
         auth
         note
@@ -154,5 +154,29 @@ contract DSProxyCache {
         }
         bytes32 hash = keccak256(_code);
         cache[hash] = target;
+    }
+}
+
+// Contract này của maker DAO có sẵn rồi, nếu deploy lại thì người dùng sẽ có 2 Smart wallet. K rõ maker dao có nó trong mạng BSC hay không
+contract ProxyRegistry {
+    mapping(address => DSProxy) public proxies;
+    DSProxyFactory factory;
+
+    constructor(DSProxyFactory factory_) {
+        factory = factory_;
+    }
+
+    // deploys a new proxy instance
+    // sets owner of proxy to caller
+    function build() public returns (DSProxy proxy) {
+        proxy = build(msg.sender);
+    }
+
+    // deploys a new proxy instance
+    // sets custom owner of proxy
+    function build(address owner) public returns (DSProxy proxy) {
+        require(proxies[owner] == DSProxy(address(0)) || proxies[owner].owner() != owner); // Not allow new proxy if the user already has one and remains being the owner
+        proxy = factory.buildByAddress(owner);
+        proxies[owner] = proxy;
     }
 }

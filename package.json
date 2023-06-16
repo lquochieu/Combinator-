@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.4.1",
+    "@defisaver/sdk": "^1.0.23",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
@@ -29,6 +30,8 @@
     "@truffle/hdwallet-provider": "^2.0.14",
     "dotenv": "^16.0.1",
     "ethers": "^5.6.8",
-    "hardhat-interface-generator": "^0.0.6"
+    "hardhat-interface-generator": "^0.0.6",
+    "web3-eth-abi": "^4.0.1",
+    "web3-utils": "^4.0.1"
   }
 }
