@@ -5,7 +5,7 @@ pragma solidity 0.8.4;
 import "../interfaces/IDFSRegistry.sol";
 import "../utils/SafeERC20.sol";
 import "./AdminVault.sol";
-import "./helpers/AuthHelper.sol";
+import "./helpers/TestAuthHelper.sol";
 
 /// @title AdminAuth Handles owner/admin privileges over smart contracts
 contract AdminAuth is AuthHelper {

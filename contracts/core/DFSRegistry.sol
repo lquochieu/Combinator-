@@ -3,6 +3,7 @@
 pragma solidity 0.8.4;
 
 import "../auth/AdminAuth.sol";
+import "hardhat/console.sol";
 
 /// @title Stores all the important DFS addresses and can be changed (timelock)
 contract DFSRegistry is AdminAuth {
@@ -62,6 +63,7 @@ contract DFSRegistry is AdminAuth {
         address _contractAddr,
         uint256 _waitPeriod
     ) public onlyOwner {
+
         if (entries[_id].exists){
             revert EntryAlreadyExistsError(_id);
         }

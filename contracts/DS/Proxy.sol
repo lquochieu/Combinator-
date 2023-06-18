@@ -20,7 +20,7 @@ pragma solidity 0.8.4;
 
 import "./Auth.sol";
 import "./DSNote.sol";
-
+import "hardhat/console.sol";
 // DSProxy
 // Allows code execution using a persistant identity This can be very
 // useful to execute a sequence of atomic actions. Since the owner of
@@ -59,7 +59,7 @@ contract DSProxy is DSAuth, DSNote {
         returns (bytes memory response)
     {
         require(_target != address(0), "ds-proxy-target-address-required");
-
+        
         // call contract in current context
         assembly {
             let succeeded := delegatecall(sub(gas(), 5000), _target, add(_data, 0x20), mload(_data), 0, 0)
