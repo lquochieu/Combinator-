@@ -4,9 +4,11 @@ pragma solidity 0.8.4;
 import "./helpers/AuthHelper.sol";
 
 /// @title A stateful contract that holds and can change owner/admin
-contract AdminVault is AuthHelper {
+contract AdminVault {
     address public owner;
     address public admin;
+
+    address internal constant ADMIN_ADDR = 0x7c1D8EC0D2aF6e6083d80D28fF9dFe903Fb7d955;
 
     error SenderNotAdmin();
 

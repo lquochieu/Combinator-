@@ -48,10 +48,10 @@ contract DSProxy is DSAuth, DSNote {
             target = cache.write(_code);
         }
 
-        response = executeTarget(target, _data);
+        response = execute(target, _data);
     }
 
-    function executeTarget(address _target, bytes memory _data)
+    function execute(address _target, bytes memory _data)
         public
         auth
         note

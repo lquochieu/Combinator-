@@ -418,6 +418,7 @@ const getNameId = (name) => {
 };
 
 const getAddrFromRegistry = async (name, regAddr = addrs[network].REGISTRY_ADDR) => {
+    console.log("name::", name);
     const registryInstance = await hre.ethers.getContractFactory('DFSRegistry');
     const registry = registryInstance.attach(regAddr);
 
@@ -427,9 +428,11 @@ const getAddrFromRegistry = async (name, regAddr = addrs[network].REGISTRY_ADDR)
     // } if (name === 'SubProxy') {
     //     return addrs[network].SubProxy;
     // }
+    console.log("Id::", getNameId(name));
     const addr = await registry.getAddr(
         getNameId(name),
     );
+    console.log("addr::", addr);
     return addr;
 };
 

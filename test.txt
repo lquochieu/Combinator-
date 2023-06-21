@@ -1,0 +1,6 @@
+Viết test strategy:
+
+Viết 1 action increase value của 1 user lên 1 đơn vị nếu value của họ nhỏ hơn 100
+
+Trong hardhat testnet, khi dùng cùng 1 contract và cùng 1 user deploy, mọi lần chạy địa chỉ đều sẽ như nhau
+=> Lợi dùng để tạo contract deploy fix địa chỉ

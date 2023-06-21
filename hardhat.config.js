@@ -1,6 +1,17 @@
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
+require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
+require("@ethersproject/abstract-provider");
+require("@ethersproject/abstract-signer");
+require("@ethersproject/transactions");
+require("@ethersproject/bytes");
+require("@truffle/hdwallet-provider");
 require("@openzeppelin/hardhat-upgrades");
+require("@nomiclabs/hardhat-waffle");
 require("hardhat-interface-generator");
+require("dotenv").config();
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 
@@ -15,7 +26,12 @@ require("hardhat-interface-generator");
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
+const GOERLI =
+  "https://goerli.infura.io/v3/ba63b223746842d89619ef053b179319";
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
 module.exports = {
+  saveOnTenderly: false,
   solidity: {
     compilers: [
       {
@@ -110,6 +126,7 @@ module.exports = {
       },
     ],
   },
+  defaultNetwork: "bscTestnet",
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
@@ -144,17 +161,19 @@ module.exports = {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      accounts: [
-        "36f1ea3519a6949576c242d927dd0c74650554cdfaedbcd03fb3a80c558c03de",
-      ],
+      accounts: [`0x${PRIVATE_KEY}`],
     },
     goerli: {
-      url: "https://rpc.ankr.com/eth_goerli",
+      url: GOERLI,
       chainId: 5,
-      accounts: [
-        "5a84c445ecc36a8b0878e9516245633ffd630353838034cfe263a9595d49d540",
-      ],
+      accounts: [`0x${PRIVATE_KEY}`],
       gas: 1e7,
     },
+  },
+  wbnbAddress: {
+    Mainnet: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+    Testnet: process.env.WBNB_BSCTESTNET,
+    Arbitrum: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    Optimism: '0x4200000000000000000000000000000000000006',
   },
 };
