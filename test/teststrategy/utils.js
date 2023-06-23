@@ -349,7 +349,6 @@ function createTestStrategy() {
     actionIds.push(actionEncoded[0]);
     paramMappings.push(actionEncoded[1]);
   });
-
   return [
     "TestStrategy",
     testStrategy.triggers.map((trigger) => keccak256(trigger.name).substr(0, 10)),
@@ -385,7 +384,6 @@ const callTestStrategy = async (addressProxy, botAcc, subId, val, strategyId) =>
   const triggerData = await createTestTrigger(addressProxy, val);
 
   const strategySub = [strategyId, false, [triggerData], [targetValueEncoded]];
-
   actionsCallData.push(testStrategyAction.encodeForRecipe()[0]);
   triggerCallData.push(abiCoder.encode(["address", 'uint256'], [addressProxy, val]));
   const strategyExecutorByBot = await (await hre.ethers.getContractFactory("StrategyExecutor")).attach(testnetOrderAddress[17]).connect(botAcc);

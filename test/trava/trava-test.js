@@ -220,11 +220,12 @@ const travaWithdrawTest = async (testLength, lendingPoolAddress) => {
     describe('Trava-Withdraw', function () {
         this.timeout(150000);
 
-        let senderAcc; let proxy; let lendingPool;
+        let senderAcc; let proxy; let dataProvider; let lendingPool;
 
         before(async () => {
             senderAcc = (await hre.ethers.getSigners())[0];
             proxy = await getProxy(senderAcc.address);
+            dataProvider = await getAaveDataProvider();
             lendingPool = await getLendingPool(lendingPoolAddress);
             console.log("get infos to withdraw successed!")
         });
@@ -232,12 +233,12 @@ const travaWithdrawTest = async (testLength, lendingPoolAddress) => {
         for (let i = 0; i < testLength; ++i) {
             console.log("----start withdraw----")
             const tokenSymbol = travaV2assetsDefaultMarket[i];
-            const fetchedAmountWithUSD = fetchAmountinUSDPrice(tokenSymbol, '10000');
+            const fetchedAmountWithUSD = fetchAmountinUSDPrice(tokenSymbol, '80');
             console.log("fetchedAmountWithUSD", fetchedAmountWithUSD);
 
             it(`... should withdraw ${fetchedAmountWithUSD} ${tokenSymbol} from Trava`, async () => {
-                const snapshot = await takeSnapshot();
-                console.log("snapshot ok");
+                // const snapshot = await takeSnapshot();
+                // console.log("snapshot ok");
                 const assetInfo = getAssetInfo(tokenSymbol);
                 console.log("assetInfo", assetInfo);
                 if (assetInfo.symbol === 'WBNB') {
@@ -276,8 +277,8 @@ const travaWithdrawTest = async (testLength, lendingPoolAddress) => {
 
                 expect(balanceAfter).to.be.gt(balanceBefore);
                 console.log("finished");
-                await revertToSnapshot(snapshot);
-                console.log("revert to snapshot ok!");
+                // await revertToSnapshot(snapshot);
+                // console.log("revert to snapshot ok!");
             });
         }
     });

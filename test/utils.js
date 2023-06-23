@@ -17,7 +17,7 @@ const recipeExecutorBytecode = require('../artifacts/contracts/core/RecipeExecut
 const proxyAuthBytecode = require('../artifacts/contracts/core/strategy/ProxyAuth.sol/ProxyAuth.json').deployedBytecode;
 // const mockChainlinkFeedRegistryBytecode = require('../artifacts/contracts/mocks/MockChainlinkFeedRegistry.sol/MockChainlinkFeedRegistry.json').deployedBytecode;
 
-require('dotenv-safe').config();
+require('dotenv').config();
 
 const addrs = {
     bscTestnet: {
@@ -120,7 +120,7 @@ const OWNER_ACC = process.env.PUCLIC_KEY;
 
 const dydxTokens = ['WETH', 'WBNB', 'USDC', 'TRAVA'];
 
-let network = hre.network.config.name;
+let network = "bscTestnet";
 
 const chainIds = {
     // mainnet: 1,
@@ -220,7 +220,10 @@ const setNetwork = (networkName) => {
     network = networkName;
 };
 
-const getNetwork = () => network;
+const getNetwork = () => {
+    console.log("?", network)
+    return network;
+}
 
 const getOwnerAddr = () => addrs[network].OWNER_ACC;
 
@@ -390,8 +393,12 @@ const getLocalTokenPrice = (tokenSymbol) => {
 };
 
 const fetchAmountinUSDPrice = (tokenSymbol, amountUSD) => {
+    console.log("token symbol", tokenSymbol)
+    console.log("amount", amountUSD)
     const { decimals } = getAssetInfo(tokenSymbol, 97);
+    console.log("Decimal", decimals)
     const tokenPrice = getLocalTokenPrice(tokenSymbol);
+    console.log("token price", tokenPrice);
     return (amountUSD / tokenPrice).toFixed(decimals);
 };
 
@@ -492,13 +499,13 @@ const redeploy = async (name, regAddr = addrs[getNetwork()].REGISTRY_ADDR, saveO
     //     const ethSender = (await hre.ethers.getSigners())[0];
     //     await sendEther(ethSender, getOwnerAddr(), '100');
     // }
-
+    console.log("start redeploy :", name)
     const signer = await hre.ethers.provider.getSigner(getOwnerAddr());
     const registryInstance = await hre.ethers.getContractFactory('contracts/core/DFSRegistry.sol:DFSRegistry', signer);
     let registry = await registryInstance.attach(regAddr);
 
     registry = registry.connect(signer);
-
+    console.log("Registry")
     const c = await deployAsOwner(name, undefined, ...args);
     
     if (name === 'StrategyExecutor' || name === 'StrategyExecutorL2') {
@@ -535,18 +542,18 @@ const redeploy = async (name, regAddr = addrs[getNetwork()].REGISTRY_ADDR, saveO
         await storageContract.changeEditPermission(true);
     }
 
-    if (hre.network.config.type !== 'tenderly') {
-        if (regAddr === addrs[network].REGISTRY_ADDR) {
-            await stopImpersonatingAccount(getOwnerAddr());
-        }
-    }
+    // if (hre.network.config.type !== 'tenderly') {
+    //     if (regAddr === addrs[network].REGISTRY_ADDR) {
+    //         await stopImpersonatingAccount(getOwnerAddr());
+    //     }
+    // }
 
-    if (saveOnTenderly) {
-        await hre.tenderly.persistArtifacts({
-            name,
-            address: c.address,
-        });
-    }
+    // if (saveOnTenderly) {
+    //     await hre.tenderly.persistArtifacts({
+    //         name,
+    //         address: c.address,
+    //     });
+    // }
 
     return c;
 };
@@ -1200,33 +1207,33 @@ module.exports = {
     // mockChainlinkPriceFeed,
     setMockPrice,
     getNftOwner,
-    addrs,
-    AVG_GAS_PRICE,
-    standardAmounts,
-    nullAddress,
-    dydxTokens,
-    REGISTRY_ADDR,
-    UNISWAP_WRAPPER,
-    WETH_ADDR,
-    WBNB_ADDR,
-    OWNER_ACC,
-    ADMIN_ACC,
-    USDC_ADDR,
-    TRAVA_ADDR,
-    TRAVA_MARKET,
-    MAX_UINT,
-    MAX_UINT128,
-    LOGGER_ADDR,
-    YEARN_REGISTRY_ADDRESS,
-    placeHolderAddr,
-    DFS_REG_CONTROLLER,
-    rariDaiFundManager,
-    rdptAddress,
-    rariUsdcFundManager,
-    rsptAddress,
-    network,
-    chainIds,
-    BOND_NFT_ADDR,
+    // addrs,
+    // AVG_GAS_PRICE,
+    // standardAmounts,
+    // nullAddress,
+    // dydxTokens,
+    // REGISTRY_ADDR,
+    // UNISWAP_WRAPPER,
+    // WETH_ADDR,
+    // WBNB_ADDR,
+    // OWNER_ACC,
+    // ADMIN_ACC,
+    // USDC_ADDR,
+    // TRAVA_ADDR,
+    // TRAVA_MARKET,
+    // MAX_UINT,
+    // MAX_UINT128,
+    // LOGGER_ADDR,
+    // YEARN_REGISTRY_ADDRESS,
+    // placeHolderAddr,
+    // DFS_REG_CONTROLLER,
+    // rariDaiFundManager,
+    // rdptAddress,
+    // rariUsdcFundManager,
+    // rsptAddress,
+    // network,
+    // chainIds,
+    // BOND_NFT_ADDR,
     setNetwork,
     getNetwork,
     setBalance,

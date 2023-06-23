@@ -13,7 +13,6 @@ contract TravaBorrow is ActionBase, TravaHelper {
         address market;
         address tokenAddr;
         uint256 amount;
-        uint256 rateMode;
         address to;
         address onBehalf;
     }
@@ -42,12 +41,6 @@ contract TravaBorrow is ActionBase, TravaHelper {
         params.amount = _parseParamUint(
             params.amount,
             _paramMapping[2],
-            _subData,
-            _returnValues
-        );
-        params.rateMode = _parseParamUint(
-            params.rateMode,
-            _paramMapping[3],
             _subData,
             _returnValues
         );

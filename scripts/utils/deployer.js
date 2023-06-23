@@ -1,15 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
-require('dotenv-safe').config();
+require('dotenv').config();
 
 const hre = require('hardhat');
 const ethers = require('ethers');
 const { write } = require('./writer');
 
-const DEPLOYMENT_GAS_LIMIT = 30_000_000;
+const DEPLOYMENT_GAS_LIMIT = 25e6;
 
 const getGasPrice = async (exGasPrice) => {
-    let defaultGasPrice = 1000000000000;
+    let defaultGasPrice = 20e9;
     let newGasPrice = defaultGasPrice;
 
     if (exGasPrice.gt('0')) {
@@ -33,7 +33,7 @@ const deploy = async (contractName, signer, action, gasPrice, nonce, ...args) =>
         const Contract = await hre.ethers.getContractFactory(contractName, signer);
 
         let options = { gasPrice, nonce, gasLimit: DEPLOYMENT_GAS_LIMIT };
-
+        console
         if (nonce === -1) {
             options = { gasPrice, gasLimit: DEPLOYMENT_GAS_LIMIT };
         }
@@ -53,7 +53,7 @@ const deploy = async (contractName, signer, action, gasPrice, nonce, ...args) =>
 
         console.log(`Gas used: ${tx.gasUsed}`);
         console.log(`${contractName} deployed to:`, contract.address);
-        console.log(`Mainnet link: https://etherscan.io/address/${contract.address}`);
+        console.log(`Mainnet link: https://bscscan.io/address/${contract.address}`);
 
         await write(contractName, hre.network.name, contract.address, ...args);
         console.log('-------------------------------------------------------------');
@@ -73,17 +73,16 @@ const deployAndReturnGasUsed = async (contractName, signer, action, gasPrice, no
         if (nonce === -1) {
             options = { gasPrice, gasLimit: DEPLOYMENT_GAS_LIMIT };
         }
-
+        console.log("options", options)
         let contract;
         if (args.length === 0) {
             contract = await Contract.deploy(options);
         } else {
             contract = await Contract.deploy(...args, options);
         }
-
+        console.log("start deploy")
         await contract.deployed();
         const tx = await contract.deployTransaction.wait(1);
-
         console.log(`${contractName} Gas used: ${tx.gasUsed}`);
 
         return parseFloat(tx.gasUsed);
