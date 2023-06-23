@@ -23,4 +23,8 @@ contract Test {
     function getToken() external view returns (address) {
         return address(token);
     }
+
+    function returnHehe() external pure returns (string memory) {
+        return "hehe";
+    }
 }
