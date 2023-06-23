@@ -87,7 +87,7 @@ const TRAVA_MARKET = '0x6df52f798740504c24ccd374cf7ce81b28ce8330';
 // const TRAVA_MARKET_OPTIMISM = '0xa97684ead0e402dC232d5A977953DF7ECBaB3CDb';
 
 // // Dfs sdk won't accept 0x0 and we need some rand addr for testing
-// const placeHolderAddr = '0x0000000000000000000000000000000000000001';
+const placeHolderAddr = '0x0000000000000000000000000000000000000001';
 // const AUNI_ADDR = '0xb9d7cb55f463405cdfbe4e90a6d2df01c2b92bf1';
 const WETH_ADDR = process.env.WETH_BSCTESTNET;
 // const AWBTC_ADDR = '0x9ff58f4ffb29fa2266ab25e75e2a8b3503311656';
@@ -1210,13 +1210,13 @@ module.exports = {
     // addrs,
     // AVG_GAS_PRICE,
     // standardAmounts,
-    // nullAddress,
+    nullAddress,
     // dydxTokens,
     // REGISTRY_ADDR,
     // UNISWAP_WRAPPER,
     // WETH_ADDR,
     // WBNB_ADDR,
-    // OWNER_ACC,
+    OWNER_ACC,
     // ADMIN_ACC,
     // USDC_ADDR,
     // TRAVA_ADDR,
@@ -1225,7 +1225,7 @@ module.exports = {
     // MAX_UINT128,
     // LOGGER_ADDR,
     // YEARN_REGISTRY_ADDRESS,
-    // placeHolderAddr,
+    placeHolderAddr,
     // DFS_REG_CONTROLLER,
     // rariDaiFundManager,
     // rdptAddress,

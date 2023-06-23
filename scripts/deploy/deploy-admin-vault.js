@@ -1,14 +1,23 @@
 const { ethers } = require("hardhat");
 const { writeToEnvFile } = require("../utils/helper");
+const { deployAsOwner } = require("../utils/deployer");
+const {owner} = require("../sdk/rdOwner")
 require("dotenv").config();
 
 async function main() {
-  const AdminVault = await ethers.getContractFactory("AdminVault");
-  const adminValut = await AdminVault.deploy();
+  const signer = owner;
+    const adminVault = await deployAsOwner('AdminVault', signer);
 
-  await adminValut.deployed();
-  console.log("AdminVault deployed at: ", adminValut.address);
-  writeToEnvFile("ADMIN_VAULT_ADDRESS", adminValut.address);
+    await changeConstantInFiles(
+        './contracts',
+        ['MainnetAuthAddresses'],
+        'ADMIN_VAULT_ADDR',
+        adminVault.address,
+    );
+
+    await run('compile');
+
+    writeToEnvFile("ADMIN_VAULT_ADDRESS", adminVault.address)
 }
 
 main()

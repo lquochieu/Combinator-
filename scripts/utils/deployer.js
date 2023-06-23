@@ -6,7 +6,7 @@ const hre = require('hardhat');
 const ethers = require('ethers');
 const { write } = require('./writer');
 
-const DEPLOYMENT_GAS_LIMIT = 25e6;
+const DEPLOYMENT_GAS_LIMIT = 1e7;
 
 const getGasPrice = async (exGasPrice) => {
     let defaultGasPrice = 20e9;

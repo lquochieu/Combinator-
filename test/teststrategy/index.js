@@ -25,16 +25,16 @@ describe("TestStrategyTest", async function() {
 
   before(async() => {
     ownerAcc = (await hre.ethers.getSigners())[0];
-    botAcc = (await hre.ethers.getSigners())[1];
-    adminOfAdminVaultAddress = (await hre.ethers.getSigners())[2];
+    botAcc = (await hre.ethers.getSigners())[0];
+    adminOfAdminVaultAddress = (await hre.ethers.getSigners())[0];
     
     console.log("Owner address::", ownerAcc.address);
     console.log("Bot address::", botAcc.address);
     console.log("Admin of admin vault contract::", adminOfAdminVaultAddress.address);
 
-    // Deploy mọi contract tại địa chỉ fix cứng
-    await setup();
-    await setupDFSRegistry();
+    // // Deploy mọi contract tại địa chỉ fix cứng
+    // await setup();
+    // await setupDFSRegistry();
 
     // K hoạt động
     // userAcc = new ethers.Wallet(userPivKey, ethers.provider);
@@ -44,19 +44,19 @@ describe("TestStrategyTest", async function() {
     // });
 
     proxy = await getProxy(ownerAcc.address);
-
+    console.log("proxy", proxy['execute(address,bytes)'])
     await setupPermission(ownerAcc, proxy, botAcc);
-
+    console.log("setup permission successed");
   });
   it("Create strategy", async() => {
     await openStrategyAndBundleStorage();
 
     // Tạo ra tham số cho strategy gồm: trigger, action và tham số với các giá trị rỗng, chỉ cần để tạo strategy trước rồi gán giá trị vào sau
     const strategyData = createTestStrategy();
-
+    
     // Tạo thẳng strategy với trigger, action và tham số lên contract
     strategyId = await createStrategy(proxy, ...strategyData, true);
-
+    
     // Tạo subdata lưu vào subStorage chứa tham số của người dùng. Ở đây ta lưu trigger data là [Smart wallet của user, 100], còn subdata là [100] => nên nhớ contract chỉ lưu hash của các data này nên khi gọi phải truyền lại để nó so sánh hash
     // Ở đây ta cho trigger check nếu val của user nhỏ hơn 100, thì sẽ cộng thêm 100 vào
     ({ subId } = await subTestStrategy(proxy, 100, strategyId));

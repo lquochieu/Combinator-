@@ -3,9 +3,9 @@
 pragma solidity ^0.8.4;
 
 contract MainnetAuthAddresses {
-    // address internal constant ADMIN_VAULT_ADDR = 0x26ABCfde49f68Bf2cc542229250a0643C2Fe8fD4;
-    // address internal constant FACTORY_ADDRESS = 0x5a15566417e6C1c9546523066500bDDBc53F88C7;
+    // address internal constant ADMIN_VAULT_ADDR = 0x6Efb0A1e9182Bf3f5C2393e93FB81a7ccDfcd826;
+    // address internal constant FACTORY_ADDRESS = 0x9010Ee2eE94cdf43a9d6f66EAdA64EFe5773bf69;
     address internal constant ADMIN_ADDR = 0x595622cBd0Fc4727DF476a1172AdA30A9dDf8F43; // USED IN ADMIN VAULT CONSTRUCTOR
-    address internal constant ADMIN_VAULT_ADDR = 0x5729494DA09117516e8F4655Ecfe0bdf928fF847;
-    address internal constant FACTORY_ADDRESS = 0x963A559d299a228D3653f19564913a213503383f;
+    address internal constant ADMIN_VAULT_ADDR = 0x6Efb0A1e9182Bf3f5C2393e93FB81a7ccDfcd826;
+    address internal constant FACTORY_ADDRESS = 0x9010Ee2eE94cdf43a9d6f66EAdA64EFe5773bf69;
 }

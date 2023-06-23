@@ -20,7 +20,6 @@ async function getFile(dir, filename) {
 
 async function changeConstantInFile(dir, filename, variable, value) {
     const filepath = (await getFile(dir, filename))[0];
-
     const isJsFile = filepath.indexOf('.js') !== -1;
 
     const data = await fsPromises.readFile(filepath, 'utf8');

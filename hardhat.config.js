@@ -161,7 +161,7 @@ module.exports = {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20e9,
-      gas: 25e6,
+      gas: 2e6,
       accounts: [`0x${PRIVATE_KEY}`],
     },
     goerli: {

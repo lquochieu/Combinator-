@@ -1,15 +1,23 @@
 const { ethers } = require("hardhat");
 const { writeToEnvFile } = require("../utils/helper");
-
+const { deployAsOwner } = require("../utils/deployer");
+const {owner} = require("../sdk/rdOwner")
 require("dotenv").config();
 
 async function main() {
-  const DFSRegistry = await ethers.getContractFactory("DFSRegistry");
-  const dfsRegistry = await DFSRegistry.deploy();
+  const signer = owner;
+  const reg = await deployAsOwner('DFSRegistry', signer);
 
-  await dfsRegistry.deployed();
-  console.log("DFSRegistry deployed at: ", dfsRegistry.address);
-  writeToEnvFile("DFS_REGISTRY_ADDRESS", dfsRegistry.address);
+    await changeConstantInFiles(
+        './contracts',
+        ['MainnetActionsUtilAddresses', 'MainnetCoreAddresses'],
+        'REGISTRY_ADDR',
+        reg.address,
+    );
+
+    await run('compile');
+
+    writeToEnvFile("DFS_REGISTRY_ADDRESS", reg.address)
 }
 
 main()
