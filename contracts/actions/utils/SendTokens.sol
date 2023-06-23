@@ -72,7 +72,7 @@ contract SendTokens is ActionBase {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    /// @notice Sends tokens to the specified addresses, works with Eth also
+    /// @notice Sends tokens to the specified addresses, works with Bnb also
     function _sendTokens(
         Params memory _inputData,
         uint256 arrayLength

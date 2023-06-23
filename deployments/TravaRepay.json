@@ -1,5 +1,5 @@
 {
-	"contractName": "TravaBorrow",
+	"contractName": "TravaRepay",
 	"abi": [
 		{
 			"inputs": [],
@@ -268,7 +268,7 @@
 						},
 						{
 							"internalType": "address",
-							"name": "to",
+							"name": "from",
 							"type": "address"
 						},
 						{
@@ -277,7 +277,7 @@
 							"type": "address"
 						}
 					],
-					"internalType": "struct TravaBorrow.Params",
+					"internalType": "struct TravaRepay.Params",
 					"name": "params",
 					"type": "tuple"
 				}

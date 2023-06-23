@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import "../interfaces/IWETH.sol";
+import "../interfaces/IWBNB.sol";
 import "./SafeERC20.sol";
 
 library TokenUtils {
@@ -75,12 +75,12 @@ library TokenUtils {
         return _amount;
     }
 
-    function depositWeth(uint256 _amount) internal {
-        IWETH(WBNB_ADDR).deposit{value: _amount}();
+    function depositWbnb(uint256 _amount) internal {
+        IWBNB(WBNB_ADDR).deposit{value: _amount}();
     }
 
-    function withdrawWeth(uint256 _amount) internal {
-        IWETH(WBNB_ADDR).withdraw(_amount);
+    function withdrawWbnb(uint256 _amount) internal {
+        IWBNB(WBNB_ADDR).withdraw(_amount);
     }
 
     function getBalance(

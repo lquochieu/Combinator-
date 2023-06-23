@@ -5,8 +5,8 @@ pragma solidity 0.8.4;
 import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 
-/// @title Helper action to wrap Ether to WETH9
-contract WrapEth is ActionBase {
+/// @title Helper action to wrap BNB to WBNB
+contract WrapBnb is ActionBase {
     struct Params {
         uint256 amount;
     }
@@ -27,7 +27,7 @@ contract WrapEth is ActionBase {
             _returnValues
         );
 
-        return bytes32(_wrapEth(inputData.amount));
+        return bytes32(_wrapBnb(inputData.amount));
     }
 
     // solhint-disable-next-line no-empty-blocks
@@ -36,7 +36,7 @@ contract WrapEth is ActionBase {
     ) public payable override {
         Params memory inputData = parseInputs(_callData);
 
-        _wrapEth(inputData.amount);
+        _wrapBnb(inputData.amount);
     }
 
     /// @inheritdoc ActionBase
@@ -46,14 +46,14 @@ contract WrapEth is ActionBase {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    /// @notice Wraps native Eth to WETH9 token
-    /// @param _amount Amount of ether to wrap, if type(uint256).max wraps whole balance
-    function _wrapEth(uint256 _amount) internal returns (uint256) {
+    /// @notice Wraps native Bnb to WBNB token
+    /// @param _amount Amount of bnb to wrap, if type(uint256).max wraps whole balance
+    function _wrapBnb(uint256 _amount) internal returns (uint256) {
         if (_amount == type(uint256).max) {
             _amount = address(this).balance;
         }
 
-        TokenUtils.depositWeth(_amount);
+        TokenUtils.depositWbnb(_amount);
         return _amount;
     }
 

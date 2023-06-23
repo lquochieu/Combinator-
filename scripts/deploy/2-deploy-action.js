@@ -7,53 +7,58 @@ const { start } = require('../utils/starter');
 
 const { changeConstantInFiles } = require('../utils/utils');
 
-const { redeploy} = require('../../test/utils');
-const {owner} = require("../sdk/rdOwner");
+const { redeploy } = require('../../test/utils');
+const { owner } = require("../sdk/rdOwner");
 const { writeToEnvFile } = require('../utils/helper');
 
 // const { topUp } = require('../utils/fork');
 
 async function main() {
     //await topUp(OWNER_ACC);
-    
+
     // get signer
     const signer = owner;
-    
-    /*
-        ||--------------------------------------------------------------------------------||
-        ||                              Utils Action Contract                             || 
-        ||--------------------------------------------------------------------------------||
-    */
-    const testStrategy = await deployAsOwner('TestStrategy', signer);
-    await changeConstantInFiles(
-        './contracts',
-        ['MainnetTestStrategyAddresses'],
-        'TEST_STRATEGY_ADDRESS',
-        testStrategy.address,
-    );
-    await run('compile');
-    writeToEnvFile("TEST_STRATEGY_ADDRESS", testStrategy.address)
+
     /*
         ||--------------------------------------------------------------------------------||
         ||                                 Action Contract                                || 
         ||--------------------------------------------------------------------------------||
-    */
-
+        */
     /*
         ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
-        ||                           TestStratage Contract                                ||
+        ||                              Utils Contract                                   ||
         ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
     */
-    const testStrategyIncrease = await redeploy('TestStrategyIncrease', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TEST_STRATEGY_INCREASE_ADDRESS", testStrategyIncrease.address)
+    const wrapBnb = await redeploy('WrapBnb', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("WRAP_BNB_ADDRESS", wrapBnb.address)
 
+    const upwrapBnb = await redeploy('UnwrapBnb', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("UNWRAP_BNB_ADDRESS", upwrapBnb.address)
+
+    const sendToken = await redeploy('SendToken', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("SEND_TOKEN_ADDRESS", sendToken.address)
+
+    const sendTokenAndUnwrap = await redeploy('SendTokenAndUnwrap', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("SEND_TOKEN_AND_UNWRAP_ADDRESS", sendTokenAndUnwrap.address)
+
+    const pullToken = await redeploy('PullToken', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("PULL_TOKEN_ADDRESS", pullToken.address)
     /*
-        ||--------------------------------------------------------------------------------||
-        ||                                Trigger Contract                                || 
-        ||--------------------------------------------------------------------------------||
-    */
-    const testStrategyTrigger = await redeploy('TestStrategyTrigger', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TEST_STRATEGY_TRIGGER_ADDRESS", testStrategyTrigger.address)
+       ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+       ||                               Trava Contract                                   ||
+       ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+   */
+    const travaBorrow = await redeploy('TravaBorrow', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address)
+
+    const travaRepay = await redeploy('TravaRepay', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address)
+
+    const travaSupply = await redeploy('TravaSupply', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("TRAVA_SUPPLY_ADDRESS", travaSupply.address)
+
+    const travaWithdraw = await redeploy('TravaWithdraw', process.env.DFS_REGISTRY_ADDRESS);
+    writeToEnvFile("TRAVA_WITHDRAW_ADDRESS", travaWithdraw.address)
 }
 
 start(main);

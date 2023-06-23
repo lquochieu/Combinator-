@@ -5,8 +5,8 @@ pragma solidity 0.8.4;
 import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 
-/// @title Helper action to un-wrap WETH9 to Eth
-contract UnwrapEth is ActionBase {
+/// @title Helper action to un-wrap WBNB to Bnb
+contract UnwrapBnb is ActionBase {
     using TokenUtils for address;
 
     struct Params {
@@ -36,7 +36,7 @@ contract UnwrapEth is ActionBase {
             _returnValues
         );
 
-        return bytes32(_unwrapEth(inputData.amount, inputData.to));
+        return bytes32(_unwrapBnb(inputData.amount, inputData.to));
     }
 
     // solhint-disable-next-line no-empty-blocks
@@ -45,7 +45,7 @@ contract UnwrapEth is ActionBase {
     ) public payable override {
         Params memory inputData = parseInputs(_callData);
 
-        _unwrapEth(inputData.amount, inputData.to);
+        _unwrapBnb(inputData.amount, inputData.to);
     }
 
     /// @inheritdoc ActionBase
@@ -55,10 +55,10 @@ contract UnwrapEth is ActionBase {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    /// @notice Unwraps WETH9 -> Eth
-    /// @param _amount Amount of Weth to unwrap
-    /// @param _to Address where to send the unwrapped Eth
-    function _unwrapEth(
+    /// @notice Unwraps WBNB -> Bnb
+    /// @param _amount Amount of Wbnb to unwrap
+    /// @param _to Address where to send the unwrapped Bnb
+    function _unwrapBnb(
         uint256 _amount,
         address _to
     ) internal returns (uint256) {
@@ -66,7 +66,7 @@ contract UnwrapEth is ActionBase {
             _amount = TokenUtils.WBNB_ADDR.getBalance(address(this));
         }
 
-        TokenUtils.withdrawWeth(_amount);
+        TokenUtils.withdrawWbnb(_amount);
 
         // if _to == proxy, it will stay on proxy
         TokenUtils.BNB_ADDR.withdrawTokens(_to, _amount);

@@ -4,7 +4,7 @@ pragma solidity 0.8.4;
 import "../../utils/TokenUtils.sol";
 import "../ActionBase.sol";
 
-/// @title Helper action to send a token to the specified address and unwrap if weth address
+/// @title Helper action to send a token to the specified address and unwrap if wbnb address
 contract SendTokenAndUnwrap is ActionBase {
     using TokenUtils for address;
 
@@ -69,8 +69,8 @@ contract SendTokenAndUnwrap is ActionBase {
 
     /// @notice Sends a token to the specified addr, works with Eth also
     /// @dev If amount is type(uint).max it will send proxy balance
-    /// @dev If weth address is set it will unwrap by default
-    /// @param _tokenAddr Address of token, use 0xEeee... for eth
+    /// @dev If wbnb address is set it will unwrap by default
+    /// @param _tokenAddr Address of token, use 0xEeee... for bnb
     /// @param _to Where the tokens are sent
     /// @param _amount Amount of tokens, can be type(uint).max
     function _sendToken(
@@ -82,9 +82,9 @@ contract SendTokenAndUnwrap is ActionBase {
             _amount = _tokenAddr.getBalance(address(this));
         }
 
-        // unwrap and send eth
+        // unwrap and send bnb
         if (_tokenAddr == TokenUtils.WBNB_ADDR) {
-            TokenUtils.withdrawWeth(_amount);
+            TokenUtils.withdrawWbnb(_amount);
             _tokenAddr = TokenUtils.BNB_ADDR;
         }
 

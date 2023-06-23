@@ -52,10 +52,24 @@ async function main() {
 
     // DSProxyFactory
     const dsProxyFactory = await deployAsOwner('DSProxyFactory', signer);
+    await changeConstantInFiles(
+        './contracts',
+        ['MainnetUtilAddresses'],
+        'PROXY_FACTORY_ADDR',
+        dsProxyFactory.address,
+    );
+    await run('compile');
     writeToEnvFile("DS_PROXY_FACTORY_ADDRESS", dsProxyFactory.address)
 
     // DSProxyRegistry
     const proxyRegistry = await deployAsOwner('DSProxyRegistry', signer, dsProxyFactory.address);
+    await changeConstantInFiles(
+        './contracts',
+        ['MainnetUtilAddresses'],
+        'MKR_PROXY_REGISTRY',
+        proxyRegistry.address,
+    );
+    await run('compile');
     writeToEnvFile("DS_PROXY_REGISTRY_ADDRESS", proxyRegistry.address)
 
     /*
@@ -160,7 +174,12 @@ async function main() {
     const botAuth = await redeploy('BotAuth', reg.address);
     writeToEnvFile("BOT_AUTH_ADDRESS", botAuth.address)
 
-        
+    /*
+        ||--------------------------------------------------------------------------------||
+        ||                                 Core Contract                                  || 
+        ||--------------------------------------------------------------------------------||
+    */
+   
     // // mcd actions
     // await redeploy('McdSupply', reg.address);
     // await redeploy('McdWithdraw', reg.address);

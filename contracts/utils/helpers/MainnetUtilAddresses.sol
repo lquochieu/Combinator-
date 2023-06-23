@@ -30,8 +30,8 @@ contract MainnetUtilAddresses {
         0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
     address internal constant CHAINLINK_WBTC_ADDR =
         0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB;
-    // address internal constant DAI_ADDR =
-    //     0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address internal constant DAI_ADDR =
+        0x6B175474E89094C44Da98b954EedeAC495271d0F;
 
     address internal constant FEE_RECEIVER_ADMIN_ADDR =
         0x595622cBd0Fc4727DF476a1172AdA30A9dDf8F43;

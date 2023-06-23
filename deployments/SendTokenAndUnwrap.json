@@ -1,5 +1,5 @@
 {
-	"contractName": "TravaBorrow",
+	"contractName": "SendTokenAndUnwrap",
 	"abi": [
 		{
 			"inputs": [],
@@ -112,19 +112,6 @@
 		},
 		{
 			"inputs": [],
-			"name": "TRAVA_REFERRAL_CODE",
-			"outputs": [
-				{
-					"internalType": "uint16",
-					"name": "",
-					"type": "uint16"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [],
 			"name": "actionType",
 			"outputs": [
 				{
@@ -147,29 +134,6 @@
 				}
 			],
 			"stateMutability": "view",
-			"type": "function"
-		},
-		{
-			"inputs": [
-				{
-					"internalType": "address",
-					"name": "_lendingPool",
-					"type": "address"
-				},
-				{
-					"internalType": "address",
-					"name": "_tokenAddr",
-					"type": "address"
-				},
-				{
-					"internalType": "bool",
-					"name": "_useAsCollateral",
-					"type": "bool"
-				}
-			],
-			"name": "enableAsCollateral",
-			"outputs": [],
-			"stateMutability": "nonpayable",
 			"type": "function"
 		},
 		{
@@ -253,18 +217,8 @@
 					"components": [
 						{
 							"internalType": "address",
-							"name": "market",
-							"type": "address"
-						},
-						{
-							"internalType": "address",
 							"name": "tokenAddr",
 							"type": "address"
-						},
-						{
-							"internalType": "uint256",
-							"name": "amount",
-							"type": "uint256"
 						},
 						{
 							"internalType": "address",
@@ -272,12 +226,12 @@
 							"type": "address"
 						},
 						{
-							"internalType": "address",
-							"name": "onBehalf",
-							"type": "address"
+							"internalType": "uint256",
+							"name": "amount",
+							"type": "uint256"
 						}
 					],
-					"internalType": "struct TravaBorrow.Params",
+					"internalType": "struct SendTokenAndUnwrap.Params",
 					"name": "params",
 					"type": "tuple"
 				}
