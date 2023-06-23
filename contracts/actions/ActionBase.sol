@@ -17,7 +17,7 @@ abstract contract ActionBase is AdminAuth, ActionsUtilHelper {
     DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
     DefisaverLogger public constant logger = DefisaverLogger(
-        DFS_LOGGER_ADDR
+        DEFISAVER_LOGGER
     );
 
     //Wrong sub index value

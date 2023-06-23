@@ -27,7 +27,7 @@ async function main() {
     const defiSaverLogger = await deployAsOwner('DefisaverLogger', signer);
     await changeConstantInFiles(
         './contracts',
-        ['MainnetCoreAddresses'],
+        ['MainnetCoreAddresses', 'MainnetActionsUtilAddresses'],
         'DEFISAVER_LOGGER',
         defiSaverLogger.address,
     );
@@ -116,7 +116,7 @@ async function main() {
     const proxyAuth = await redeploy('ProxyAuth', reg.address);
     await changeConstantInFiles(
         './contracts',
-        ['MainnetCoreAddresses'],
+        ['MainnetCoreAddresses', 'MainnetActionsUtilAddresses'],
         'PROXY_AUTH_ADDR',
         proxyAuth.address,
 
@@ -127,7 +127,7 @@ async function main() {
     const subStorage = await redeploy('SubStorage', reg.address);
     await changeConstantInFiles(
         './contracts',
-        ['MainnetCoreAddresses'],
+        ['MainnetCoreAddresses', 'MainnetActionsUtilAddresses'],
         'SUB_STORAGE_ADDR',
         subStorage.address,
     );
@@ -160,7 +160,7 @@ async function main() {
     const botAuth = await redeploy('BotAuth', reg.address);
     writeToEnvFile("BOT_AUTH_ADDRESS", botAuth.address)
 
-
+        
     // // mcd actions
     // await redeploy('McdSupply', reg.address);
     // await redeploy('McdWithdraw', reg.address);
