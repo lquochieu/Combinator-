@@ -48,8 +48,8 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
     function addToPool(uint256 _numNewProxies) public {
 
         for (uint256 i = 0; i < _numNewProxies; ++i) {
-            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
-                .build();
+            DSProxy newProxy =DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
+                .build());
             proxyPool.push(address(newProxy));
         }
     }
@@ -64,8 +64,8 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
 
             return newProxy;
         } else {
-            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
-                .buildByAddress(_user);
+            DSProxy newProxy = DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
+                .buildByAddress(_user));
             return address(newProxy);
         }
     }

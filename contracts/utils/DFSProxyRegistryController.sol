@@ -43,11 +43,11 @@ contract DFSProxyRegistryController is AdminAuth, UtilHelper {
     /// @notice Adds proxies to pool for users to later claim and save on gas
     function addToPool(uint256 _numNewProxies) public {
         for (uint256 i = 0; i < _numNewProxies; ++i) {
-            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
-                .build();
+            DSProxy newProxy = DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR).build());
             proxyPool.push(address(newProxy));
         }
     }
+
 
     /// @notice Created a new DSProxy or grabs a prebuilt one
     function getFromPoolOrBuild(address _user) internal returns (address) {
@@ -59,8 +59,8 @@ contract DFSProxyRegistryController is AdminAuth, UtilHelper {
 
             return newProxy;
         } else {
-            DSProxy newProxy = DSProxyFactory(PROXY_FACTORY_ADDR)
-                .buildByAddress(_user);
+            DSProxy newProxy = DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
+                .buildByAddress(_user));
             return address(newProxy);
         }
     }

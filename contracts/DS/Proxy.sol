@@ -33,8 +33,8 @@ contract DSProxy is DSAuth, DSNote {
         setCache(_cacheAddr);
     }
 
-    // function() external payable {
-    // }
+    receive() external payable {
+    }
 
     // use the proxy to execute calldata _data on contract _code
     function executeBycode(bytes memory _code, bytes memory _data)
@@ -108,17 +108,17 @@ contract DSProxyFactory {
 
     // deploys a new proxy instance
     // sets owner of proxy to caller
-    function build() public returns (DSProxy proxy) {
+    function build() public returns (address payable proxy) {
         proxy = buildByAddress(msg.sender);
     }
 
     // deploys a new proxy instance
     // sets custom owner of proxy
-    function buildByAddress(address owner) public returns (DSProxy proxy) {
-        proxy = new DSProxy(address(cache));
+    function buildByAddress(address owner)public returns (address payable proxy) {
+        proxy = payable(address(new DSProxy(address(cache))));
         emit Created(msg.sender, owner, address(proxy), address(cache));
         DSProxy(proxy).setOwner(owner);
-        isProxy[address(proxy)] = true;
+        isProxy[proxy] = true;
 
         // for testing . When real project must be removed
         listProxy[owner].push(address(proxy));
@@ -160,26 +160,24 @@ contract DSProxyCache {
 // ProxyRegistry
 // This Registry deploys new proxy instances through DSProxyFactory.build(address) and keeps a registry of owner => proxy
 contract DSProxyRegistry {
-    mapping(address => address) public proxies;
+    mapping(address => DSProxy) public proxies;
     DSProxyFactory factory;
 
-    constructor(DSProxyFactory factory_) {
-        factory = factory_;
+    constructor(address factory_) public {
+        factory = DSProxyFactory(factory_);
     }
 
     // deploys a new proxy instance
     // sets owner of proxy to caller
-    function buildProxy() public returns (address proxy) {
-         proxy = build(msg.sender);
+    function build() public returns (address payable proxy) {
+        proxy = build(msg.sender);
     }
 
     // deploys a new proxy instance
     // sets custom owner of proxy
-    function build(address owner) public returns (address) {
-        require(proxies[owner] == address(DSProxy(address(0))) || DSProxy(proxies[owner]).owner() != owner); // Not allow new proxy if the user already has one and remains being the owner
-        DSProxy proxy = factory.buildByAddress(owner);
-        proxies[owner] = address(proxy);
-
-        return address(proxy);
+    function build(address owner) public returns (address payable proxy) {
+      require(address(proxies[owner]) == address(0) || proxies[owner].owner() != owner);// Not allow new proxy if the user already has one and remains being the owner
+        proxy = factory.buildByAddress(owner);
+        proxies[owner] = DSProxy(proxy);
     }
 }
