@@ -163,7 +163,7 @@ contract DSProxyRegistry {
     mapping(address => DSProxy) public proxies;
     DSProxyFactory factory;
 
-    constructor(address factory_) public {
+    constructor(address factory_) {
         factory = DSProxyFactory(factory_);
     }
 

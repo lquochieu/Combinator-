@@ -42,7 +42,7 @@
 			"name": "build",
 			"outputs": [
 				{
-					"internalType": "contract DSProxy",
+					"internalType": "address payable",
 					"name": "proxy",
 					"type": "address"
 				}
@@ -61,7 +61,7 @@
 			"name": "buildByAddress",
 			"outputs": [
 				{
-					"internalType": "contract DSProxy",
+					"internalType": "address payable",
 					"name": "proxy",
 					"type": "address"
 				}

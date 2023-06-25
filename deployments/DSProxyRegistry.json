@@ -4,7 +4,7 @@
 		{
 			"inputs": [
 				{
-					"internalType": "contract DSProxyFactory",
+					"internalType": "address",
 					"name": "factory_",
 					"type": "address"
 				}
@@ -23,8 +23,8 @@
 			"name": "build",
 			"outputs": [
 				{
-					"internalType": "address",
-					"name": "",
+					"internalType": "address payable",
+					"name": "proxy",
 					"type": "address"
 				}
 			],
@@ -36,7 +36,7 @@
 			"name": "buildProxy",
 			"outputs": [
 				{
-					"internalType": "address",
+					"internalType": "address payable",
 					"name": "proxy",
 					"type": "address"
 				}
@@ -55,7 +55,7 @@
 			"name": "proxies",
 			"outputs": [
 				{
-					"internalType": "address",
+					"internalType": "contract DSProxy",
 					"name": "",
 					"type": "address"
 				}
