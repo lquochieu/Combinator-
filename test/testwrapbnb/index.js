@@ -72,6 +72,6 @@ describe("TestWrapBNB", async function() {
     const wbnbContract = (await hre.ethers.getContractAt('IWBNB', process.env.WBNB_BSCTESTNET));
     console.log("Balance of receiver:: ", await wbnbContract.balanceOf(receiverAcc.address));
 
-    await callStrategy(proxy.address, botAcc, subId, params, receiverAcc.address, ownerAcc);
+    await callStrategy(proxy.address, botAcc, subId, params, receiverAcc.address, ownerAcc, strategyId);
   })
 });

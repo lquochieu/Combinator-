@@ -152,7 +152,7 @@ const getLatestSubId = async (regAddr) => {
   return latestSubId;
 };
 
-const getStrategySub = async (value, ownerAddress, receiverAddress) => {
+const getStrategySub = async (value, ownerAddress, receiverAddress, strategyId) => {
   const isBundle = false;
 
   const valueToSend = value.div(2).toString();
@@ -165,11 +165,11 @@ const getStrategySub = async (value, ownerAddress, receiverAddress) => {
   const unwrapBNB1Encoded = abiCoder.encode(['uint256'], [valueToUnwrap]);
   const unwrapBNB12ncoded = abiCoder.encode(['address'], [ownerAddress]);
 
-  const strategySub = [2, isBundle, [triggerData], [wrapBNB1Encoded, sendToken1Encoded, sendToken2Encoded, sendToken3Encoded, unwrapBNB1Encoded, unwrapBNB12ncoded]];
+  const strategySub = [strategyId, isBundle, [triggerData], [wrapBNB1Encoded, sendToken1Encoded, sendToken2Encoded, sendToken3Encoded, unwrapBNB1Encoded, unwrapBNB12ncoded]];
   return strategySub;
 }
 
-const callStrategy = async (addressProxy, botAcc, subId, val, receiverAddress, ownerAcc) => {
+const callStrategy = async (addressProxy, botAcc, subId, val, receiverAddress, ownerAcc, strategyId) => {
   const triggerCallData = [];
   const actionsCallData = [];
 
@@ -190,7 +190,7 @@ const callStrategy = async (addressProxy, botAcc, subId, val, receiverAddress, o
   const strategyIndex = 0; 
 
   console.log("YYY");
-  const receipt = await strategyExecutorByBot.executeStrategy(subId, strategyIndex, triggerCallData, actionsCallData, await getStrategySub(val, ownerAcc.address, receiverAddress));
+  const receipt = await strategyExecutorByBot.executeStrategy(subId, strategyIndex, triggerCallData, actionsCallData, await getStrategySub(val, ownerAcc.address, receiverAddress, strategyId));
   const parsed = await receipt.wait();
 
   console.log(parsed.gasUsed.toString());
