@@ -21,6 +21,7 @@ describe("TestWrapBNB", async function() {
 
     proxy = await getProxy(userAcc.address, userAcc);
     
+    // !!!!!****** Uncomment để cung thêm cho proxy, nếu proxy hết tiền sẽ k chạy được
     // await ownerAcc.sendTransaction({
     //   to: proxy.address,
     //   value: ethers.utils.parseEther("0.1"),

@@ -193,9 +193,9 @@ const callStrategy = async (addressProxy, botAcc, subId, val, receiverAddress, o
   const receipt = await strategyExecutorByBot.executeStrategy(subId, strategyIndex, triggerCallData, actionsCallData, await getStrategySub(val, ownerAcc.address, receiverAddress, strategyId));
   const parsed = await receipt.wait();
 
-  console.log(parsed.gasUsed.toString());
-  console.log(parsed);
-  console.log("ZZZ");
+  // console.log(parsed.gasUsed.toString());
+  // console.log(parsed);
+  // console.log("ZZZ");
 
   console.log("After calling strategy::");
   const wbnbContract = (await hre.ethers.getContractAt('IWBNB', process.env.WBNB_BSCTESTNET));
