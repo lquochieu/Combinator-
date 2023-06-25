@@ -371,7 +371,6 @@ const callTestStrategy = async (addressProxy, botAcc, subId, val, strategyId) =>
   const strategyExecutorByBot = await (await hre.ethers.getContractFactory("StrategyExecutor")).attach(process.env.STRATEGY_EXECUTOR_ADDRESS).connect(botAcc);
   const strategyIndex = 0; // Dùng nếu dùng bundle để nói vị trí của strategy trong bundle
 
-  
   const testStrategyInstance = await (await hre.ethers.getContractFactory("TestStrategy")).attach(process.env.TEST_STRATEGY_ADDRESS);
   console.log(`Trc khi goi trigger, value cua user la::${await testStrategyInstance.getTestStrategy(addressProxy)}`);
 
