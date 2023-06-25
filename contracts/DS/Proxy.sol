@@ -169,7 +169,7 @@ contract DSProxyRegistry {
 
     // deploys a new proxy instance
     // sets owner of proxy to caller
-    function build() public returns (address payable proxy) {
+    function buildProxy() public returns (address payable proxy) {
         proxy = build(msg.sender);
     }
 
