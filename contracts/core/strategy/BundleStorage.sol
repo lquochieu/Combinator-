@@ -7,12 +7,13 @@ import "../../auth/AdminAuth.sol";
 import "../DFSRegistry.sol";
 import "./StrategyStorage.sol";
 import "../helpers/CoreHelper.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title BundleStorage - Record of all the Bundles created
-contract BundleStorage is StrategyModel, AdminAuth, CoreHelper {
+contract BundleStorage is StrategyModel, AdminAuth {
 
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
-
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+    ILib_AddressManager private libAddressManager;
     StrategyBundle[] public bundles;
     bool public openToPublic = false;
 
@@ -22,7 +23,7 @@ contract BundleStorage is StrategyModel, AdminAuth, CoreHelper {
     event BundleCreated(uint256 indexed bundleId);
 
     modifier onlyAuthCreators {
-        if (adminVault.owner() != msg.sender && openToPublic == false) {
+        if (adminVault().owner() != msg.sender && openToPublic == false) {
             revert NoAuthToCreateBundle(msg.sender, openToPublic);
         }
 
@@ -32,13 +33,13 @@ contract BundleStorage is StrategyModel, AdminAuth, CoreHelper {
     /// @dev Checks if the triggers in strategies are the same (order also relevant)
     /// @dev If the caller is not owner we do additional checks, we skip those checks for gas savings
     modifier sameTriggers(uint64[] memory _strategyIds) {
-        if (msg.sender != adminVault.owner()) {
-            Strategy memory firstStrategy = StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategy(_strategyIds[0]);
+        if (msg.sender != adminVault().owner()) {
+            Strategy memory firstStrategy = StrategyStorage(libAddressManager.getAddress("STRATEGY_STORAGE_ADDR")).getStrategy(_strategyIds[0]);
 
             bytes32 firstStrategyTriggerHash = keccak256(abi.encode(firstStrategy.triggerIds));
 
             for (uint256 i = 1; i < _strategyIds.length; ++i) {
-                Strategy memory s = StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategy(_strategyIds[i]);
+                Strategy memory s = StrategyStorage(libAddressManager.getAddress("STRATEGY_STORAGE_ADDR")).getStrategy(_strategyIds[i]);
 
                 if (firstStrategyTriggerHash != keccak256(abi.encode(s.triggerIds))) {
                     revert DiffTriggersInBundle(_strategyIds);
@@ -47,6 +48,10 @@ contract BundleStorage is StrategyModel, AdminAuth, CoreHelper {
         }
 
         _;
+    }
+
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {
+        libAddressManager = ILib_AddressManager(_libAddresManager);
     }
 
     /// @notice Adds a new bundle to array

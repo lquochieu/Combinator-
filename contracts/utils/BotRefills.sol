@@ -6,20 +6,21 @@ import "../auth/AdminAuth.sol";
 import "../interfaces/exchange/IUniswapRouter.sol";
 import "../interfaces/IBotRegistry.sol";
 import "./TokenUtils.sol";
-import "./helpers/UtilHelper.sol";
+import "../libs/ILib_AddressManager.sol";
 
 /// @title Contract used to refill tx sending bots when they are low on bnb
-contract BotRefills is AdminAuth, UtilHelper {
+contract BotRefills is AdminAuth {
     using TokenUtils for address;
     error WrongRefillCallerError();
     error NotAuthBotError();
 
-    IUniswapRouter internal router = IUniswapRouter(UNI_V2_ROUTER);
+    // IUniswapRouter internal router = IUniswapRouter(UNI_V2_ROUTER);
+    ILib_AddressManager private libAddressManager;
 
     mapping(address => bool) public additionalBots;
 
     modifier isApprovedBot(address _botAddr) {
-        if (!(IBotRegistry(BOT_REGISTRY_ADDRESS).botList(_botAddr) || additionalBots[_botAddr])){
+        if (!(IBotRegistry(libAddressManager.getAddress("BOT_REGISTRY_ADDRESS")).botList(_botAddr) || additionalBots[_botAddr])){
             revert NotAuthBotError();
         }
 
@@ -27,10 +28,14 @@ contract BotRefills is AdminAuth, UtilHelper {
     }
 
     modifier isRefillCaller {
-        if (msg.sender != refillCaller){
+        if (msg.sender != libAddressManager.getAddress("refillCaller")){
             revert WrongRefillCallerError();
         }
         _;
+    }
+
+    constructor(address _libAddressManager) AdminAuth(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
     }
 
     function refill(uint256 _bnbAmount, address _botAddress)
@@ -39,26 +44,26 @@ contract BotRefills is AdminAuth, UtilHelper {
         isApprovedBot(_botAddress)
     {
         // check if we have enough wbnb to send
-        uint256 wbnbBalance = IERC20(TokenUtils.WBNB_ADDR).balanceOf(feeAddr);
+        uint256 wbnbBalance = IERC20(TokenUtils.WBNB_ADDR).balanceOf(libAddressManager.getAddress("feeAddr"));
 
         if (wbnbBalance >= _bnbAmount) {
-            IERC20(TokenUtils.WBNB_ADDR).transferFrom(feeAddr, address(this), _bnbAmount);
+            IERC20(TokenUtils.WBNB_ADDR).transferFrom(libAddressManager.getAddress("feeAddr"), address(this), _bnbAmount);
 
             TokenUtils.withdrawWbnb(_bnbAmount);
             payable(_botAddress).transfer(_bnbAmount);
         } else {
             address[] memory path = new address[](2);
-            path[0] = DAI_ADDR;
+            path[0] = libAddressManager.getAddress("DAI_ADDR");
             path[1] = TokenUtils.WBNB_ADDR;
 
             // get how much dai we need to convert
             uint256 daiAmount = getEth2Dai(_bnbAmount);
 
-            IERC20(DAI_ADDR).transferFrom(feeAddr, address(this), daiAmount);
-            DAI_ADDR.approveToken(address(router), daiAmount);
+            IERC20(libAddressManager.getAddress("DAI_ADDR")).transferFrom(libAddressManager.getAddress("feeAddr"), address(this), daiAmount);
+            libAddressManager.getAddress("DAI_ADDR").approveToken(libAddressManager.getAddress("UNI_V2_ROUTER"), daiAmount);
 
             // swap and transfer directly to botAddress
-            router.swapExactTokensForETH(daiAmount, 1, path, _botAddress, block.timestamp + 1);
+            IUniswapRouter(libAddressManager.getAddress("UNI_V2_ROUTER")).swapExactTokensForBNB(daiAmount, 1, path, _botAddress, block.timestamp + 1);
         }
     }
 
@@ -72,17 +77,17 @@ contract BotRefills is AdminAuth, UtilHelper {
     function getEth2Dai(uint256 _bnbAmount) internal view returns (uint256 daiAmount) {
         address[] memory path = new address[](2);
         path[0] = TokenUtils.WBNB_ADDR;
-        path[1] = DAI_ADDR;
+        path[1] = libAddressManager.getAddress("DAI_ADDR");
 
-        daiAmount = router.getAmountsOut(_bnbAmount, path)[1];
+        daiAmount = IUniswapRouter(libAddressManager.getAddress("UNI_V2_ROUTER")).getAmountsOut(_bnbAmount, path)[1];
     }
 
     function setRefillCaller(address _newBot) public onlyOwner {
-        refillCaller = _newBot;
+        libAddressManager.setAddress("refillCaller", _newBot);
     }
 
     function setFeeAddr(address _newFeeAddr) public onlyOwner {
-        feeAddr = _newFeeAddr;
+        libAddressManager.setAddress("feeAddr", _newFeeAddr);
     }
 
     function setAdditionalBot(address _botAddr, bool _approved) public onlyOwner {

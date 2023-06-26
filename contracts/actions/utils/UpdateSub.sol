@@ -15,6 +15,11 @@ contract UpdateSub is ActionBase {
         StrategyModel.StrategySub sub;
     }
 
+    ILib_AddressManager private libAddressManager;
+
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -61,7 +66,7 @@ contract UpdateSub is ActionBase {
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
     function updateSubData(Params memory _inputData) internal {
-        SubStorage(SUB_STORAGE_ADDR).updateSubData(
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).updateSubData(
             _inputData.subId,
             _inputData.sub
         );

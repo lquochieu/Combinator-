@@ -6,19 +6,20 @@ import "../core/DFSRegistry.sol";
 import "../DS/Proxy.sol";
 import "../utils/DefisaverLogger.sol";
 import "./utils/helpers/ActionsUtilHelper.sol";
-
+import "../libs/ILib_AddressManager.sol";
 /// @title Implements Action interface and common helpers for passing inputs
-abstract contract ActionBase is AdminAuth, ActionsUtilHelper {
+abstract contract ActionBase is AdminAuth {
     event ActionEvent(
         string indexed logName,
         bytes data
     );
 
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+    ILib_AddressManager private libAddressManager;
+    //DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);//
 
-    DefisaverLogger public constant logger = DefisaverLogger(
-        DEFISAVER_LOGGER
-    );
+    // DefisaverLogger public constant logger = DefisaverLogger(
+    //     DEFISAVER_LOGGER
+    // );
 
     //Wrong sub index value
     error SubIndexValueError();
@@ -39,6 +40,9 @@ abstract contract ActionBase is AdminAuth, ActionsUtilHelper {
     /// @dev We need to parse Flash loan actions in a different way
     enum ActionType { FL_ACTION, STANDARD_ACTION, FEE_ACTION, CHECK_ACTION, CUSTOM_ACTION }
 
+    constructor(address _libAddressManager) AdminAuth(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
     /// @notice Parses inputs and runs the implemented action through a proxy
     /// @dev Is called by the RecipeExecutor chaining actions together
     /// @param _callData Array of input values each value encoded as bytes
@@ -163,5 +167,9 @@ abstract contract ActionBase is AdminAuth, ActionsUtilHelper {
             revert ReturnIndexValueError();
         }
         return (_type - SUB_MIN_INDEX_VALUE);
+    }
+
+    function logger() public view returns(DefisaverLogger) {
+        return DefisaverLogger(libAddressManager.getAddress("DEFISAVER_LOGGER"));
     }
 }

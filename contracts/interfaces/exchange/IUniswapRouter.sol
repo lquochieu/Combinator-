@@ -3,7 +3,7 @@
 pragma solidity 0.8.4;
 
 abstract contract IUniswapRouter {
-    function swapExactTokensForETH(
+    function swapExactTokensForBNB(
         uint256 amountIn,
         uint256 amountOutMin,
         address[] calldata path,
@@ -19,7 +19,7 @@ abstract contract IUniswapRouter {
         uint256 deadline
     ) external virtual returns (uint256[] memory amounts);
 
-    function swapTokensForExactETH(
+    function swapTokensForExactBNB(
         uint256 amountOut,
         uint256 amountInMax,
         address[] calldata path,
@@ -53,11 +53,11 @@ abstract contract IUniswapRouter {
             uint256 liquidity
         );
 
-    function addLiquidityETH(
+    function addLiquidityBNB(
         address token,
         uint256 amountTokenDesired,
         uint256 amountTokenMin,
-        uint256 amountETHMin,
+        uint256 amountBNBMin,
         address to,
         uint256 deadline
     )
@@ -66,7 +66,7 @@ abstract contract IUniswapRouter {
         virtual
         returns (
             uint256 amountToken,
-            uint256 amountETH,
+            uint256 amountBNB,
             uint256 liquidity
         );
 

@@ -6,20 +6,24 @@ import "../../auth/AdminAuth.sol";
 import "../../auth/ProxyPermission.sol";
 import "./SubStorage.sol";
 import "../DFSRegistry.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title Called through DSProxy, handles auth and calls subscription contract
-contract SubProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
+contract SubProxy is StrategyModel, AdminAuth, ProxyPermission {
+    ILib_AddressManager private libAddressManager;
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
-
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) ProxyPermission(_libAddresManager) {
+        libAddressManager = ILib_AddressManager(_libAddresManager);
+    }
     /// @notice Gives DSProxy permission if needed and registers a new sub
     /// @param _sub Subscription struct of the user (is not stored on chain, only the hash)
     function subscribeToStrategy(
         StrategySub calldata _sub
     ) public {
-        givePermission(PROXY_AUTH_ADDR);
+        givePermission(libAddressManager.getAddress("PROXY_AUTH_ADDR"));
 
-        SubStorage(SUB_STORAGE_ADDR).subscribeToStrategy(_sub);
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).subscribeToStrategy(_sub);
     }
 
     /// @notice Calls SubStorage to update the users subscription data
@@ -29,7 +33,7 @@ contract SubProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
         uint256 _subId,
         StrategySub calldata _sub
     ) public {
-        SubStorage(SUB_STORAGE_ADDR).updateSubData(_subId, _sub);
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).updateSubData(_subId, _sub);
     }
 
     /// @notice Enables the subscription for execution if disabled
@@ -38,7 +42,7 @@ contract SubProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
     function activateSub(
         uint _subId
     ) public {
-        SubStorage(SUB_STORAGE_ADDR).activateSub(_subId);
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).activateSub(_subId);
     }
 
 
@@ -49,8 +53,8 @@ contract SubProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
         uint _subId,
         StrategySub calldata _sub
     ) public {
-        SubStorage(SUB_STORAGE_ADDR).updateSubData(_subId, _sub);
-        SubStorage(SUB_STORAGE_ADDR).activateSub(_subId);
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).updateSubData(_subId, _sub);
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).activateSub(_subId);
     }
 
     /// @notice Disables the subscription (will not be able to execute the strategy for the user)
@@ -59,6 +63,6 @@ contract SubProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
     function deactivateSub(
         uint _subId
     ) public {
-        SubStorage(SUB_STORAGE_ADDR).deactivateSub(_subId);
-    }
+        SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).deactivateSub(_subId);
+    } 
 }

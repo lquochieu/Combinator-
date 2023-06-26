@@ -5,10 +5,12 @@ import "../../interfaces/IDFSRegistry.sol";
 import "../../interfaces/IDSProxy.sol";
 import "../../auth/AdminAuth.sol";
 import "./../helpers/CoreHelper.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title ProxyAuth Gets DSProxy auth from users and is callable by the Executor
-contract ProxyAuth is AdminAuth, CoreHelper {
-    IDFSRegistry public constant registry = IDFSRegistry(REGISTRY_ADDR);
+contract ProxyAuth is AdminAuth {
+    ILib_AddressManager private libAddressManager;
+    // IDFSRegistry public constant registry = IDFSRegistry(REGISTRY_ADDR);
 
     /// @dev The id is on purpose not the same as contract name for easier deployment
     bytes4 constant STRATEGY_EXECUTOR_ID = bytes4(keccak256("StrategyExecutorID"));
@@ -16,13 +18,17 @@ contract ProxyAuth is AdminAuth, CoreHelper {
     error SenderNotExecutorError(address, address);
 
     modifier onlyExecutor {
-        address executorAddr = registry.getAddr(STRATEGY_EXECUTOR_ID);
+        address executorAddr = IDFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(STRATEGY_EXECUTOR_ID);
 
         if (msg.sender != executorAddr){
             revert SenderNotExecutorError(msg.sender, executorAddr);
         }
 
         _;
+    }
+
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {
+        libAddressManager = ILib_AddressManager(_libAddresManager);
     }
 
     /// @notice Calls the .execute() method of the specified users DSProxy

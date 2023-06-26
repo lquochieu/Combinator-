@@ -17,6 +17,7 @@ contract TravaBorrow is ActionBase, TravaHelper {
         address onBehalf;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -80,7 +81,7 @@ contract TravaBorrow is ActionBase, TravaHelper {
             params.to,
             params.onBehalf
         );
-        logger.logActionDirectEvent("TravaBorrow", logData);
+        logger().logActionDirectEvent("TravaBorrow", logData);
     }
 
     /// @inheritdoc ActionBase

@@ -11,6 +11,8 @@ contract SumInputs is ActionBase {
         uint256 b;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+    
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,

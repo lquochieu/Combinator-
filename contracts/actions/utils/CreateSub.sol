@@ -7,7 +7,7 @@ import "../../auth/ProxyPermission.sol";
 import "../../utils/TokenUtils.sol";
 import "../../core/strategy/SubStorage.sol";
 import "../../core/strategy/StrategyModel.sol";
-
+import "../../libs/ILib_AddressManager.sol";
 /// @title Action to create a new subscription
 contract CreateSub is ActionBase, ProxyPermission {
     /// @param _sub Subscription struct of the user (is not stored on chain, only the hash)
@@ -15,6 +15,8 @@ contract CreateSub is ActionBase, ProxyPermission {
         StrategyModel.StrategySub sub;
     }
 
+    ILib_AddressManager private libAddressManager;
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) ProxyPermission(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -57,9 +59,9 @@ contract CreateSub is ActionBase, ProxyPermission {
     function createSub(
         Params memory _inputData
     ) internal returns (uint256 subId) {
-        givePermission(PROXY_AUTH_ADDR);
+        givePermission(libAddressManager.getAddress("PROXY_AUTH_ADDR"));
 
-        subId = SubStorage(SUB_STORAGE_ADDR).subscribeToStrategy(
+        subId = SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).subscribeToStrategy(
             _inputData.sub
         );
     }

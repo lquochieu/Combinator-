@@ -12,6 +12,7 @@ contract BNBBalanceTrigger is ITrigger, AdminAuth {
     uint amount;
   }
 
+  constructor(address _libAddressManager) AdminAuth(_libAddressManager) {}
   function isTriggered(bytes memory, bytes memory _subData)
       public
       view

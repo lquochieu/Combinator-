@@ -18,6 +18,7 @@ contract TravaWithdraw is ActionBase, TravaHelper {
         address to;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -73,7 +74,7 @@ contract TravaWithdraw is ActionBase, TravaHelper {
             params.amount,
             params.to
         );
-        logger.logActionDirectEvent("TravaWithdraw", logData);
+        logger().logActionDirectEvent("TravaWithdraw", logData);
     }
 
     /// @inheritdoc ActionBase

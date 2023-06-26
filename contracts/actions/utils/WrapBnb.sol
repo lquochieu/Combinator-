@@ -11,6 +11,7 @@ contract WrapBnb is ActionBase {
         uint256 amount;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,

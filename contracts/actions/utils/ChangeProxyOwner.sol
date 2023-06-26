@@ -5,15 +5,20 @@ pragma experimental ABIEncoderV2;
 
 import "../ActionBase.sol";
 import "../../utils/DFSProxyRegistryController.sol";
-
+import "../../libs/ILib_AddressManager.sol";
 /// @title Changes the owner of the DSProxy and updated the DFSRegistry
 contract ChangeProxyOwner is ActionBase {
     struct Params {
         address newOwner;
     }
 
-    DFSProxyRegistryController constant dfsRegController =
-        DFSProxyRegistryController(DFS_REG_CONTROLLER_ADDR);
+    ILib_AddressManager private libAddressManager;
+    // DFSProxyRegistryController constant dfsRegController =
+    //     DFSProxyRegistryController(DFS_REG_CONTROLLER_ADDR);
+
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
 
     /// @inheritdoc ActionBase
     function executeAction(
@@ -56,7 +61,7 @@ contract ChangeProxyOwner is ActionBase {
 
         DSAuth(address(this)).setOwner(_newOwner);
 
-        dfsRegController.changeOwnerInDFSRegistry(_newOwner);
+        DFSProxyRegistryController(libAddressManager.getAddress("DFS_REG_CONTROLLER_ADDR")).changeOwnerInDFSRegistry(_newOwner);
     }
 
     function parseInputs(

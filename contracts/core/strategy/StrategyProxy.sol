@@ -7,11 +7,16 @@ import "../../auth/ProxyPermission.sol";
 import "./StrategyStorage.sol";
 import "./BundleStorage.sol";
 import "../DFSRegistry.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title Called through DSProxy calls strategy storage contract
-contract StrategyProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper {
-
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+contract StrategyProxy is StrategyModel, AdminAuth, ProxyPermission {
+    ILib_AddressManager private libAddressManager;
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+    
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) ProxyPermission(_libAddresManager){
+        libAddressManager = ILib_AddressManager(_libAddresManager);
+    }
 
     /// @notice Calls strategy sub through DSProxy
     /// @param _name Name of the strategy useful for logging what strategy is executing
@@ -26,7 +31,7 @@ contract StrategyProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper 
         uint8[][] memory _paramMapping,
         bool _continuous
     ) public {
-        StrategyStorage(STRATEGY_STORAGE_ADDR).createStrategy(_name, _triggerIds, _actionIds, _paramMapping, _continuous);
+        StrategyStorage(libAddressManager.getAddress("STRATEGY_STORAGE_ADDR")).createStrategy(_name, _triggerIds, _actionIds, _paramMapping, _continuous);
     }
 
     /// @notice Calls bundle storage through dsproxy to create new bundle
@@ -34,6 +39,6 @@ contract StrategyProxy is StrategyModel, AdminAuth, ProxyPermission, CoreHelper 
     function createBundle(
         uint64[] memory _strategyIds
     ) public {
-        BundleStorage(BUNDLE_STORAGE_ADDR).createBundle(_strategyIds);
+        BundleStorage(libAddressManager.getAddress("BUNDLE_STORAGE_ADDR")).createBundle(_strategyIds);
     }  
 }

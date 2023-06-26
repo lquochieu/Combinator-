@@ -5,12 +5,17 @@ pragma solidity 0.8.4;
 import "../DS/Guard.sol";
 import "../DS/Auth.sol";
 
-import "./helpers/AuthHelper.sol";
+import "../libs/ILib_AddressManager.sol";
 
 /// @title ProxyPermission Proxy contract which works with DSProxy to give execute permission
-contract ProxyPermission is AuthHelper {
+contract ProxyPermission {
+    ILib_AddressManager private libAddressManager;
+    bytes4 public constant EXECUTE_SELECTOR =
+        bytes4(keccak256("execute(address,bytes)"));
 
-    bytes4 public constant EXECUTE_SELECTOR = bytes4(keccak256("execute(address,bytes)"));
+    constructor(address _libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
 
     /// @notice Called in the context of DSProxy to authorize an address
     /// @param _contractAddr Address which will be authorized
@@ -19,7 +24,9 @@ contract ProxyPermission is AuthHelper {
         DSGuard guard = DSGuard(currAuthority);
 
         if (currAuthority == address(0)) {
-            guard = DSGuardFactory(FACTORY_ADDRESS).newGuard();
+            guard = DSGuardFactory(
+                libAddressManager.getAddress("FACTORY_ADDRESS")
+            ).newGuard();
             DSAuth(address(this)).setAuthority(DSAuthority(address(guard)));
         }
 

@@ -3,22 +3,23 @@
 pragma solidity 0.8.4;
 
 import "./SafeERC20.sol";
-import "./helpers/UtilHelper.sol";
-
+import "../libs/ILib_AddressManager.sol";
 
 /// @title Contract that receivers fees and can be withdrawn from with the admin
-contract FeeReceiver is UtilHelper {
+contract FeeReceiver {
     using SafeERC20 for IERC20;
 
+    ILib_AddressManager private libAddressManager;
 
     modifier onlyAdmin {
-        require(msg.sender == FEE_RECEIVER_ADMIN_ADDR, "Only Admin");
+        require(msg.sender == libAddressManager.getAddress("FEE_RECEIVER_ADMIN_ADDR"), "Only Admin");
 
         _;
     }
 
     /// @dev Approves bot refill as it needs to pull funds for gas feeds from this addr
-    constructor() {
+    constructor(address _libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
     }
 
     /// @notice Withdraws ERC20 tokens from the contract

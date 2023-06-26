@@ -28,6 +28,8 @@ contract UniWithdrawV3 is ActionBase, UniV3Helper {
         uint128 amount1Max;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -65,7 +67,7 @@ contract UniWithdrawV3 is ActionBase, UniV3Helper {
     ) public payable override {
         Params memory uniData = parseInputs(_callData);
         (, , bytes memory logData) = _uniWithdrawFromPosition(uniData);
-        logger.logActionDirectEvent("UniWithdrawV3", logData);
+        logger().logActionDirectEvent("UniWithdrawV3", logData);
     }
 
     /// @inheritdoc ActionBase

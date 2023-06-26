@@ -5,24 +5,26 @@ pragma solidity 0.8.4;
 import "../auth/AdminAuth.sol";
 import "../interfaces/IProxyRegitry.sol";
 import "../interfaces/IDSProxy.sol";
-import "./helpers/UtilHelper.sol";
 import "../core/DFSRegistry.sol";
-import "../actions/utils/helpers/ActionsUtilHelper.sol";
-
+import "../libs/ILib_AddressManager.sol";
 /// @title Checks Mcd registry and replaces the proxy addr if owner changed
-contract DFSProxyRegistry is AdminAuth, UtilHelper, ActionsUtilHelper {
-    IProxyRegistry public mcdRegistry = IProxyRegistry(MKR_PROXY_REGISTRY);
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+contract DFSProxyRegistry is AdminAuth {
+    ILib_AddressManager private libAddressManager;
+    // IProxyRegistry public mcdRegistry = IProxyRegistry(MKR_PROXY_REGISTRY);
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
     bytes4 public DFS_PROXY_REGISTRY_CONTROLLER_ID = 0xcbbb53f2;
 
     mapping(address => address) public changedOwners;
     mapping(address => address[]) public additionalProxies;
 
+    constructor(address _libAddressManager) AdminAuth(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
     /// @notice Changes the proxy that is returned for the user
     /// @dev Used when the user changed DSProxy ownership himself
     function changeMcdOwner(address _user, address _proxy) public {
-        address dfsProxyRegistryController = registry.getAddr(
+        address dfsProxyRegistryController = DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(
             DFS_PROXY_REGISTRY_CONTROLLER_ID
         );
         require(msg.sender == dfsProxyRegistryController);
@@ -35,7 +37,7 @@ contract DFSProxyRegistry is AdminAuth, UtilHelper, ActionsUtilHelper {
     /// @notice Returns the proxy address associated with the user account
     /// @dev If user changed ownership of DSProxy admin can hardcode replacement
     function getMcdProxy(address _user) public view returns (address) {
-        address proxyAddr = mcdRegistry.proxies(_user);
+        address proxyAddr = IProxyRegistry(libAddressManager.getAddress("MKR_PROXY_REGISTRY")).proxies(_user);
 
         // if check changed proxies
         if (changedOwners[_user] != address(0)) {
@@ -46,7 +48,7 @@ contract DFSProxyRegistry is AdminAuth, UtilHelper, ActionsUtilHelper {
     }
 
     function addAdditionalProxy(address _user, address _proxy) public {
-        address dfsProxyRegistryController = registry.getAddr(
+        address dfsProxyRegistryController = DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(
             DFS_PROXY_REGISTRY_CONTROLLER_ID
         );
         require(msg.sender == dfsProxyRegistryController);

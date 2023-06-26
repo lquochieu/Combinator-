@@ -7,9 +7,11 @@ import "../DFSRegistry.sol";
 import "./BundleStorage.sol";
 import "./StrategyStorage.sol";
 import "./StrategyModel.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title Storage of users subscriptions to strategies/bundles
-contract SubStorage is StrategyModel, AdminAuth, CoreHelper {
+contract SubStorage is StrategyModel, AdminAuth {
+
     error SenderNotSubOwnerError(address, uint256);
     error SubIdOutOfRange(uint256, bool);
 
@@ -18,8 +20,9 @@ contract SubStorage is StrategyModel, AdminAuth, CoreHelper {
     event ActivateSub(uint256 indexed subId);
     event DeactivateSub(uint256 indexed subId);
 
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+    ILib_AddressManager private libAddressManager;
 
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
     StoredSubData[] public strategiesSubs;
 
     /// @notice Checks if subId is init. and if the sender is the owner
@@ -33,11 +36,11 @@ contract SubStorage is StrategyModel, AdminAuth, CoreHelper {
     /// @notice Checks if the id is valid (points to a stored bundle/sub)
     modifier isValidId(uint256 _id, bool _isBundle) {
         if (_isBundle) {
-            if (_id > (BundleStorage(BUNDLE_STORAGE_ADDR).getBundleCount() - 1)) {
+            if (_id > (BundleStorage(libAddressManager.getAddress("BUNDLE_STORAGE_ADDR")).getBundleCount() - 1)) {
                 revert SubIdOutOfRange(_id, _isBundle);
             }
         } else {
-            if (_id > (StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategyCount() - 1)) {
+            if (_id > (StrategyStorage(libAddressManager.getAddress("STRATEGY_STORAGE_ADDR")).getStrategyCount() - 1)) {
                 revert SubIdOutOfRange(_id, _isBundle);
             }
         }
@@ -45,6 +48,9 @@ contract SubStorage is StrategyModel, AdminAuth, CoreHelper {
         _;
     }
 
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {
+        libAddressManager = ILib_AddressManager(_libAddresManager);
+    }
     /// @notice Adds users info and records StoredSubData, logs StrategySub
     /// @dev To save on gas we don't store the whole struct but rather the hash of the struct
     /// @param _sub Subscription struct of the user (is not stored on chain, only the hash)

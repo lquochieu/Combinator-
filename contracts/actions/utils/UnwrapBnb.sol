@@ -14,6 +14,7 @@ contract UnwrapBnb is ActionBase {
         address to;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,

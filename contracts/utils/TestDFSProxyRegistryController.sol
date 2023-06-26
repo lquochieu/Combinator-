@@ -5,23 +5,27 @@ pragma solidity 0.8.4;
 import "./DFSProxyRegistry.sol";
 import "../interfaces/IDSProxy.sol";
 import "../DS/Proxy.sol";
-import "./helpers/TestUtilHelper.sol";
 import "../auth/TestAdminAuth.sol";
-
+import "../libs/ILib_AddressManager.sol";
 import "hardhat/console.sol";
 
 /// @title User facing contract to manage new proxies (is owner of DFSProxyRegistry)
-contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
+contract TestDFSProxyRegistryController is TestAdminAuth {
+
+    ILib_AddressManager private libAddressManager;
     /// @dev List of prebuilt proxies the users can claim to save gas
     address[] public proxyPool;
 
     event NewProxy(address, address);
     event ChangedOwner(address, address);
 
+    constructor(address _libAddressManager) TestAdminAuth(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
     /// @notice User calls from EOA to build a new DFS registered proxy
     function addNewProxy() public returns (address) {
         address newProxy = getFromPoolOrBuild(msg.sender);
-        DFSProxyRegistry(DFS_PROXY_REGISTRY_ADDR).addAdditionalProxy(
+        DFSProxyRegistry(libAddressManager.getAddress("DFS_PROXY_REGISTRY_ADDR")).addAdditionalProxy(
             msg.sender,
             newProxy
         );
@@ -36,7 +40,7 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
     /// @dev msg.sender == DSProxy which calls this method
     function changeOwnerInDFSRegistry(address _newOwner) public {
        
-        DFSProxyRegistry(DFS_PROXY_REGISTRY_ADDR).changeMcdOwner(
+        DFSProxyRegistry(libAddressManager.getAddress("DFS_PROXY_REGISTRY_ADDR")).changeMcdOwner(
             _newOwner,
             msg.sender
         );
@@ -48,7 +52,7 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
     function addToPool(uint256 _numNewProxies) public {
 
         for (uint256 i = 0; i < _numNewProxies; ++i) {
-            DSProxy newProxy =DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
+            DSProxy newProxy =DSProxy(DSProxyFactory(libAddressManager.getAddress("PROXY_FACTORY_ADDR"))
                 .build());
             proxyPool.push(address(newProxy));
         }
@@ -64,7 +68,7 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
 
             return newProxy;
         } else {
-            DSProxy newProxy = DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
+            DSProxy newProxy = DSProxy(DSProxyFactory(libAddressManager.getAddress("PROXY_FACTORY_ADDR"))
                 .buildByAddress(_user));
             return address(newProxy);
         }
@@ -74,7 +78,7 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
         (
             address mcdProxy,
             address[] memory additionalProxies
-        ) = DFSProxyRegistry(DFS_PROXY_REGISTRY_ADDR).getAllProxies(_user);
+        ) = DFSProxyRegistry(libAddressManager.getAddress("DFS_PROXY_REGISTRY_ADDR")).getAllProxies(_user);
 
         if (mcdProxy == address(0)) {
             return additionalProxies;

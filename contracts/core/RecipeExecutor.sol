@@ -12,13 +12,18 @@ import "./strategy/BundleStorage.sol";
 import "./strategy/SubStorage.sol";
 import "../interfaces/flashloan/IFlashLoanBase.sol";
 import "../interfaces/ITrigger.sol";
-import "hardhat/console.sol";
+import "../libs/ILib_AddressManager.sol";
 
 /// @title Entry point into executing recipes/checking triggers directly and as part of a strategy
-contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper {
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth {
+    ILib_AddressManager private libAddressManager;
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
     error TriggerNotActiveError(uint256);
+
+    constructor(address _libAddressManager) AdminAuth(_libAddressManager) ProxyPermission(_libAddressManager){
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
 
     /// @notice Called directly through DsProxy to execute a recipe
     /// @dev This is the main entry point for Recipes executed manually
@@ -48,15 +53,15 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
 
             // fetch strategy if inside of bundle
             if (_sub.isBundle) {
-                strategyId = BundleStorage(BUNDLE_STORAGE_ADDR).getStrategyId(strategyId, _strategyIndex);
+                strategyId = BundleStorage(libAddressManager.getAddress("BUNDLE_STORAGE_ADDR")).getStrategyId(strategyId, _strategyIndex);
             }
 
-            strategy = StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategy(strategyId);
+            strategy = StrategyStorage(libAddressManager.getAddress("STRATEGY_STORAGE_ADDR")).getStrategy(strategyId);
         }
 
         // check if all the triggers are true
         (bool triggered, uint256 errIndex) 
-            = _checkTriggers(strategy, _sub, _triggerCallData, _subId, SUB_STORAGE_ADDR);
+            = _checkTriggers(strategy, _sub, _triggerCallData, _subId, libAddressManager.getAddress("SUB_STORAGE_ADDR"));
         
         if (!triggered) {
             revert TriggerNotActiveError(errIndex);
@@ -64,7 +69,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
 
         // if this is a one time strategy
         if (!strategy.continuous) {
-            SubStorage(SUB_STORAGE_ADDR).deactivateSub(_subId);
+            SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).deactivateSub(_subId);
         }
 
         // format recipe from strategy
@@ -94,7 +99,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
         uint256 i;
 
         for (i = 0; i < triggerIds.length; i++) {
-            triggerAddr = registry.getAddr(triggerIds[i]);
+            triggerAddr = DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(triggerIds[i]);
 
             isTriggered = ITrigger(triggerAddr).isTriggered(
                 _triggerCallData[i],
@@ -132,7 +137,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     /// @dev FL action must be first and is parsed separately, execution will go to _executeActionsFromFL
     /// @param _currRecipe Recipe to be executed
     function _executeActions(Recipe memory _currRecipe) internal {
-        address firstActionAddr = registry.getAddr(_currRecipe.actionIds[0]);
+        address firstActionAddr = DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(_currRecipe.actionIds[0]);
 
         bytes32[] memory returnValues = new bytes32[](_currRecipe.actionIds.length);
         console.log("_currRecipe.actionIds.length", _currRecipe.actionIds.length);
@@ -148,7 +153,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
         }
 
         /// log the recipe name
-        DefisaverLogger(DEFISAVER_LOGGER).logRecipeEvent(_currRecipe.name);
+        DefisaverLogger(libAddressManager.getAddress("DEFISAVER_LOGGER")).logRecipeEvent(_currRecipe.name);
     }
 
     /// @notice Gets the action address and executes it
@@ -161,7 +166,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
         bytes32[] memory _returnValues
     ) internal returns (bytes32 response) {
 
-        address actionAddr = registry.getAddr(_currRecipe.actionIds[_index]);
+        address actionAddr = DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(_currRecipe.actionIds[_index]);
 
         response = IDSProxy(address(this)).execute(
             actionAddr,

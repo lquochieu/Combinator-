@@ -18,6 +18,8 @@ contract TravaRepay is ActionBase, TravaHelper {
         address onBehalf;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -54,7 +56,7 @@ contract TravaRepay is ActionBase, TravaHelper {
             params.from,
             params.onBehalf
         );
-        logger.logActionDirectEvent("TravaRepay", logData);
+        logger().logActionDirectEvent("TravaRepay", logData);
     }
 
     /// @inheritdoc ActionBase

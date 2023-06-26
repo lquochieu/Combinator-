@@ -4,9 +4,11 @@ pragma solidity 0.8.4;
 
 import "./StrategyModel.sol";
 import "../../auth/AdminAuth.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title StrategyStorage - Record of all the Strategies created
 contract StrategyStorage is StrategyModel, AdminAuth {
+    ILib_AddressManager private libAddressManager;
 
     Strategy[] public strategies;
     bool public openToPublic = false;
@@ -15,13 +17,14 @@ contract StrategyStorage is StrategyModel, AdminAuth {
     event StrategyCreated(uint256 indexed strategyId);
 
     modifier onlyAuthCreators {
-        if (adminVault.owner() != msg.sender && openToPublic == false) {
+        if (adminVault().owner() != msg.sender && openToPublic == false) {
             revert NoAuthToCreateStrategy(msg.sender, openToPublic);
         }
 
         _;
     }
 
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {}
     /// @notice Creates a new strategy and writes the data in an array
     /// @dev Can only be called by auth addresses if it's not open to public
     /// @param _name Name of the strategy useful for logging what strategy is executing

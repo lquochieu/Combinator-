@@ -10,6 +10,8 @@ contract TestStrategyIncrease is ActionBase, TestStrategyHelper {
       uint val;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -42,7 +44,7 @@ contract TestStrategyIncrease is ActionBase, TestStrategyHelper {
         (, bytes memory logData) = _increaseVal(
             params.val
         );
-        logger.logActionDirectEvent("IncreaseVal", logData);
+        logger().logActionDirectEvent("IncreaseVal", logData);
     }
 
     /// @inheritdoc ActionBase

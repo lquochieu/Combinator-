@@ -2,23 +2,26 @@
 
 pragma solidity 0.8.4;
 import "./helpers/AuthHelper.sol";
+import "../libs/ILib_AddressManager.sol";
 
 /// @title A stateful contract that holds and can change owner/admin
-contract AdminVault is AuthHelper {
+contract AdminVault {
+    ILib_AddressManager private libAddressManager;
+
     address public owner;
-    address public admin;
+    // address public admin;
 
     error SenderNotAdmin();
 
-    constructor() {
+    constructor(address _libAddressManager) {
         owner = msg.sender;
-        admin = ADMIN_ADDR;
+        libAddressManager = ILib_AddressManager(_libAddressManager);
     }
 
     /// @notice Admin is able to change owner
     /// @param _owner Address of new owner
     function changeOwner(address _owner) public {
-        if (admin != msg.sender){
+        if (libAddressManager.getAddress("ADMIN_ADDR") != msg.sender) {
             revert SenderNotAdmin();
         }
         owner = _owner;
@@ -27,10 +30,18 @@ contract AdminVault is AuthHelper {
     /// @notice Admin is able to set new admin
     /// @param _admin Address of multisig that becomes new admin
     function changeAdmin(address _admin) public {
-        if (admin != msg.sender){
+        if (libAddressManager.getAddress("ADMIN_ADDR") != msg.sender) {
             revert SenderNotAdmin();
         }
-        admin = _admin;
+        libAddressManager.setAddress("ADMIN_ADDR", _admin);
+    }
+
+    // function getLibAddressManager() public view returns (address) {
+    //     return address(libAddressManager);
+    // }
+
+    function admin() public view returns (address) {
+        return libAddressManager.getAddress("ADMIN_ADDR");
     }
 
 }

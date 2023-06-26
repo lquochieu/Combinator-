@@ -92,11 +92,11 @@ describe("DFS test", () => {
 
     let allProxyUser1 = await dfsProxyRegistry.getAllProxies(user1.address);
 
-    // console.log("allProxyUser1", allProxyUser1);
+    console.log("allProxyUser1", allProxyUser1);
 
     let allProxyUser2 = await dfsProxyRegistry.getAllProxies(user2.address);
 
-    // console.log("allProxyUser2", allProxyUser2);
+    console.log("allProxyUser2", allProxyUser2);
 
     // change owner of proxy
 

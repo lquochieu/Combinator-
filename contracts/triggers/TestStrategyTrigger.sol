@@ -17,6 +17,8 @@ contract TestStrategyTrigger is ITrigger, AdminAuth, TestStrategyHelper {
         uint256 val;
     }
     
+    constructor(address _libAddressManager) AdminAuth(_libAddressManager) {}
+    
     /// @dev checks current safety value of a TestStrategh position and triggers if it's in a correct state
     function isTriggered(bytes memory, bytes memory _subData)
         public

@@ -8,17 +8,22 @@ import "./BotAuth.sol";
 import "../DFSRegistry.sol";
 import "./ProxyAuth.sol";
 import "../strategy/SubStorage.sol";
+import "../../libs/ILib_AddressManager.sol";
 
 /// @title Main entry point for executing automated strategies
-contract StrategyExecutor is StrategyModel, AdminAuth, CoreHelper {
-
-    DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
+contract StrategyExecutor is StrategyModel, AdminAuth {
+    ILib_AddressManager private libAddressManager;
+    // DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
     bytes4 constant BOT_AUTH_ID = bytes4(keccak256("BotAuth"));
 
     error BotNotApproved(address, uint256);
     error SubNotEnabled(uint256);
     error SubDatHashMismatch(uint256, bytes32, bytes32);
+
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {
+        libAddressManager = ILib_AddressManager(_libAddresManager);
+    }
 
     /// @notice Checks all the triggers and executes actions
     /// @dev Only authorized callers can execute it
@@ -39,7 +44,7 @@ contract StrategyExecutor is StrategyModel, AdminAuth, CoreHelper {
             revert BotNotApproved(msg.sender, _subId);
         }
 
-        StoredSubData memory storedSubData = SubStorage(SUB_STORAGE_ADDR).getSub(_subId);
+        StoredSubData memory storedSubData = SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).getSub(_subId);
 
         bytes32 subDataHash = keccak256(abi.encode(_sub));
 
@@ -60,7 +65,7 @@ contract StrategyExecutor is StrategyModel, AdminAuth, CoreHelper {
     /// @notice Checks if msg.sender has auth, reverts if not
     /// @param _subId Id of the strategy
     function checkCallerAuth(uint256 _subId) internal view returns (bool) {
-        return BotAuth(registry.getAddr(BOT_AUTH_ID)).isApproved(_subId, msg.sender);
+        return BotAuth(DFSRegistry(libAddressManager.getAddress("REGISTRY_ADDR")).getAddr(BOT_AUTH_ID)).isApproved(_subId, msg.sender);
     }
 
 
@@ -79,9 +84,9 @@ contract StrategyExecutor is StrategyModel, AdminAuth, CoreHelper {
         StrategySub memory _sub,
         address _userProxy
     ) internal {
-        ProxyAuth(PROXY_AUTH_ADDR).callExecute{value: msg.value}(
+        ProxyAuth(libAddressManager.getAddress("PROXY_AUTH_ADDR")).callExecute{value: msg.value}(
             _userProxy,
-            RECIPE_EXECUTOR_ADDR,
+            libAddressManager.getAddress("RECIPE_EXECUTOR_ADDR"),
             abi.encodeWithSignature(
                 "executeRecipeFromStrategy(uint256,bytes[],bytes[],uint256,(uint64,bool,bytes[],bytes32[]))",
                 _subId,

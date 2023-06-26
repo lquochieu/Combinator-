@@ -4,7 +4,7 @@ pragma solidity 0.8.4;
 
 import "../ActionBase.sol";
 import "../../core/strategy/SubStorage.sol";
-
+import "../../libs/ILib_AddressManager.sol";
 /// @title ToggleSub - Sets the state of the sub to active or deactivated
 /// @dev User can only disable/enable his own subscriptions
 contract ToggleSub is ActionBase {
@@ -13,6 +13,11 @@ contract ToggleSub is ActionBase {
         bool active;
     }
 
+    ILib_AddressManager private libAddressManager;
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {
+        libAddressManager = ILib_AddressManager(_libAddressManager);
+    }
+    
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -44,9 +49,9 @@ contract ToggleSub is ActionBase {
 
     function updateSubData(Params memory _inputData) internal {
         if (_inputData.active) {
-            SubStorage(SUB_STORAGE_ADDR).activateSub(_inputData.subId);
+            SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).activateSub(_inputData.subId);
         } else {
-            SubStorage(SUB_STORAGE_ADDR).deactivateSub(_inputData.subId);
+            SubStorage(libAddressManager.getAddress("SUB_STORAGE_ADDR")).deactivateSub(_inputData.subId);
         }
     }
 

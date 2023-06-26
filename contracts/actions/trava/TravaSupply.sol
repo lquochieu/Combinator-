@@ -19,6 +19,7 @@ contract TravaSupply is ActionBase, TravaHelper {
         bool enableAsColl;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -84,7 +85,7 @@ contract TravaSupply is ActionBase, TravaHelper {
             params.onBehalf,
             params.enableAsColl
         );
-        logger.logActionDirectEvent("TravaSupply", logData);
+        logger().logActionDirectEvent("TravaSupply", logData);
     }
 
     /// @inheritdoc ActionBase

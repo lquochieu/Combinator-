@@ -32,6 +32,8 @@ contract UniSupplyV3 is ActionBase, UniV3Helper {
         address token1;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -71,7 +73,7 @@ contract UniSupplyV3 is ActionBase, UniV3Helper {
     ) public payable override {
         Params memory uniData = parseInputs(_callData);
         (, bytes memory logData) = _uniSupplyPosition(uniData);
-        logger.logActionDirectEvent("UniSupplyV3", logData);
+        logger().logActionDirectEvent("UniSupplyV3", logData);
     }
 
     /// @inheritdoc ActionBase

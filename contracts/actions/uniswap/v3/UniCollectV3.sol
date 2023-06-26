@@ -8,6 +8,8 @@ import "./helpers/UniV3Helper.sol";
 /// @title Collects tokensOwed from a position represented by tokenId
 contract UniCollectV3 is ActionBase, UniV3Helper {
     using TokenUtils for address;
+
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -28,7 +30,7 @@ contract UniCollectV3 is ActionBase, UniV3Helper {
     function executeActionDirect(bytes memory _callData) public payable override {
         IUniswapV3NonfungiblePositionManager.CollectParams memory uniData = parseInputs(_callData);
         (, , bytes memory logData) = _uniCollect(uniData);
-        logger.logActionDirectEvent("UniCollectV3", logData);
+        logger().logActionDirectEvent("UniCollectV3", logData);
     }
 
     /// @inheritdoc ActionBase

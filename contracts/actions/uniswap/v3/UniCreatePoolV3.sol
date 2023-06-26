@@ -41,6 +41,8 @@ contract UniCreatePoolV3 is ActionBase, UniV3Helper {
         uint160 sqrtPriceX96;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,
@@ -78,7 +80,7 @@ contract UniCreatePoolV3 is ActionBase, UniV3Helper {
 
         _createPool(inputData);
         (, bytes memory logData) = _uniCreatePosition(inputData);
-        logger.logActionDirectEvent("UniCreatePoolV3", logData);
+        logger().logActionDirectEvent("UniCreatePoolV3", logData);
     }
 
     /// @inheritdoc ActionBase

@@ -11,6 +11,7 @@ async function main() {
     if (proxyAddr === nullAddress) {
         await proxyRegistry.build(acc);
         proxyAddr = await proxyRegistry.proxies(acc);
+        await proxyAddr.wait();
         console.log("ProxyAddr:: 1", proxyAddr);
     }
     console.log("ProxyAddr::", proxyAddr);

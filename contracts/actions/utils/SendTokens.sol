@@ -17,6 +17,9 @@ contract SendTokens is ActionBase {
         uint256[] amounts;
     }
 
+    constructor(address _libAddressManager) ActionBase(_libAddressManager) {}
+    
+
     /// @inheritdoc ActionBase
     function executeAction(
         bytes memory _callData,

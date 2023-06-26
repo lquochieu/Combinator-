@@ -3,7 +3,6 @@
 pragma solidity 0.8.4;
 
 import "../auth/AdminAuth.sol";
-import "hardhat/console.sol";
 
 /// @title Stores all the important DFS addresses and can be changed (timelock)
 contract DFSRegistry is AdminAuth {
@@ -39,6 +38,9 @@ contract DFSRegistry is AdminAuth {
     mapping(bytes4 => address) public pendingAddresses;
     mapping(bytes4 => uint256) public pendingWaitTimes;
 
+
+    constructor (address _libAddressManager) AdminAuth(_libAddressManager) {}
+    
     /// @notice Given an contract id returns the registered address
     /// @dev Id is keccak256 of the contract name
     /// @param _id Id of contract

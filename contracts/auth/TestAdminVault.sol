@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.4;
-import "./helpers/TestAuthHelper.sol";
 
+import "../libs/ILib_AddressManager.sol";
 /// @title A stateful contract that holds and can change owner/admin
-contract TestAdminVault is TestAuthHelper {
+contract TestAdminVault {
     address public owner;
     address public admin;
 
     error SenderNotAdmin();
 
-    constructor() {
+    constructor(address _libAddressManager) {
         owner = msg.sender;
-        admin = ADMIN_ADDR;
+        admin = ILib_AddressManager(_libAddressManager).getAddress("ADMIN_ADDR");
     }
 
     /// @notice Admin is able to change owner

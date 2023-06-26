@@ -7,6 +7,8 @@ import "../../auth/AdminAuth.sol";
 contract BotAuth is AdminAuth {
     mapping(address => bool) public approvedCallers;
 
+    constructor(address _libAddresManager) AdminAuth(_libAddresManager) {}
+    
     /// @notice Checks if the caller is approved for the specific subscription
     /// @dev First param is subId but it's not used in this implementation 
     /// @dev Currently auth callers are approved for all strategies

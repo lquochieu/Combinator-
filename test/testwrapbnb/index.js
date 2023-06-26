@@ -1,3 +1,5 @@
+const hre = require('hardhat');
+const { expect } = require('chai');
 const { getProxy, setupPermission, createXStrategy, createStrategy, getAddrFromRegistry, subTestStrategy, callStrategy } = require("./utils");
 
 describe("TestWrapBNB", async function() {
@@ -14,18 +16,18 @@ describe("TestWrapBNB", async function() {
     userAcc = (await hre.ethers.getSigners())[1];
     botAcc = (await hre.ethers.getSigners())[2];
     receiverAcc = (await hre.ethers.getSigners())[3];
-    console.log(`Owner address:: ${ownerAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(ownerAcc.address))} TBNB`);
-    console.log(`User address:: ${userAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(userAcc.address))} TBNB`);
-    console.log(`Bot address:: ${botAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(botAcc.address))} TBNB`);
-    console.log(`Receiver address:: ${receiverAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(receiverAcc.address))} TBNB`);
+    console.log(`Owner address:: ${ownerAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(ownerAcc.address))} BNB`);
+    console.log(`User address:: ${userAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(userAcc.address))} BNB`);
+    console.log(`Bot address:: ${botAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(botAcc.address))} BNB`);
+    console.log(`Receiver address:: ${receiverAcc.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(receiverAcc.address))} BNB`);
 
     proxy = await getProxy(userAcc.address, userAcc);
     
     // !!!!!****** Uncomment để cung thêm cho proxy, nếu proxy hết tiền sẽ k chạy được
-    // await ownerAcc.sendTransaction({
-    //   to: proxy.address,
-    //   value: ethers.utils.parseEther("0.1"),
-    // });
+    await ownerAcc.sendTransaction({
+      to: proxy.address,
+      value: ethers.utils.parseEther("0.1"),
+    });
 
     console.log(`Proxy address:: ${proxy.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxy.address))} TBNB`);
 
@@ -33,8 +35,7 @@ describe("TestWrapBNB", async function() {
   });
 
   it("Create Trigger And Strategy", async() => {
-    const strategyData = createXStrategy();
-
+    
     // Deploy trigger và add vào registry
     const registry = (await hre.ethers.getContractFactory("DFSRegistry")).attach(process.env.DFS_REGISTRY_ADDRESS);
     const hash = hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("BNBBalanceTrigger")).substr(0, 10);
@@ -48,6 +49,7 @@ describe("TestWrapBNB", async function() {
     }
     
     // Đã tạo XStrategy vào id = 0 nên k cần tạo lại nữa
+    //const strategyData = createXStrategy();
     // strategyId = await createStrategy(...strategyData, true);
     // console.log(strategyId);
     const storageAddr = await getAddrFromRegistry('StrategyStorage');
