@@ -26,12 +26,11 @@ require("dotenv").config();
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-const GOERLI =
-  "https://goerli.infura.io/v3/ba63b223746842d89619ef053b179319";
-  const PRIVATE_KEY = process.env.PRIVATE_KEY;
-  const PRIVATE_KEY2 = process.env.PRIVATE_KEY2;
-  const PRIVATE_KEY3 = process.env.PRIVATE_KEY3;
-  const BOT_KEY = process.env.BOT_KEY;
+const GOERLI = "https://goerli.infura.io/v3/ba63b223746842d89619ef053b179319";
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY2 = process.env.PRIVATE_KEY2;
+const PRIVATE_KEY3 = process.env.PRIVATE_KEY3;
+const BOT_KEY = process.env.BOT_KEY;
 
 module.exports = {
   saveOnTenderly: false,
@@ -165,7 +164,7 @@ module.exports = {
       chainId: 97,
       gasPrice: 20e9,
       gas: 2e6,
-      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${BOT_KEY}`, `0x${PRIVATE_KEY3}`],
+      accounts: [`0x${PRIVATE_KEY}`],
     },
     goerli: {
       url: GOERLI,
@@ -175,9 +174,9 @@ module.exports = {
     },
   },
   wbnbAddress: {
-    Mainnet: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+    Mainnet: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
     Testnet: process.env.WBNB_BSCTESTNET,
-    Arbitrum: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
-    Optimism: '0x4200000000000000000000000000000000000006',
+    Arbitrum: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    Optimism: "0x4200000000000000000000000000000000000006",
   },
 };
