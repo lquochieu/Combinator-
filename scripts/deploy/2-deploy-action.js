@@ -19,46 +19,57 @@ async function main() {
     // get signer
     const signer = owner;
 
-    /*
-        ||--------------------------------------------------------------------------------||
-        ||                                 Action Contract                                || 
-        ||--------------------------------------------------------------------------------||
-        */
-    /*
-        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
-        ||                              Utils Contract                                   ||
-        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
-    */
-    const wrapBnb = await redeploy('WrapBnb', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("WRAP_BNB_ADDRESS", wrapBnb.address)
+//     /*
+//         ||--------------------------------------------------------------------------------||
+//         ||                                 Action Contract                                || 
+//         ||--------------------------------------------------------------------------------||
+//         */
+//     /*
+//         ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+//         ||                              Utils Contract                                   ||
+//         ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+//     */
+//     const wrapBnb = await redeploy('WrapBnb', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("WRAP_BNB_ADDRESS", wrapBnb.address)
 
-    const upwrapBnb = await redeploy('UnwrapBnb', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("UNWRAP_BNB_ADDRESS", upwrapBnb.address)
+//     const upwrapBnb = await redeploy('UnwrapBnb', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("UNWRAP_BNB_ADDRESS", upwrapBnb.address)
 
-    const sendToken = await redeploy('SendToken', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("SEND_TOKEN_ADDRESS", sendToken.address)
+//     const sendToken = await redeploy('SendToken', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("SEND_TOKEN_ADDRESS", sendToken.address)
 
-    const sendTokenAndUnwrap = await redeploy('SendTokenAndUnwrap', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("SEND_TOKEN_AND_UNWRAP_ADDRESS", sendTokenAndUnwrap.address)
+//     const sendTokenAndUnwrap = await redeploy('SendTokenAndUnwrap', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("SEND_TOKEN_AND_UNWRAP_ADDRESS", sendTokenAndUnwrap.address)
 
-    const pullToken = await redeploy('PullToken', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("PULL_TOKEN_ADDRESS", pullToken.address)
+//     const pullToken = await redeploy('PullToken', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("PULL_TOKEN_ADDRESS", pullToken.address)
+//     /*
+//        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+//        ||                               Trava Contract                                   ||
+//        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+//    */
+//     const travaBorrow = await redeploy('TravaBorrow', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address)
+
+//     const travaRepay = await redeploy('TravaRepay', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address)
+
+//     const travaSupply = await redeploy('TravaSupply', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("TRAVA_SUPPLY_ADDRESS", travaSupply.address)
+
+//     const travaWithdraw = await redeploy('TravaWithdraw', process.env.DFS_REGISTRY_ADDRESS);
+//     writeToEnvFile("TRAVA_WITHDRAW_ADDRESS", travaWithdraw.address)
+
     /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
-       ||                               Trava Contract                                   ||
+       ||                               Pancake Contract                                   ||
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
    */
-    const travaBorrow = await redeploy('TravaBorrow', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address)
+       const pancakeAddLiquidityV2 = await redeploy('PancakeAddLiquidityV2', process.env.DFS_REGISTRY_ADDRESS);
+       writeToEnvFile("PANCAKE_ADD_LIQUIDITY_V2_ADDRESS", pancakeAddLiquidityV2.address)
 
-    const travaRepay = await redeploy('TravaRepay', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address)
-
-    const travaSupply = await redeploy('TravaSupply', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TRAVA_SUPPLY_ADDRESS", travaSupply.address)
-
-    const travaWithdraw = await redeploy('TravaWithdraw', process.env.DFS_REGISTRY_ADDRESS);
-    writeToEnvFile("TRAVA_WITHDRAW_ADDRESS", travaWithdraw.address)
+       const pancakeSwapV2 = await redeploy('PancakeSwapV2', process.env.DFS_REGISTRY_ADDRESS);
+       writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address)
 }
 
 start(main);
