@@ -4,10 +4,10 @@ pragma solidity 0.8.4;
 
 import "../../ActionBase.sol";
 import "../../../utils/TokenUtils.sol";
-import "./helpers/PancakeV2Helper.sol";
+import "./helpers/PancakeV3Helper.sol";
 
 /// @title Supplies liquidity to a PancakeswapV3 position represented by TokenId
-contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
+contract PancakeSwapV3 is ActionBase,  PancakeV3Helper{
     using TokenUtils for address;
     /// @param amountIn amount want to swap
     /// @param amountOutMin default = 0
@@ -17,7 +17,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
         uint256 amountOutMin;
         address[] path;
         address to;
-        uint256 deadline;
+        // uint256 deadline;
     }
 
     /// @inheritdoc ActionBase
@@ -62,16 +62,16 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
             _subData,
             _returnValues
         );
-        pancakeData.deadline = _parseParamUint(
-            pancakeData.deadline,
-            _paramMapping[t + 4],
-            _subData,
-            _returnValues
-        );
+        // pancakeData.deadline = _parseParamUint(
+        //     pancakeData.deadline,
+        //     _paramMapping[t + 4],
+        //     _subData,
+        //     _returnValues
+        // );
 
-        (uint256[] memory amount, bytes memory logData) = _pancakeSwap(pancakeData);
-        emit ActionEvent("PancakeSwapV2", logData);
-        return bytes32(amount[0]);
+        (uint256 amount, bytes memory logData) = _pancakeSwap(pancakeData);
+        emit ActionEvent("PancakeSwapV3", logData);
+        return bytes32(amount);
     }
 
     /// @inheritdoc ActionBase
@@ -80,7 +80,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
     ) public payable override {
         Params memory pancakeData = parseInputs(_callData);
         (, bytes memory logData) = _pancakeSwap(pancakeData);
-        logger.logActionDirectEvent("PancakeSwapV2", logData);
+        logger.logActionDirectEvent("PancakeSwapV3", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -92,7 +92,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
 
     function _pancakeSwap(
         Params memory _pancakeData
-    ) internal returns (uint256[] memory amount, bytes memory logData) {
+    ) internal returns (uint256 amount, bytes memory logData) {
         // fetch tokens from address
         uint amountPulled = _pancakeData.path[0].pullTokensIfNeeded(
             _pancakeData.path[0],
@@ -100,22 +100,22 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
         );
 
         // approve positionManager so it can pull tokens
-        _pancakeData.path[0].approveToken(address(pancakeRouter), amountPulled);
+        _pancakeData.path[0].approveToken(address(smartRouter), amountPulled);
 
         _pancakeData.amountIn = amountPulled;
 
-        amount = pancakeRouter.swapExactTokensForTokens(
+        amount = smartRouter.swapExactTokensForTokens(
             _pancakeData.amountIn,
             _pancakeData.amountOutMin,
             _pancakeData.path,
-            _pancakeData.to,
-            _pancakeData.deadline
+            _pancakeData.to
+            // _pancakeData.deadline
         );
         
         //send leftovers
         _pancakeData.path[0].withdrawTokens(
             _pancakeData.path[0],
-            _pancakeData.amountIn - amount[0]
+            _pancakeData.amountIn - amount
         );
 
         logData = abi.encode(_pancakeData, amount);

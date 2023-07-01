@@ -7,14 +7,13 @@ import "../../../utils/TokenUtils.sol";
 import "./helpers/PancakeV2Helper.sol";
 
 /// @title Supplies liquidity to a PancakeswapV3 position represented by TokenId
-contract PancakeAddLiquidityV2 is ActionBase,  PancakeV2Helper{
+contract PancakeRemoveLiquidityV2 is ActionBase, PancakeV2Helper {
     using TokenUtils for address;
 
     struct Params {
         address tokenA;
         address tokenB;
-        uint256 amountADesired;
-        uint256 amountBDesired;
+        uint256 liquidity;
         uint256 amountAMin;
         uint256 amountBMin;
         address to;
@@ -42,46 +41,45 @@ contract PancakeAddLiquidityV2 is ActionBase,  PancakeV2Helper{
             _subData,
             _returnValues
         );
-        pancakeData.amountADesired = _parseParamUint(
-            pancakeData.amountADesired,
+        pancakeData.liquidity = _parseParamUint(
+            pancakeData.liquidity,
             _paramMapping[2],
-            _subData,
-            _returnValues
-        );
-        pancakeData.amountBDesired = _parseParamUint(
-            pancakeData.amountBDesired,
-            _paramMapping[3],
             _subData,
             _returnValues
         );
         pancakeData.amountAMin = _parseParamUint(
             pancakeData.amountAMin,
-            _paramMapping[4],
+            _paramMapping[3],
             _subData,
             _returnValues
         );
         pancakeData.amountBMin = _parseParamUint(
             pancakeData.amountBMin,
-            _paramMapping[5],
+            _paramMapping[4],
             _subData,
             _returnValues
         );
         pancakeData.to = _parseParamAddr(
             pancakeData.to,
-            _paramMapping[6],
+            _paramMapping[5],
             _subData,
             _returnValues
         );
         pancakeData.deadline = _parseParamUint(
             pancakeData.deadline,
-            _paramMapping[7],
+            _paramMapping[6],
             _subData,
             _returnValues
         );
 
-        (uint256 liquidity, bytes memory logData) = _pancakeAddLiquidity(pancakeData);
-        emit ActionEvent("PancakeAddLiquidityV2", logData);
-        return bytes32(liquidity);
+        (
+            uint256 amountA,
+            ,
+            bytes memory logData
+        ) = _pancakeRemoveLiquidity(pancakeData);
+        emit ActionEvent("PancakeRemoveLiquidityV2", logData);
+
+        return bytes32(amountA);
     }
 
     /// @inheritdoc ActionBase
@@ -89,8 +87,12 @@ contract PancakeAddLiquidityV2 is ActionBase,  PancakeV2Helper{
         bytes memory _callData
     ) public payable override {
         Params memory pancakeData = parseInputs(_callData);
-        (, bytes memory logData) = _pancakeAddLiquidity(pancakeData);
-        logger.logActionDirectEvent("PancakeAddLiquidityV2", logData);
+        (
+            ,
+            ,
+            bytes memory logData
+        ) = _pancakeRemoveLiquidity(pancakeData);
+        logger.logActionDirectEvent("PancakeRemoveLiquidityV2", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -100,50 +102,23 @@ contract PancakeAddLiquidityV2 is ActionBase,  PancakeV2Helper{
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    function _pancakeAddLiquidity(
+    function _pancakeRemoveLiquidity(
         Params memory _pancakeData
-    ) internal returns (uint256 liquidity, bytes memory logData) {
-        // fetch tokens from address
-        uint amountAPulled = _pancakeData.tokenA.pullTokensIfNeeded(
-            _pancakeData.tokenA,
-            _pancakeData.amountADesired
-        );
-        uint amountBPulled = _pancakeData.tokenB.pullTokensIfNeeded(
-            _pancakeData.tokenB,
-            _pancakeData.amountBDesired
-        );
-
-        // approve positionManager so it can pull tokens
-        _pancakeData.tokenA.approveToken(address(pancakeRouter), amountAPulled);
-        _pancakeData.tokenB.approveToken(address(pancakeRouter), amountBPulled);
-
-        _pancakeData.amountADesired = amountAPulled;
-        _pancakeData.amountBDesired = amountBPulled;
-
-        uint256 amountA;
-        uint256 amountB;
-        (amountA, amountB, liquidity) = pancakeRouter.addLiquidity(
+    )
+        internal
+        returns (uint256 amountA, uint256 amountB, bytes memory logData)
+    {
+        (amountA, amountB) = pancakeRouter.removeLiquidity(
             _pancakeData.tokenA,
             _pancakeData.tokenB,
-            _pancakeData.amountADesired,
-            _pancakeData.amountBDesired,
+            _pancakeData.liquidity,
             _pancakeData.amountAMin,
             _pancakeData.amountBMin,
             _pancakeData.to,
             _pancakeData.deadline
         );
 
-        //send leftovers
-        _pancakeData.tokenA.withdrawTokens(
-            _pancakeData.tokenA,
-            _pancakeData.amountADesired - amountA
-        );
-        _pancakeData.tokenB.withdrawTokens(
-            _pancakeData.tokenB,
-            _pancakeData.amountBDesired - amountB
-        );
-
-        logData = abi.encode(_pancakeData, amountA, amountB, liquidity);
+        logData = abi.encode(_pancakeData, amountA, amountB);
     }
 
     function parseInputs(

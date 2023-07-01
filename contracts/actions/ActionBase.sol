@@ -85,6 +85,34 @@ abstract contract ActionBase is AdminAuth, ActionsUtilHelper {
         return _param;
     }
 
+    /// @notice Given an uint256 input, injects return/sub values if specified
+    /// @param _param The original input value
+    /// @param _mapType Indicated the type of the input in paramMapping
+    /// @param _subData Array of subscription data we can replace the input value with
+    /// @param _returnValues Array of subscription data we can replace the input value with
+    function _parseParamInt(
+        int _param,
+        uint8 _mapType,
+        bytes32[] memory _subData,
+        bytes32[] memory _returnValues
+    ) internal pure returns (int) {
+        if (isReplaceable(_mapType)) {
+            if (isReturnInjection(_mapType)) {
+                bytes memory byteArray = abi.encodePacked(_returnValues[getReturnIndex(_mapType)]);
+                assembly {
+                    _param := mload(add(byteArray, 32))
+                }
+            } else {
+                bytes memory byteArray = abi.encodePacked(_subData[getSubIndex(_mapType)]);
+                assembly {
+                    _param := mload(add(byteArray, 32))
+                }
+            }
+        }
+
+        return _param;
+    }
+
 
     /// @notice Given an addr input, injects return/sub values if specified
     /// @param _param The original input value
