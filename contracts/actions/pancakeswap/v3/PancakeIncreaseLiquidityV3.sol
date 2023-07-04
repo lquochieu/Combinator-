@@ -17,6 +17,7 @@ contract PancakeIncreaseLiquidityV3 is ActionBase,  PancakeV3Helper{
         uint256 amount0Min;
         uint256 amount1Min;
         uint256 deadline;
+        address from;
     }
 
     /// @inheritdoc ActionBase
@@ -68,6 +69,13 @@ contract PancakeIncreaseLiquidityV3 is ActionBase,  PancakeV3Helper{
             _subData,
             _returnValues
         );
+        
+        pancakeData.from = _parseParamAddr(
+            pancakeData.from,
+            _paramMapping[6],
+            _subData,
+            _returnValues
+        );
 
         (uint256 liquidity, , , bytes memory logData) = _pancakeIncreaseLiquidity(pancakeData);
         emit ActionEvent("PancakeIncreaseLiquidityV3", logData);
@@ -103,11 +111,11 @@ contract PancakeIncreaseLiquidityV3 is ActionBase,  PancakeV3Helper{
 
         // fetch tokens from address
         uint amount0Pulled = token0.pullTokensIfNeeded(
-            token0,
+            _pancakeData.from,
             _pancakeData.amount0Desired
         );
         uint amount1Pulled = token1.pullTokensIfNeeded(
-            token1,
+            _pancakeData.from,
             _pancakeData.amount1Desired
         );
 
@@ -131,11 +139,11 @@ contract PancakeIncreaseLiquidityV3 is ActionBase,  PancakeV3Helper{
 
         //send leftovers
        token0.withdrawTokens(
-            token0,
+            _pancakeData.from,
             _pancakeData.amount0Desired - amount0
         );
        token1.withdrawTokens(
-            token1,
+            _pancakeData.from,
             _pancakeData.amount1Desired - amount1
         );
 

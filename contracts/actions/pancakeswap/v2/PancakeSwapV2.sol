@@ -18,6 +18,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
         address[] path;
         address to;
         uint256 deadline;
+        address from;
     }
 
     /// @inheritdoc ActionBase
@@ -68,7 +69,12 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
             _subData,
             _returnValues
         );
-
+        pancakeData.from = _parseParamAddr(
+            pancakeData.from,
+            _paramMapping[t+5],
+            _subData,
+            _returnValues
+        );
         (uint256[] memory amount, bytes memory logData) = _pancakeSwap(pancakeData);
         emit ActionEvent("PancakeSwapV2", logData);
         return bytes32(amount[0]);
@@ -95,7 +101,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
     ) internal returns (uint256[] memory amount, bytes memory logData) {
         // fetch tokens from address
         uint amountPulled = _pancakeData.path[0].pullTokensIfNeeded(
-            _pancakeData.path[0],
+            _pancakeData.from,
             _pancakeData.amountIn
         );
 
@@ -114,7 +120,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
         
         //send leftovers
         _pancakeData.path[0].withdrawTokens(
-            _pancakeData.path[0],
+            _pancakeData.from,
             _pancakeData.amountIn - amount[0]
         );
 

@@ -22,6 +22,7 @@ contract PancakeAddLiquidityV3 is ActionBase,  PancakeV3Helper{
         uint256 amount1Min;
         address recipient;
         uint256 deadline;
+        address from;
     }
 
     /// @inheritdoc ActionBase
@@ -107,6 +108,13 @@ contract PancakeAddLiquidityV3 is ActionBase,  PancakeV3Helper{
             _returnValues
         );
 
+        pancakeData.from = _parseParamAddr(
+            pancakeData.from,
+            _paramMapping[11],
+            _subData,
+            _returnValues
+        );
+        
         (, uint256 liquidity, , , bytes memory logData) = _pancakeAddLiquidity(pancakeData);
         emit ActionEvent("PancakeAddLiquidityV3", logData);
         return bytes32(liquidity);
@@ -133,11 +141,11 @@ contract PancakeAddLiquidityV3 is ActionBase,  PancakeV3Helper{
     ) internal returns (uint256 tokenId, uint128 liquidity, uint256 amount0, uint256 amount1, bytes memory logData) {
         // fetch tokens from address
         uint amount0Pulled = _pancakeData.token0.pullTokensIfNeeded(
-            _pancakeData.token0,
+            _pancakeData.from,
             _pancakeData.amount0Desired
         );
         uint amount1Pulled = _pancakeData.token1.pullTokensIfNeeded(
-            _pancakeData.token1,
+            _pancakeData.from,
             _pancakeData.amount1Desired
         );
 
@@ -169,11 +177,11 @@ contract PancakeAddLiquidityV3 is ActionBase,  PancakeV3Helper{
 
         //send leftovers
         _pancakeData.token0.withdrawTokens(
-            _pancakeData.token0,
+            _pancakeData.from,
             _pancakeData.amount0Desired - amount0
         );
         _pancakeData.token1.withdrawTokens(
-            _pancakeData.token1,
+            _pancakeData.from,
             _pancakeData.amount1Desired - amount1
         );
 

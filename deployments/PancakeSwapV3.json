@@ -247,6 +247,11 @@
 							"internalType": "address",
 							"name": "to",
 							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "from",
+							"type": "address"
 						}
 					],
 					"internalType": "struct PancakeSwapV3.Params",
