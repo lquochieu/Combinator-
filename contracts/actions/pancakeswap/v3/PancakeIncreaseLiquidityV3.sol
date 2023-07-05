@@ -120,8 +120,8 @@ contract PancakeIncreaseLiquidityV3 is ActionBase,  PancakeV3Helper{
         );
 
         // approve positionManager so it can pull tokens
-        token0.approveToken(address(smartRouter), amount0Pulled);
-        token1.approveToken(address(smartRouter), amount1Pulled);
+        token0.approveToken(address(manager), amount0Pulled);
+        token1.approveToken(address(manager), amount1Pulled);
 
         _pancakeData.amount0Desired = amount0Pulled;
         _pancakeData.amount1Desired = amount1Pulled;
