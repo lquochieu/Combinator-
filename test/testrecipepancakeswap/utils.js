@@ -19,34 +19,31 @@ const getProxy = async (acc) => {
   return await dsProxy;
 };
 
-const createPool = async (proxy, token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from) => {
+const addLiquidity = async (proxy, token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from) => {
   await approve(token0, proxy.address);
   await approve(token1, proxy.address);
 
   console.log("Run to create pool");
-  const createPoolAction = new Action(
+  const addLiquidityAction = new Action(
     "PancakeAddLiquidityV3",
     process.env.PANCAKE_ADD_LIQUIDITY_V3_ADDRESS,
     ["address", "address", "uint24", "int24", "int24", "uint256", "uint256", "uint256", "uint256", "address", "uint256", "address"],
     [token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from]
   );
   console.log(token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from);
-  const functionData = createPoolAction.encodeForDsProxyCall()[1];
+  const functionData = addLiquidityAction.encodeForDsProxyCall()[1];
   console.log(functionData);
 
   const createPoolContract = await getAddrFromRegistry("PancakeAddLiquidityV3");
   console.log(createPoolContract);
 
-  // let tx = await proxy["execute(address,bytes)"](
-  //   createPoolContract,
-  //   functionData,
-  //   {
-  //     gasLimit: 20000000,
-  //   }
-  // );
+  let tx = await proxy["execute(address,bytes)"](
+    createPoolContract,
+    functionData
+  );
 
-  // tx = await tx.wait();
-  // console.log("tx::", tx);
+  tx = await tx.wait();
+  console.log("tx::", tx);
 }
 
 const getNameId = (name) => {
@@ -82,7 +79,20 @@ const approve = async (tokenAddr, to, signer) => {
   }
 };
 
+const increaseLiquidity = async () => {
+  console.log("Run to increaseLiquidity");
+  // uint256 tokenId = cung 0.1 CAKE đi
+  // uint256 amount0Desired = 
+  // uint256 amount1Desired = 
+  // uint256 amount0Min = 0
+  // uint256 amount1Min = 0
+  // uint256 deadline = 2688452425
+  // address from = 0x595622cbd0fc4727df476a1172ada30a9ddf8f43
+
+}
+
 module.exports = {
   getProxy,
-  createPool
+  addLiquidity,
+  increaseLiquidity
 }
