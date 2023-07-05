@@ -113,6 +113,7 @@ describe("Test Pancakeswap", async function() {
     // );
   });
   it("Test Swap", async() => {
+    // Ta sẽ dùng accountA để swap mà k dùng account owner
     // Đầu tiên gửi TOKEN_A_TEST2 cho accA cho nó có đủ tiền
     const tokenA = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_A_TEST2)).connect(ownerAcc);
     // await tokenA.transfer(accA.address, "1000000000000000000");

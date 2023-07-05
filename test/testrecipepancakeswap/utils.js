@@ -191,6 +191,8 @@ const collectLiquidity = async (owner, proxy, tokenId, recipient, amount0Max, am
 
 const swapTokenForToken = async (accA, proxy, amountIn, amountOutMin, path, to, from) => {
   console.log("Run to swapTokenForToken");
+  
+  await approve(path[0], proxy.address, accA);
 
   const createPoolAction = new Action(
     "PancakeSwapV3",
@@ -206,12 +208,13 @@ const swapTokenForToken = async (accA, proxy, amountIn, amountOutMin, path, to, 
   console.log(createPoolContract);
 
   const tokenB = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_B_TEST2));
-  // await tokenA.transfer(accA.address, "1000000000000000000");
   console.log("Before, balance token B of accA::", await tokenB.balanceOf(accA.address));
 
   let tx = await proxy["execute(address,bytes)"](
     createPoolContract,
-    functionData
+    functionData, {
+      gasLimit: 10000000
+    }
   );
   tx = await tx.wait();
   console.log("tx hash::", tx.transactionHash);
