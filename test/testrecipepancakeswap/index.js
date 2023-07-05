@@ -1,6 +1,6 @@
 // Tạo 2 token -> tạo 1 pool vói 2 token -> Test action 1 là addLiquidity cả 2 token đó -> Test action 2 là increaseLiquidity 1 đồng -> Test action 3 là swap -> Test action 4 là collect lãi do 1 thằng khác đã swap ở bước trước > Test aciton 5 là removeLiquidity
 
-const { getProxy, addLiquidity, increaseLiquidity } = require("./utils");
+const { getProxy, addLiquidity, increaseLiquidity, createPool } = require("./utils");
 
 // Account Owner support 2 token
 // Account A swap
@@ -23,7 +23,7 @@ describe("Test Pancakeswap", async function() {
     // await tokenA.deployed();
     // console.log("Address ERC20Mock token A::", tokenA.address);
     // console.log("Balance of Owner::", await tokenA.balanceOf(ownerAcc.address));
-    const tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_A_TEST);
+    const tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_A_TEST2);
     console.log("Balance token A of Owner::", await tokenA.balanceOf(ownerAcc.address));
     
     // Mint cho Owner 1000 token B
@@ -32,7 +32,7 @@ describe("Test Pancakeswap", async function() {
     // await tokenB.deployed();
     // console.log("Address ERC20Mock token B::", tokenB.address);
     // console.log("Balance token B of Owner::", await tokenB.balanceOf(ownerAcc.address));
-    const tokenB = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_B_TEST);
+    const tokenB = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_B_TEST2);
     console.log("Balance token B of Owner::", await tokenB.balanceOf(ownerAcc.address));
 
     proxy = await getProxy(ownerAcc.address);
@@ -49,6 +49,7 @@ describe("Test Pancakeswap", async function() {
     // Gọi trực tiếp executeActionDirect
     // Uncomment để test
     // await addLiquidity(
+    //   ownerAcc,
     //   proxy, 
     //   "0x8d008b313c1d6c7fe2982f62d32da7507cf43551", 
     //   "0xae13d989dac2f0debff460ac112a837c89baa7cd", 
@@ -64,9 +65,38 @@ describe("Test Pancakeswap", async function() {
     //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43"
     // );
   });
-  it("Test increaseliquidity", async() => {
-    await increaseLiquidity(
-      proxy,
+  it("Test createPool", async() => {
+    // Lỗi
+    await createPool(
+      ownerAcc,
+      proxy, 
+      process.env.TOKEN_B_TEST2, 
+      process.env.TOKEN_A_TEST2, 
+      "2500", 
+      "-28150", 
+      "-26050", 
+      "145075268333520540069",
+      "10000000000000000000",
+      "0", 
+      "0", 
+      "0x595622cbd0fc4727df476a1172ada30a9ddf8f43", 
+      "2688452425",
+      "0x595622cbd0fc4727df476a1172ada30a9ddf8f43",
+      '20456476331960289157024907122'
     );
+  })
+  it("Test increaseLiquidity", async() => {
+    // await increaseLiquidity(
+    //   proxy, 
+    //   process.env.TOKEN_A_TEST, 
+    //   process.env.TOKEN_B_TEST, 
+    //   "2992", 
+    //   "21148100000000000", 
+    //   "1000000000000", 
+    //   "0", 
+    //   "0", 
+    //   "2688452425", 
+    //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43"
+    // );
   })
 });

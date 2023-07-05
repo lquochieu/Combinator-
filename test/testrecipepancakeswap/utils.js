@@ -19,31 +19,41 @@ const getProxy = async (acc) => {
   return await dsProxy;
 };
 
-const addLiquidity = async (proxy, token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from) => {
+const addLiquidity = async (owner, proxy, token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from) => {
   await approve(token0, proxy.address);
   await approve(token1, proxy.address);
 
-  console.log("Run to create pool");
+  console.log("Run to addLiquidity");
   const addLiquidityAction = new Action(
     "PancakeAddLiquidityV3",
     process.env.PANCAKE_ADD_LIQUIDITY_V3_ADDRESS,
     ["address", "address", "uint24", "int24", "int24", "uint256", "uint256", "uint256", "uint256", "address", "uint256", "address"],
     [token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from]
   );
-  console.log(token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from);
+  // console.log(token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from);
   const functionData = addLiquidityAction.encodeForDsProxyCall()[1];
-  console.log(functionData);
+  // console.log(functionData);
 
   const createPoolContract = await getAddrFromRegistry("PancakeAddLiquidityV3");
-  console.log(createPoolContract);
+  // console.log(createPoolContract);
+
+  const position = await hre.ethers.getContractAt("INonfungiblePositionManager",process.env.NON_FUNGIBLE_POSITION_MANAGER);
+  const length = await position.balanceOf(owner.address);
+  console.log("Before, balance of user::", length);
+  for(var i = 0; i < length; i++){
+    console.log("::", await position.tokenOfOwnerByIndex(owner.address, i));
+  }
 
   let tx = await proxy["execute(address,bytes)"](
     createPoolContract,
     functionData
   );
-
   tx = await tx.wait();
-  console.log("tx::", tx);
+  console.log("tx hash::", tx.transactionHash);
+
+  const length2 = await position.balanceOf(owner.address);
+  console.log("After, balance of user::", length2);
+  console.log("Last index tokenid is::", await position.tokenOfOwnerByIndex(owner.address, length2 - 1));
 }
 
 const getNameId = (name) => {
@@ -79,20 +89,75 @@ const approve = async (tokenAddr, to, signer) => {
   }
 };
 
-const increaseLiquidity = async () => {
+const increaseLiquidity = async (proxy, token0, token1, tokenId, amount0Desired, amount1Desired, amount0Min, amount1Min, deadline, from) => {
   console.log("Run to increaseLiquidity");
-  // uint256 tokenId = cung 0.1 CAKE đi
-  // uint256 amount0Desired = 
-  // uint256 amount1Desired = 
-  // uint256 amount0Min = 0
-  // uint256 amount1Min = 0
-  // uint256 deadline = 2688452425
-  // address from = 0x595622cbd0fc4727df476a1172ada30a9ddf8f43
+  await approve(token0, proxy.address);
+  await approve(token1, proxy.address);
+  const increaseLiquidityAction = new Action(
+    "PancakeIncreaseLiquidityV3",
+    process.env.PANCAKE_INCREASE_LIQUIDITY_V3_ADDRESS,
+    ["uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "address"],
+    [tokenId, amount0Desired, amount1Desired, amount0Min, amount1Min, deadline, from]
+  );
+  const functionData = increaseLiquidityAction.encodeForDsProxyCall()[1];
 
+  const createPoolContract = await getAddrFromRegistry("PancakeIncreaseLiquidityV3");
+  console.log(createPoolContract);
+
+  const position = await hre.ethers.getContractAt("INonfungiblePositionManager",process.env.NON_FUNGIBLE_POSITION_MANAGER);
+  console.log("Before, tokenPosition::", (await position.positions(tokenId)).liquidity);
+
+  let tx = await proxy["execute(address,bytes)"](
+    createPoolContract,
+    functionData
+  );
+  tx = await tx.wait();
+  console.log("tx hash::", tx.transactionHash);
+
+  console.log("After, tokenPosition::", (await position.positions(tokenId)).liquidity);
+}
+
+const createPool = async (owner, proxy, token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from, sqrtPriceX96) => {
+  console.log("Run to createPool");
+  await approve(token0, proxy.address);
+  await approve(token1, proxy.address);
+
+  await approve(token0, "0x427bF5b37357632377eCbEC9de3626C71A5396c1");
+  await approve(token1, "0x427bF5b37357632377eCbEC9de3626C71A5396c1");
+  const createPoolAction = new Action(
+    "PancakeCreatePoolV3",
+    process.env.PANCAKE_CREATE_POOL_V3_ADDRESS,
+    ["address", "address", "uint24", "int24", "int24", "uint256", "uint256", "uint256", "uint256", "address", "uint256", "address", "uint160"],
+    [token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from, sqrtPriceX96]
+  );
+  console.log(token0, token1, fee, tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min, recipient, deadline, from, sqrtPriceX96);
+  const functionData = createPoolAction.encodeForDsProxyCall()[1];
+
+  const createPoolContract = await getAddrFromRegistry("PancakeCreatePoolV3");
+  console.log(createPoolContract);
+
+  const position = await hre.ethers.getContractAt("INonfungiblePositionManager",process.env.NON_FUNGIBLE_POSITION_MANAGER);
+  const length = await position.balanceOf(owner.address);
+  console.log("Before, balance of user::", length);
+  // for(var i = 0; i < length; i++){
+  //   console.log("::", await position.tokenOfOwnerByIndex(owner.address, i));
+  // }
+
+  let tx = await proxy["execute(address,bytes)"](
+    createPoolContract,
+    functionData
+  );
+  tx = await tx.wait();
+  console.log("tx hash::", tx.transactionHash);
+
+  const length2 = await position.balanceOf(owner.address);
+  console.log("After, balance of user::", length2);
+  // console.log("Last index is::", await position.tokenOfOwnerByIndex(owner.address, length2 - 1));
 }
 
 module.exports = {
   getProxy,
   addLiquidity,
-  increaseLiquidity
+  increaseLiquidity,
+  createPool
 }
