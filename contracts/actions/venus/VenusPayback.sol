@@ -4,12 +4,12 @@ pragma solidity 0.8.4;
 import "../../interfaces/venus/IVenusController.sol";
 import "../../interfaces/venus/IVToken.sol";
 import "../../interfaces/IWBNB.sol";
-import "../../utils/TokenUtils.sol";
+import "../../utils/TokenUtilsVenus.sol";
 import "../ActionBase.sol";
 import "./helpers/VenusHelper.sol";
 /// @title Payback a token a user borrowed from Compound
-contract CompPayback is ActionBase, VenusHelper {
-    using TokenUtils for address;
+contract VenusPayback is ActionBase, VenusHelper {
+    using TokenUtilsVenus for address;
 
     struct Params {
         address cTokenAddr;
@@ -77,13 +77,13 @@ contract CompPayback is ActionBase, VenusHelper {
         tokenAddr.pullTokensIfNeeded(_from, _amount);
 
         // we always expect actions to deal with WETH never Eth
-        if (tokenAddr != TokenUtils.WBNB_ADDR) {
+        if (tokenAddr != TokenUtilsVenus.WBNB_ADDR) {
             tokenAddr.approveToken(_cTokenAddr, _amount);
             if (IVToken(_cTokenAddr).repayBorrowBehalf(_onBehalf, _amount) != NO_ERROR){
                 revert CompPaybackError();
             }
         } else {
-            TokenUtils.withdrawWbnb(_amount);
+            TokenUtilsVenus.withdrawWbnb(_amount);
             IVToken(_cTokenAddr).repayBorrowBehalf{value: _amount}(_onBehalf); // reverts on fail
         }
 

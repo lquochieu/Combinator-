@@ -17,7 +17,7 @@ contract VenusHelper is MainnetVenusAddresses{
     // @notice Returns the underlying token address of the given cToken
     function getUnderlyingAddr(address _cTokenAddr) internal returns (address tokenAddr) {
         // cEth has no .underlying() method
-        if (_cTokenAddr == C_BNB_ADDR) return TokenUtils.WBNB_ADDR;
+        if (_cTokenAddr == V_BNB_ADDR) return TokenUtils.WBNB_ADDR;
 
         tokenAddr = IVToken(_cTokenAddr).underlying();
     }
@@ -29,7 +29,7 @@ contract VenusHelper is MainnetVenusAddresses{
         address[] memory markets = new address[](1);
         markets[0] = _cTokenAddr;
 
-        uint256[] memory errCodes = IVenusController(VENUSCONTROLLER_ADDR).enterMarkets(markets);
+        uint256[] memory errCodes = IVenusController(COMPTROLLER_ADDR).enterMarkets(markets);
 
         if (errCodes[0] != NO_ERROR){
             revert VenusEnterMarketError();
@@ -39,7 +39,7 @@ contract VenusHelper is MainnetVenusAddresses{
     /// @notice Exits the Venusound market
     /// @param _cTokenAddr CToken address of the token
     function exitMarket(address _cTokenAddr) public {
-        if (IVenusController(VENUSCONTROLLER_ADDR).exitMarket(_cTokenAddr) != NO_ERROR){
+        if (IVenusController(COMPTROLLER_ADDR).exitMarket(_cTokenAddr) != NO_ERROR){
             revert VenusExitMarketError();
         }
     }

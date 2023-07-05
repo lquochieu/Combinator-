@@ -4,13 +4,13 @@ pragma solidity 0.8.4;
 
 import "../../interfaces/IWBNB.sol";
 import "../../interfaces/venus/IVToken.sol";
-import "../../utils/TokenUtils.sol";
+import "../../utils/TokenUtilsVenus.sol";
 import "../ActionBase.sol";
 import "./helpers/VenusHelper.sol";
 
 /// @title Withdraw a token from Compound
 contract VenusWithdraw is ActionBase, VenusHelper {
-    using TokenUtils for address;
+    using TokenUtilsVenus for address;
     struct Params {
         address cTokenAddr;
         uint256 amount;
@@ -65,8 +65,8 @@ contract VenusWithdraw is ActionBase, VenusHelper {
         address tokenAddr = getUnderlyingAddr(_cTokenAddr);
 
         // because comp returns native eth we need to check the balance of that
-        if (tokenAddr == TokenUtils.WBNB_ADDR) {
-            tokenAddr = TokenUtils.WBNB_ADDR;
+        if (tokenAddr == TokenUtilsVenus.WBNB_ADDR) {
+            tokenAddr = TokenUtilsVenus.WBNB_ADDR;
         }
 
         uint256 tokenBalanceBefore = tokenAddr.getBalance(address(this));
@@ -89,9 +89,9 @@ contract VenusWithdraw is ActionBase, VenusHelper {
         _amount = tokenBalanceAfter - tokenBalanceBefore;
 
         // always return WETH, never native Eth
-        if (tokenAddr == TokenUtils.WBNB_ADDR) {
-            TokenUtils.depositWbnb(_amount);
-            tokenAddr = TokenUtils.WBNB_ADDR    ; // switch back to weth
+        if (tokenAddr == TokenUtilsVenus.WBNB_ADDR) {
+            TokenUtilsVenus.depositWbnb(_amount);
+            tokenAddr = TokenUtilsVenus.WBNB_ADDR    ; // switch back to weth
         }
 
         // If tokens needs to be send to the _to address
