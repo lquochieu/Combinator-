@@ -164,7 +164,7 @@ module.exports = {
       chainId: 97,
       gasPrice: 20e9,
       gas: 2e6,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`],
     },
     goerli: {
       url: GOERLI,
