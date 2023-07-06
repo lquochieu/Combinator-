@@ -26,7 +26,7 @@ describe("Trava-Supply", function () {
 
     const traveSupply = new Action(
       "TravaSupply",
-      process.env.TRAVA_SUPPLY,
+      process.env.TRAVA_SUPPLY_ADDRESS,
       ["address", "address", "uint256", "address", "address", "bool"],
       [market, trava, amount, from, onBehalf, enableAsColl]
     );

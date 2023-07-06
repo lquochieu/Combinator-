@@ -48,11 +48,17 @@ async function main() {
   //        ||                               Trava Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
-  //     const travaBorrow = await redeploy('TravaBorrow', process.env.DFS_REGISTRY_ADDRESS);
-  //     writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address)
+  const travaBorrow = await redeploy(
+    "TravaBorrow",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address);
 
-  //     const travaRepay = await redeploy('TravaRepay', process.env.DFS_REGISTRY_ADDRESS);
-  //     writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address)
+  const travaRepay = await redeploy(
+    "TravaRepay",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address);
 
   //     const travaSupply = await redeploy('TravaSupply', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("TRAVA_SUPPLY_ADDRESS", travaSupply.address)
@@ -103,29 +109,29 @@ async function main() {
        ||                               Venus     Contract                               ||
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
    */
-  const venusBorrow = await redeploy(
-    "VenusBorrow",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("VENUS_BORROW_ADDRESS", venusBorrow.address);
+  // const venusBorrow = await redeploy(
+  //   "VenusBorrow",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("VENUS_BORROW_ADDRESS", venusBorrow.address);
 
-  const venusRepay = await redeploy(
-    "VenusPayback",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("VENUS_PAYBACK_ADDRESS", venusRepay.address);
+  // const venusRepay = await redeploy(
+  //   "VenusPayback",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("VENUS_PAYBACK_ADDRESS", venusRepay.address);
 
-  const venusSupply = await redeploy(
-    "VenusSupply",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("VENUS_SUPPLY_ADDRESS", venusSupply.address);
+  // const venusSupply = await redeploy(
+  //   "VenusSupply",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("VENUS_SUPPLY_ADDRESS", venusSupply.address);
 
-  const venusWithdraw = await redeploy(
-    "VenusWithdraw",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("VENUS_WITHDRAW_ADDRESS", venusWithdraw.address);
+  // const venusWithdraw = await redeploy(
+  //   "VenusWithdraw",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("VENUS_WITHDRAW_ADDRESS", venusWithdraw.address);
 }
 
 start(main);

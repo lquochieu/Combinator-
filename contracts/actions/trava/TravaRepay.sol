@@ -30,8 +30,8 @@ contract TravaRepay is ActionBase, TravaHelper {
         params.market = _parseParamAddr(params.market, _paramMapping[0], _subData, _returnValues);
         params.tokenAddr = _parseParamAddr(params.tokenAddr, _paramMapping[1], _subData, _returnValues);
         params.amount = _parseParamUint(params.amount, _paramMapping[2], _subData, _returnValues);
-        params.from = _parseParamAddr(params.from, _paramMapping[4], _subData, _returnValues);
-        params.onBehalf = _parseParamAddr(params.onBehalf, _paramMapping[5], _subData, _returnValues);
+        params.from = _parseParamAddr(params.from, _paramMapping[3], _subData, _returnValues);
+        params.onBehalf = _parseParamAddr(params.onBehalf, _paramMapping[4], _subData, _returnValues);
 
         (uint256 paybackAmount, bytes memory logData) = _payback(
             params.market,

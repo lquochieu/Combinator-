@@ -46,13 +46,13 @@ contract TravaBorrow is ActionBase, TravaHelper {
         );
         params.to = _parseParamAddr(
             params.to,
-            _paramMapping[4],
+            _paramMapping[3],
             _subData,
             _returnValues
         );
         params.onBehalf = _parseParamAddr(
             params.onBehalf,
-            _paramMapping[5],
+            _paramMapping[4],
             _subData,
             _returnValues
         );
