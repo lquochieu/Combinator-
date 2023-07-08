@@ -141,12 +141,6 @@ contract PancakeSwapV3 is ActionBase, PancakeV3Helper {
             });
         amount = smartRouter.exactInputSingle(params);
 
-        //send leftovers
-        _pancakeData.tokenIn.withdrawTokens(
-            _pancakeData.from,
-            _pancakeData.amountIn - amount
-        );
-
         logData = abi.encode(_pancakeData, amount);
     }
 
