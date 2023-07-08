@@ -118,11 +118,6 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
             _pancakeData.deadline
         );
         
-        //send leftovers
-        _pancakeData.path[0].withdrawTokens(
-            _pancakeData.from,
-            _pancakeData.amountIn - amount[0]
-        );
 
         logData = abi.encode(_pancakeData, amount);
     }

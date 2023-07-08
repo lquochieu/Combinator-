@@ -74,8 +74,8 @@ async function main() {
   // const pancakeAddLiquidityV2 = await redeploy('PancakeAddLiquidityV2', process.env.DFS_REGISTRY_ADDRESS);
   // writeToEnvFile("PANCAKE_ADD_LIQUIDITY_V2_ADDRESS", pancakeAddLiquidityV2.address)
 
-  //    const pancakeSwapV2 = await redeploy('PancakeSwapV2', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address)
+     const pancakeSwapV2 = await redeploy('PancakeSwapV2', process.env.DFS_REGISTRY_ADDRESS);
+     writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address)
 
   //    const pancakeRemoveLiquidityV2 = await redeploy('PancakeRemoveLiquidityV2', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V2_ADDRESS", pancakeRemoveLiquidityV2.address)
@@ -98,8 +98,8 @@ async function main() {
   //    const pancakeCollectV3 = await redeploy('PancakeCollectV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_COLLECT_V3_ADDRESS", pancakeCollectV3.address)
 
-     const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
-     writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
+    //  const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
+    //  writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
 
   //    const pancakeRemoveLiquidityV3 = await redeploy('PancakeRemoveLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V3_ADDRESS", pancakeRemoveLiquidityV3.address)
