@@ -48,17 +48,17 @@ async function main() {
   //        ||                               Trava Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
-  const travaBorrow = await redeploy(
-    "TravaBorrow",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address);
+  // const travaBorrow = await redeploy(
+  //   "TravaBorrow",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_BORROW_ADDRESS", travaBorrow.address);
 
-  const travaRepay = await redeploy(
-    "TravaRepay",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address);
+  // const travaRepay = await redeploy(
+  //   "TravaRepay",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_REPAY_ADDRESS", travaRepay.address);
 
   //     const travaSupply = await redeploy('TravaSupply', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("TRAVA_SUPPLY_ADDRESS", travaSupply.address)
@@ -98,8 +98,8 @@ async function main() {
   //    const pancakeCollectV3 = await redeploy('PancakeCollectV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_COLLECT_V3_ADDRESS", pancakeCollectV3.address)
 
-  //    const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
+     const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
+     writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
 
   //    const pancakeRemoveLiquidityV3 = await redeploy('PancakeRemoveLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V3_ADDRESS", pancakeRemoveLiquidityV3.address)

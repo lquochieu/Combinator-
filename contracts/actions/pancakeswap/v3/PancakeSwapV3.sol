@@ -7,17 +7,19 @@ import "../../../utils/TokenUtils.sol";
 import "./helpers/PancakeV3Helper.sol";
 
 /// @title Supplies liquidity to a PancakeswapV3 position represented by TokenId
-contract PancakeSwapV3 is ActionBase,  PancakeV3Helper{
+contract PancakeSwapV3 is ActionBase, PancakeV3Helper {
     using TokenUtils for address;
     /// @param amountIn amount want to swap
     /// @param amountOutMin default = 0
     /// @param path[0]: address tokenA, path[1]: address tokenB
     struct Params {
+        address tokenIn;
+        address tokenOut;
+        uint24 fee;
+        address recipient;
         uint256 amountIn;
-        uint256 amountOutMin;
-        address[] path;
-        address to;
-        // uint256 deadline;
+        uint256 amountOutMinimum;
+        uint160 sqrtPriceLimitX96;
         address from;
     }
 
@@ -32,47 +34,62 @@ contract PancakeSwapV3 is ActionBase,  PancakeV3Helper{
 
         uint256 t = 0;
 
-        pancakeData.amountIn = _parseParamUint(
-            pancakeData.amountIn,
+        pancakeData.tokenIn = _parseParamAddr(
+            pancakeData.tokenIn,
             _paramMapping[0],
             _subData,
             _returnValues
         );
 
-        pancakeData.amountOutMin = _parseParamUint(
-            pancakeData.amountOutMin,
+        pancakeData.tokenOut = _parseParamAddr(
+            pancakeData.tokenOut,
             _paramMapping[1],
             _subData,
             _returnValues
         );
 
-        t = pancakeData.path.length;
-        for(uint256 i = 0; i < t; i++) {
-            pancakeData.path[i] = _parseParamAddr(
-                pancakeData.path[i],
-                _paramMapping[2 + i],
+        pancakeData.fee = uint24(
+            _parseParamUint(
+                pancakeData.fee,
+                _paramMapping[2],
                 _subData,
                 _returnValues
-            );
+            )
+        );
 
-        }
-
-        pancakeData.to = _parseParamAddr(
-            pancakeData.to,
-            _paramMapping[t + 3],
+        pancakeData.recipient = _parseParamAddr(
+            pancakeData.recipient,
+            _paramMapping[3],
             _subData,
             _returnValues
         );
-        // pancakeData.deadline = _parseParamUint(
-        //     pancakeData.deadline,
-        //     _paramMapping[t + 4],
-        //     _subData,
-        //     _returnValues
-        // );
+
+        pancakeData.amountIn = _parseParamUint(
+            pancakeData.amountIn,
+            _paramMapping[4],
+            _subData,
+            _returnValues
+        );
+
+        pancakeData.amountOutMinimum = _parseParamUint(
+            pancakeData.amountOutMinimum,
+            _paramMapping[5],
+            _subData,
+            _returnValues
+        );
+
+        pancakeData.sqrtPriceLimitX96 = uint160(
+            _parseParamUint(
+                pancakeData.sqrtPriceLimitX96,
+                _paramMapping[6],
+                _subData,
+                _returnValues
+            )
+        );
 
         pancakeData.from = _parseParamAddr(
             pancakeData.from,
-            _paramMapping[t + 4],
+            _paramMapping[7],
             _subData,
             _returnValues
         );
@@ -102,26 +119,30 @@ contract PancakeSwapV3 is ActionBase,  PancakeV3Helper{
         Params memory _pancakeData
     ) internal returns (uint256 amount, bytes memory logData) {
         // fetch tokens from address
-        uint amountPulled = _pancakeData.path[0].pullTokensIfNeeded(
+        uint amountPulled = _pancakeData.tokenIn.pullTokensIfNeeded(
             _pancakeData.from,
             _pancakeData.amountIn
         );
 
         // approve positionManager so it can pull tokens
-        _pancakeData.path[0].approveToken(address(smartRouter), amountPulled);
+        _pancakeData.tokenIn.approveToken(address(smartRouter), amountPulled);
 
         _pancakeData.amountIn = amountPulled;
 
-        amount = smartRouter.swapExactTokensForTokens(
-            _pancakeData.amountIn,
-            _pancakeData.amountOutMin,
-            _pancakeData.path,
-            _pancakeData.to
-            // _pancakeData.deadline
-        );
-        
+        IV3SwapRouter.ExactInputSingleParams memory params = IV3SwapRouter
+            .ExactInputSingleParams({
+                tokenIn: _pancakeData.tokenIn,
+                tokenOut: _pancakeData.tokenOut,
+                fee: _pancakeData.fee,
+                recipient: _pancakeData.recipient,
+                amountIn: _pancakeData.amountIn,
+                amountOutMinimum: _pancakeData.amountOutMinimum,
+                sqrtPriceLimitX96: _pancakeData.sqrtPriceLimitX96
+            });
+        amount = smartRouter.exactInputSingle(params);
+
         //send leftovers
-        _pancakeData.path[0].withdrawTokens(
+        _pancakeData.tokenIn.withdrawTokens(
             _pancakeData.from,
             _pancakeData.amountIn - amount
         );
