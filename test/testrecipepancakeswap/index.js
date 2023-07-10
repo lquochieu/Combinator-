@@ -1,6 +1,6 @@
 // Tạo 2 token -> tạo 1 pool vói 2 token -> Test action 1 là addLiquidity cả 2 token đó -> Test action 2 là increaseLiquidity 1 đồng -> Test action 3 là swap -> Test action 4 là collect lãi do 1 thằng khác đã swap ở bước trước > Test aciton 5 là removeLiquidity
 
-const { getProxy, addLiquidity, increaseLiquidity, createPool, collectLiquidity, swapTokenForToken, removeLiquidity } = require("./utils");
+const { getProxy, addLiquidity, increaseLiquidity, createPool, collectLiquidity, removeLiquidity, swapExactTokenForToken, swapExactInputSingle, combinatorPancakeswap } = require("./utils");
 
 // Account Owner support 2 token
 // Account A swap
@@ -37,16 +37,16 @@ describe("Test Pancakeswap", async function() {
     proxy = await getProxy(ownerAcc.address);
     console.log(`Proxy address:: ${proxy.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxy.address))} TBNB`);
 
-    // Send token to SW 
-    // await tokenA.transfer(proxy.address, "11000000000000000000");
-    // await tokenB.transfer(proxy.address, "11000000000000000000");
+    // // Send token to accA
+    // await tokenA.transfer(accA.address, "10000000000000000000");
+    // await tokenB.transfer(accA.address, "10000000000000000000");
     // console.log("Balance token A of Proxy::", await tokenA.balanceOf(proxy.address));
     // console.log("Balance token B of Proxy::", await tokenB.balanceOf(proxy.address));
   });
 
   it("Test addLiquidity", async() => {
-    // Gọi trực tiếp executeActionDirect
-    // Uncomment để test
+    // // Gọi trực tiếp executeActionDirect
+    // // Uncomment để test
     // await addLiquidity(
     //   ownerAcc,
     //   proxy, 
@@ -112,21 +112,69 @@ describe("Test Pancakeswap", async function() {
     //   ownerAcc, proxy, "2994", "1000", 0, 0, 2688452425
     // );
   });
-  it("Test Swap", async() => {
-    // Ta sẽ dùng accountA để swap mà k dùng account owner
-    // Đầu tiên gửi TOKEN_A_TEST2 cho accA cho nó có đủ tiền
-    const tokenA = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_A_TEST2)).connect(ownerAcc);
-    // await tokenA.transfer(accA.address, "1000000000000000000");
-    console.log("Balance token A of accA::", await tokenA.balanceOf(accA.address));
+  it("Test SwapExactTokensForTokens", async() => {
+    // // Test này thao tác với pool token đã có ở v2 nhưng chưa có tiền gì nên sẽ lỗi. Hàm createPool trên là v3 mà, ít nhất để có pool phải gọi vào creataPair ở contract Factory của v2 trước
+    // // V2 swap dùng ERC20, V3 dùng ERC721 nên đương nhiên khác nhau. Ở trên ta create pool với C3 và phải dùng V3 để swap
+    // // Ta sẽ dùng accountA để swap mà k dùng account owner
+    // // Đầu tiên gửi TOKEN_A_TEST2 cho accA cho nó có đủ tiền
+    // const tokenA = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_A_TEST2)).connect(ownerAcc);
+    // // await tokenA.transfer(accA.address, "1000000000000000000");
+    // console.log("Balance token A of accA::", await tokenA.balanceOf(accA.address));
 
-    // Lấy proxy của accA để thực hiện thông qua proxy
-    const proxyA = (await getProxy(accA.address)).connect(accA);
-    console.log(`Proxy address:: ${proxyA.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxyA.address))} TBNB`);
+    // // Lấy proxy của accA để thực hiện thông qua proxy
+    // const proxyA = (await getProxy(accA.address)).connect(accA);
+    // console.log(`Proxy address:: ${proxyA.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxyA.address))} TBNB`);
 
-    // Phải approve cho router contract => contract đã có rồi
+    // // Phải approve cho router contract => trong contract đã có rồi
     
-    await swapTokenForToken(
-      accA, proxyA, "10000000000", 0, ["0xfFa52085f3a06AD915EDdC70Fe5564F28852A0e0", "0x5FA12BE425b51da9bcd4C835a341E2A3A31dC214"], accA.address, accA.address
-    );
+    // await swapExactTokenForToken(
+    //   accA, proxyA, "10000000000", 0, ["0xfFa52085f3a06AD915EDdC70Fe5564F28852A0e0", "0x5FA12BE425b51da9bcd4C835a341E2A3A31dC214"], accA.address, accA.address
+    // );
   });
+  it("Test SwapExactTokensForTokens", async() => {
+    // // Test này là thao tác vói 1 pool token ở v2 đã có sẵn nên thành công.
+    // const tokenB = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_B_TEST));
+    // console.log("Before, balance token WBNB of owner::", await tokenB.balanceOf(ownerAcc.address));
+    // await swapExactTokenForToken(
+    //   ownerAcc, 
+    //   proxy, 
+    //   "10000000000000000",
+    //   "0", 
+    //   ["0xae13d989dac2f0debff460ac112a837c89baa7cd","0x8d008b313c1d6c7fe2982f62d32da7507cf43551"], 
+    //   ownerAcc.address, 
+    //   ownerAcc.address
+    // );
+  });
+
+  it("Test swapExactInputSingle", async() => {
+    // // Ta sẽ dùng accountA để swap mà k dùng account owner
+    // // Đầu tiên gửi TOKEN_A_TEST2 cho accA cho nó có đủ tiền
+    // const tokenA = (await hre.ethers.getContractAt("ERC20Mock", process.env.TOKEN_A_TEST2)).connect(ownerAcc);
+    // // await tokenA.transfer(accA.address, "1000000000000000000");
+    // console.log("Balance token A of accA::", await tokenA.balanceOf(accA.address));
+
+    // // Lấy proxy của accA để thực hiện thông qua proxy
+    // const proxyA = (await getProxy(accA.address)).connect(accA);
+    // console.log(`Proxy address:: ${proxyA.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxyA.address))} TBNB`);
+
+    // // Phải approve cho router contract => trong contract đã có rồi
+    // await swapExactInputSingle(
+    //   accA, 
+    //   proxyA, 
+    //   process.env.TOKEN_A_TEST2,
+    //   process.env.TOKEN_B_TEST2, 
+    //   "2500", 
+    //   accA.address, 
+    //   "1000000000000000",
+    //   "0",
+    //   "0",
+    //   accA.address
+    // );
+  });
+
+  it("Test Swap Combinator", async() => {
+    // Gom thứ tự: Owner create 2 token và cung vào pool -> Owner increase liquidity -> Owner gọi swap luôn trên pool của chính mình -> Owner remove liquidity -> Owner gọi collect pool đó
+    await combinatorPancakeswap(ownerAcc, proxy);
+  }).timeout(100000000000);
+
 });

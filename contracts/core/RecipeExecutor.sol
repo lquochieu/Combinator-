@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.4;
+pragma solidity ^0.8.4;
 
 import "../interfaces/IDSProxy.sol";
 import "../auth/ProxyPermission.sol";
@@ -12,7 +12,6 @@ import "./strategy/BundleStorage.sol";
 import "./strategy/SubStorage.sol";
 import "../interfaces/flashloan/IFlashLoanBase.sol";
 import "../interfaces/ITrigger.sol";
-import "hardhat/console.sol";
 
 /// @title Entry point into executing recipes/checking triggers directly and as part of a strategy
 contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper {
@@ -135,10 +134,7 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
         address firstActionAddr = registry.getAddr(_currRecipe.actionIds[0]);
 
         bytes32[] memory returnValues = new bytes32[](_currRecipe.actionIds.length);
-        console.log("_currRecipe.actionIds.length", _currRecipe.actionIds.length);
-        // for (uint256 i = 0; i < _currRecipe.actionIds.length; ++i) {
-        //         console.log("returnValues %s", returnValues[i]);
-        // }
+
         if (isFL(firstActionAddr)) {
             _parseFLAndExecute(_currRecipe, firstActionAddr, returnValues);
         } else {
