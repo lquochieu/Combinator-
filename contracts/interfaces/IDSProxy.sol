@@ -9,7 +9,7 @@ abstract contract IDSProxy {
     //     virtual
     //     returns (address, bytes32);
 
-    function execute(address _target, bytes memory _data) public payable virtual returns (bytes32);
+    function execute(address _target, bytes memory _data) public payable virtual returns (bytes memory);
 
     function setCache(address _cacheAddr) public payable virtual returns (bool);
 

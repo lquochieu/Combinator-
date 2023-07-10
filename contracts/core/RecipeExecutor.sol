@@ -15,7 +15,12 @@ import "../interfaces/ITrigger.sol";
 import "hardhat/console.sol";
 
 /// @title Entry point into executing recipes/checking triggers directly and as part of a strategy
-contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper {
+contract RecipeExecutor is
+    StrategyModel,
+    ProxyPermission,
+    AdminAuth,
+    CoreHelper
+{
     DFSRegistry public constant registry = DFSRegistry(REGISTRY_ADDR);
 
     error TriggerNotActiveError(uint256);
@@ -26,7 +31,6 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     function executeRecipe(Recipe calldata _currRecipe) public payable {
         _executeActions(_currRecipe);
     }
-
 
     /// @notice Called by users DSProxy through the ProxyAuth to execute a recipe & check triggers
     /// @param _subId Id of the subscription we want to execute
@@ -43,21 +47,32 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     ) public payable {
         Strategy memory strategy;
 
-        { // to handle stack too deep
+        {
+            // to handle stack too deep
             uint256 strategyId = _sub.strategyOrBundleId;
 
             // fetch strategy if inside of bundle
             if (_sub.isBundle) {
-                strategyId = BundleStorage(BUNDLE_STORAGE_ADDR).getStrategyId(strategyId, _strategyIndex);
+                strategyId = BundleStorage(BUNDLE_STORAGE_ADDR).getStrategyId(
+                    strategyId,
+                    _strategyIndex
+                );
             }
 
-            strategy = StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategy(strategyId);
+            strategy = StrategyStorage(STRATEGY_STORAGE_ADDR).getStrategy(
+                strategyId
+            );
         }
 
         // check if all the triggers are true
-        (bool triggered, uint256 errIndex) 
-            = _checkTriggers(strategy, _sub, _triggerCallData, _subId, SUB_STORAGE_ADDR);
-        
+        (bool triggered, uint256 errIndex) = _checkTriggers(
+            strategy,
+            _sub,
+            _triggerCallData,
+            _subId,
+            SUB_STORAGE_ADDR
+        );
+
         if (!triggered) {
             revert TriggerNotActiveError(errIndex);
         }
@@ -101,12 +116,13 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
                 _sub.triggerData[i]
             );
 
-
             if (!isTriggered) return (false, i);
 
             // after execution triggers flag-ed changeable can update their value
             if (ITrigger(triggerAddr).isChangeable()) {
-                _sub.triggerData[i] = ITrigger(triggerAddr).changedSubData(_sub.triggerData[i]);
+                _sub.triggerData[i] = ITrigger(triggerAddr).changedSubData(
+                    _sub.triggerData[i]
+                );
                 SubStorage(_storageAddr).updateSubData(_subId, _sub);
             }
         }
@@ -118,8 +134,13 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     /// @dev FL function must be the first action and repayment is done last
     /// @param _currRecipe Recipe to be executed
     /// @param _flAmount Result value from FL action
-    function _executeActionsFromFL(Recipe calldata _currRecipe, bytes32 _flAmount) public payable {
-        bytes32[] memory returnValues = new bytes32[](_currRecipe.actionIds.length);
+    function _executeActionsFromFL(
+        Recipe calldata _currRecipe,
+        bytes32 _flAmount
+    ) public payable {
+        bytes32[] memory returnValues = new bytes32[](
+            _currRecipe.actionIds.length
+        );
         returnValues[0] = _flAmount; // set the flash loan action as first return value
 
         // skips the first actions as it was the fl action
@@ -134,8 +155,13 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     function _executeActions(Recipe memory _currRecipe) internal {
         address firstActionAddr = registry.getAddr(_currRecipe.actionIds[0]);
 
-        bytes32[] memory returnValues = new bytes32[](_currRecipe.actionIds.length);
-        console.log("_currRecipe.actionIds.length", _currRecipe.actionIds.length);
+        bytes32[] memory returnValues = new bytes32[](
+            _currRecipe.actionIds.length
+        );
+        console.log(
+            "_currRecipe.actionIds.length",
+            _currRecipe.actionIds.length
+        );
         // for (uint256 i = 0; i < _currRecipe.actionIds.length; ++i) {
         //         console.log("returnValues %s", returnValues[i]);
         // }
@@ -160,19 +186,32 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
         uint256 _index,
         bytes32[] memory _returnValues
     ) internal returns (bytes32 response) {
-
         address actionAddr = registry.getAddr(_currRecipe.actionIds[_index]);
 
-        response = IDSProxy(address(this)).execute(
-            actionAddr,
-            abi.encodeWithSignature(
-                "executeAction(bytes,bytes32[],uint8[],bytes32[])",
-                _currRecipe.callData[_index],
-                _currRecipe.subData,
-                _currRecipe.paramMapping[_index],
-                _returnValues
-            )
+        response = bytesToBytes32(
+            IDSProxy(address(this)).execute(
+                actionAddr,
+                abi.encodeWithSignature(
+                    "executeAction(bytes,bytes32[],uint8[],bytes32[])",
+                    _currRecipe.callData[_index],
+                    _currRecipe.subData,
+                    _currRecipe.paramMapping[_index],
+                    _returnValues
+                )
+            ),
+            0
         );
+    }
+
+    function bytesToBytes32(
+        bytes memory b,
+        uint offset
+    ) private pure returns (bytes32) {
+        bytes32 out;
+        for (uint i = 0; i < 32; i++) {
+            out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
+        }
+        return out;
     }
 
     /// @notice Prepares and executes a flash loan action
@@ -210,6 +249,8 @@ contract RecipeExecutor is StrategyModel, ProxyPermission, AdminAuth, CoreHelper
     /// @notice Checks if the specified address is of FL type action
     /// @param _actionAddr Address of the action
     function isFL(address _actionAddr) internal pure returns (bool) {
-        return ActionBase(_actionAddr).actionType() == uint8(ActionBase.ActionType.FL_ACTION);
+        return
+            ActionBase(_actionAddr).actionType() ==
+            uint8(ActionBase.ActionType.FL_ACTION);
     }
 }
