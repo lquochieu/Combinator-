@@ -1,22 +1,20 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity 0.8.4;
 
-import "../../utils/TokenUtils.sol";
-import "../ActionBase.sol";
+import "../../../utils/TokenUtils.sol";
+import "../../ActionBase.sol";
 import "./helpers/TravaHelper.sol";
 
-/// @title Supply a token to an Trava market
-contract TravaSupply is ActionBase, TravaHelper {
+/// @title Borrow a token a from an Trava market
+contract TravaBorrow is ActionBase, TravaHelper {
     using TokenUtils for address;
 
     struct Params {
         address market;
         address tokenAddr;
         uint256 amount;
-        address from;
+        address to;
         address onBehalf;
-        bool enableAsColl;
     }
 
     /// @inheritdoc ActionBase
@@ -46,8 +44,8 @@ contract TravaSupply is ActionBase, TravaHelper {
             _subData,
             _returnValues
         );
-        params.from = _parseParamAddr(
-            params.from,
+        params.to = _parseParamAddr(
+            params.to,
             _paramMapping[3],
             _subData,
             _returnValues
@@ -59,16 +57,15 @@ contract TravaSupply is ActionBase, TravaHelper {
             _returnValues
         );
 
-        (uint256 supplyAmount, bytes memory logData) = _supply(
+        (uint256 borrowAmount, bytes memory logData) = _borrow(
             params.market,
             params.tokenAddr,
             params.amount,
-            params.from,
-            params.onBehalf,
-            params.enableAsColl
+            params.to,
+            params.onBehalf
         );
-        emit ActionEvent("TravaSupply", logData);
-        return bytes32(supplyAmount);
+        emit ActionEvent("TravaBorrow", logData);
+        return bytes32(borrowAmount);
     }
 
     /// @inheritdoc ActionBase
@@ -76,15 +73,14 @@ contract TravaSupply is ActionBase, TravaHelper {
         bytes memory _callData
     ) public payable override {
         Params memory params = parseInputs(_callData);
-        (, bytes memory logData) = _supply(
+        (, bytes memory logData) = _borrow(
             params.market,
             params.tokenAddr,
             params.amount,
-            params.from,
-            params.onBehalf,
-            params.enableAsColl
+            params.to,
+            params.onBehalf
         );
-        logger.logActionDirectEvent("TravaSupply", logData);
+        logger.logActionDirectEvent("TravaBorrow", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -94,54 +90,40 @@ contract TravaSupply is ActionBase, TravaHelper {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    /// @notice User deposits tokens to the Trava protocol
-    /// @dev User needs to approve the DSProxy to pull the _tokenAddr tokens
-    /// @param _market Provider Id for specific market
-    /// @param _tokenAddr The address of the token to be deposited
-    /// @param _amount Amount of tokens to be deposited
-    /// @param _from Where are we pulling the supply tokens amount from
-    /// @param _onBehalf For what user we are supplying the tokens, defaults to proxy
-    /// @param _enableAsColl If the supply asset should be collateral
-    function _supply(
+    /// @notice User borrows tokens from the Trava protocol
+    /// @param _market Provider id for specific market
+    /// @param _tokenAddr The address of the token to be borrowed
+    /// @param _amount Amount of tokens to be borrowed
+    /// @param _to The address we are sending the borrowed tokens to
+    /// @param _onBehalf From what user we are borrow the tokens, defaults to proxy
+    function _borrow(
         address _market,
         address _tokenAddr,
         uint256 _amount,
-        address _from,
-        address _onBehalf,
-        bool _enableAsColl
+        address _to,
+        address _onBehalf
     ) internal returns (uint256, bytes memory) {
         ILendingPool lendingPool = ILendingPool(_market);
-
-        // if amount is set to max, take the whole _from balance
-        if (_amount == type(uint256).max) {
-            _amount = _tokenAddr.getBalance(_from);
-        }
-
-        // default to onBehalf of proxy
+        // defaults to onBehalf of proxy
         if (_onBehalf == address(0)) {
             _onBehalf = address(this);
         }
 
-        // pull tokens to proxy so we can supply
-        _tokenAddr.pullTokensIfNeeded(_from, _amount);
+        lendingPool.borrow(
+            _tokenAddr,
+            _amount,
+            TRAVA_REFERRAL_CODE,
+            _onBehalf
+        );
 
-        // approve trava pool to pull tokens
-        _tokenAddr.approveToken(address(lendingPool), _amount);
-
-        // deposit in behalf of the proxy
-        lendingPool.deposit(_tokenAddr, _amount, _onBehalf, TRAVA_REFERRAL_CODE);
-
-        if (_enableAsColl) {
-            enableAsCollateral(_market, _tokenAddr, true);
-        }
+        _amount = _tokenAddr.withdrawTokens(_to, _amount);
 
         bytes memory logData = abi.encode(
             _market,
             _tokenAddr,
             _amount,
-            _from,
-            _onBehalf,
-            _enableAsColl
+            _to,
+            _onBehalf
         );
         return (_amount, logData);
     }

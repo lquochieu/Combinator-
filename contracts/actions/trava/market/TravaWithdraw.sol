@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.4;
 
-import "../../interfaces/IWBNB.sol";
-import "../../utils/TokenUtils.sol";
-import "../ActionBase.sol";
+import "../../../interfaces/IWBNB.sol";
+import "../../../utils/TokenUtils.sol";
+import "../../ActionBase.sol";
 import "./helpers/TravaHelper.sol";
 
 /// @title Withdraw a token from an Trava market based on market

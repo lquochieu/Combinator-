@@ -45,7 +45,7 @@ async function main() {
   //     writeToEnvFile("PULL_TOKEN_ADDRESS", pullToken.address)
   //     /*
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
-  //        ||                               Trava Contract                                   ||
+  //        ||                               Trava Market Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
   // const travaBorrow = await redeploy(
@@ -65,6 +65,36 @@ async function main() {
 
   //     const travaWithdraw = await redeploy('TravaWithdraw', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("TRAVA_WITHDRAW_ADDRESS", travaWithdraw.address)
+
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava Governance Contract                                   ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+  const travaGovernanceCreateLock = await redeploy(
+    "TravaGovernanceCreateLock",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_GOVERNANCE_CREATE_LOCK_ADDRESS", travaGovernanceCreateLock.address);
+
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava Staking Contract                                   ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+  const travaStakingStake = await redeploy(
+    "TravaStakingStake",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_STAKING_STAKE_ADDRESS", travaStakingStake.address);
+
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT Contract                                   ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+  const travaNFTBuy = await redeploy(
+    "TravaNFTBuy",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
@@ -98,8 +128,8 @@ async function main() {
   //    const pancakeCollectV3 = await redeploy('PancakeCollectV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_COLLECT_V3_ADDRESS", pancakeCollectV3.address)
 
-     const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
-     writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
+  // const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
+  // writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
 
   //    const pancakeRemoveLiquidityV3 = await redeploy('PancakeRemoveLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
   //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V3_ADDRESS", pancakeRemoveLiquidityV3.address)

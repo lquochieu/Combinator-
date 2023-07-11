@@ -4,8 +4,8 @@ pragma solidity 0.8.4;
 import {
     IAddressesProviderFactory
 } from "./IAddressesProviderFactory.sol";
-import {DataTypes} from "../../protocol/libraries/types/DataTypes.sol";
-import {IBEP20} from "../IBEP20.sol";
+import {DataTypes} from "../../../protocol/libraries/types/DataTypes.sol";
+import {IBEP20} from "../../IBEP20.sol";
 
 interface ILendingPool {
     /**
