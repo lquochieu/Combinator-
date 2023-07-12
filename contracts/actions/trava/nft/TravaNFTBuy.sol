@@ -64,12 +64,12 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         address _from
     ) internal returns (uint256, bytes memory) {
         require(
-            marketplace.getTokenOrder(_tokenId).nftSeller != _from,
+            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller != _from,
             "Seller  can't execute action to buy own NFT"
         );
-        marketplace.makeOrder(_tokenId);
+        IMarketplace(NFT_MARKETPLACE).makeOrder(_tokenId);
 
-        travaNFT.transferFrom(address(this), _from, _tokenId);
+        INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
 
         bytes memory logData = abi.encode(_tokenId, _from);
         return (_tokenId, logData);

@@ -65,16 +65,17 @@ async function main() {
 
   //     const travaWithdraw = await redeploy('TravaWithdraw', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("TRAVA_WITHDRAW_ADDRESS", travaWithdraw.address)
-
+  const travaClaimRewards = await redeploy('TravaClaimRewards', process.env.DFS_REGISTRY_ADDRESS);
+  writeToEnvFile("TRAVA_CLAIMS_REWARDS_ADDRESS", travaClaimRewards.address)
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //        ||                               Trava Governance Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
-  const travaGovernanceCreateLock = await redeploy(
-    "TravaGovernanceCreateLock",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_GOVERNANCE_CREATE_LOCK_ADDRESS", travaGovernanceCreateLock.address);
+  // const travaGovernanceCreateLock = await redeploy(
+  //   "TravaGovernanceCreateLock",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_GOVERNANCE_CREATE_LOCK_ADDRESS", travaGovernanceCreateLock.address);
 
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //        ||                               Trava Staking Contract                                   ||
@@ -116,23 +117,23 @@ async function main() {
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
    */
 
-  // const pancakeAddLiquidityV3 = await redeploy('PancakeCreatePoolV3', process.env.DFS_REGISTRY_ADDRESS);
-  // writeToEnvFile("PANCAKE_CREATE_POOL_V3_ADDRESS", pancakeAddLiquidityV3.address)
+  const pancakeCreatePoolV3 = await redeploy('PancakeCreatePoolV3', process.env.DFS_REGISTRY_ADDRESS);
+  writeToEnvFile("PANCAKE_CREATE_POOL_V3_ADDRESS", pancakeCreatePoolV3.address)
 
-  //    const pancakeAddLiquidityV3 = await redeploy('PancakeAddLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_ADD_LIQUIDITY_V3_ADDRESS", pancakeAddLiquidityV3.address)
+  const pancakeAddLiquidityV3 = await redeploy('PancakeAddLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
+  writeToEnvFile("PANCAKE_ADD_LIQUIDITY_V3_ADDRESS", pancakeAddLiquidityV3.address)
 
-  //    const pancakeIncreaseLiquidityV3 = await redeploy('PancakeIncreaseLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_INCREASE_LIQUIDITY_V3_ADDRESS", pancakeIncreaseLiquidityV3.address)
+  const pancakeIncreaseLiquidityV3 = await redeploy('PancakeIncreaseLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
+  writeToEnvFile("PANCAKE_INCREASE_LIQUIDITY_V3_ADDRESS", pancakeIncreaseLiquidityV3.address)
 
-  //    const pancakeCollectV3 = await redeploy('PancakeCollectV3', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_COLLECT_V3_ADDRESS", pancakeCollectV3.address)
+  const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
+  writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
 
-  // const pancakeSwapV3 = await redeploy('PancakeSwapV3', process.env.DFS_REGISTRY_ADDRESS);
-  // writeToEnvFile("PANCAKE_SWAP_V3_ADDRESS", pancakeSwapV3.address)
+  //  const pancakeCollectV3 = await redeploy('PancakeCollectV3', process.env.DFS_REGISTRY_ADDRESS);
+  //  writeToEnvFile("PANCAKE_COLLECT_V3_ADDRESS", pancakeCollectV3.address)
 
-  //    const pancakeRemoveLiquidityV3 = await redeploy('PancakeRemoveLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V3_ADDRESS", pancakeRemoveLiquidityV3.address)
+  //  const pancakeRemoveLiquidityV3 = await redeploy('PancakeRemoveLiquidityV3', process.env.DFS_REGISTRY_ADDRESS);
+  //  writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V3_ADDRESS", pancakeRemoveLiquidityV3.address)
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||

@@ -9,5 +9,4 @@ import "./MainnetTravaStakingAddresses.sol";
 
 /// @title Utility functions and data used in trava actions
 contract TravaStakingHelper is MainnetTravaStakingAddresses {
-    IStakedTrava stakedToken = IStakedTrava(STAKED_TRAVA_TOKEN_ADDRESS);
 }

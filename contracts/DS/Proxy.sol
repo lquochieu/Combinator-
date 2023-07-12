@@ -20,28 +20,26 @@ pragma solidity 0.8.4;
 
 import "./Auth.sol";
 import "./DSNote.sol";
-import "hardhat/console.sol";
+
 // DSProxy
 // Allows code execution using a persistant identity This can be very
 // useful to execute a sequence of atomic actions. Since the owner of
 // the proxy can be changed, this allows for dynamic ownership models
 // i.e. a multisig
 contract DSProxy is DSAuth, DSNote {
-    DSProxyCache public cache;  // global cache for contracts
+    DSProxyCache public cache; // global cache for contracts
 
-    constructor(address _cacheAddr)  {
+    constructor(address _cacheAddr) {
         setCache(_cacheAddr);
     }
 
-    receive() external payable {
-    }
+    receive() external payable {}
 
     // use the proxy to execute calldata _data on contract _code
-    function executeBycode(bytes memory _code, bytes memory _data)
-        public
-        payable
-        returns (address target, bytes memory response)
-    {
+    function executeBycode(
+        bytes memory _code,
+        bytes memory _data
+    ) public payable returns (address target, bytes memory response) {
         target = cache.read(_code);
         if (target == address(0)) {
             // deploy contract & store its address in cache
@@ -51,22 +49,29 @@ contract DSProxy is DSAuth, DSNote {
         response = execute(target, _data);
     }
 
-    function execute(address _target, bytes memory _data)
-        public
-        auth
-        note
-        payable
-        returns (bytes memory response)
-    {
+    function execute(
+        address _target,
+        bytes memory _data
+    ) public payable auth note returns (bytes memory response) {
         require(_target != address(0), "ds-proxy-target-address-required");
-        
+
         // call contract in current context
         assembly {
-            let succeeded := delegatecall(sub(gas(), 5000), _target, add(_data, 0x20), mload(_data), 0, 0)
+            let succeeded := delegatecall(
+                sub(gas(), 5000),
+                _target,
+                add(_data, 0x20),
+                mload(_data),
+                0,
+                0
+            )
             let size := returndatasize()
 
             response := mload(0x40)
-            mstore(0x40, add(response, and(add(add(size, 0x20), 0x1f), not(0x1f))))
+            mstore(
+                0x40,
+                add(response, and(add(add(size, 0x20), 0x1f), not(0x1f)))
+            )
             mstore(response, size)
             returndatacopy(add(response, 0x20), 0, size)
 
@@ -79,14 +84,9 @@ contract DSProxy is DSAuth, DSNote {
     }
 
     //set new cache
-    function setCache(address _cacheAddr)
-        public
-        auth
-        note
-        returns (bool)
-    {
+    function setCache(address _cacheAddr) public auth note returns (bool) {
         require(_cacheAddr != address(0), "ds-proxy-cache-address-required");
-        cache = DSProxyCache(_cacheAddr);  // overwrite cache
+        cache = DSProxyCache(_cacheAddr); // overwrite cache
         return true;
     }
 }
@@ -95,12 +95,17 @@ contract DSProxy is DSAuth, DSNote {
 // This factory deploys new proxy instances through build()
 // Deployed proxy addresses are logged
 contract DSProxyFactory {
-    event Created(address indexed sender, address indexed owner, address proxy, address cache);
-    mapping(address=>bool) public isProxy;
+    event Created(
+        address indexed sender,
+        address indexed owner,
+        address proxy,
+        address cache
+    );
+    mapping(address => bool) public isProxy;
     DSProxyCache public cache;
 
     // for testing . When real project must be removed
-    mapping(address=> address[]) public listProxy;
+    mapping(address => address[]) public listProxy;
 
     constructor() {
         cache = new DSProxyCache();
@@ -114,7 +119,9 @@ contract DSProxyFactory {
 
     // deploys a new proxy instance
     // sets custom owner of proxy
-    function buildByAddress(address owner)public returns (address payable proxy) {
+    function buildByAddress(
+        address owner
+    ) public returns (address payable proxy) {
         proxy = payable(address(new DSProxy(address(cache))));
         emit Created(msg.sender, owner, address(proxy), address(cache));
         DSProxy(proxy).setOwner(owner);
@@ -123,7 +130,6 @@ contract DSProxyFactory {
         // for testing . When real project must be removed
         listProxy[owner].push(address(proxy));
     }
-
 }
 
 // DSProxyCache
@@ -176,7 +182,10 @@ contract DSProxyRegistry {
     // deploys a new proxy instance
     // sets custom owner of proxy
     function build(address owner) public returns (address payable proxy) {
-      require(address(proxies[owner]) == address(0) || proxies[owner].owner() != owner);// Not allow new proxy if the user already has one and remains being the owner
+        require(
+            address(proxies[owner]) == address(0) ||
+                proxies[owner].owner() != owner
+        ); // Not allow new proxy if the user already has one and remains being the owner
         proxy = factory.buildByAddress(owner);
         proxies[owner] = DSProxy(proxy);
     }

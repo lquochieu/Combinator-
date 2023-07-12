@@ -127,6 +127,17 @@ module.exports = {
         },
       },
     ],
+    outputSelection: {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "metadata", // <-- add this
+        
+        ]
+      }
+    }
   },
   defaultNetwork: "bscTestnet",
   networks: {

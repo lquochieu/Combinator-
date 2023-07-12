@@ -3,7 +3,6 @@
 pragma solidity 0.8.4;
 
 import "../auth/AdminAuth.sol";
-import "hardhat/console.sol";
 
 /// @title Stores all the important DFS addresses and can be changed (timelock)
 contract DFSRegistry is AdminAuth {

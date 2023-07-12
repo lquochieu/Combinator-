@@ -7,6 +7,4 @@ import "../../../../interfaces/trava/nft/INFTCore.sol";
 
 /// @title Utility functions and data used in travaNFT actions
 contract TravaNFTHelper is MainnetTravaNFTAddresses {
-    IMarketplace marketplace = IMarketplace(NFT_MARKETPLACE);
-    INFTCore travaNFT = INFTCore(NFT_CORE);
 }

@@ -185,37 +185,37 @@ contract PancakeCreatePoolV3 is ActionBase, PancakeV3Helper {
     function _pancakeCreatePosition(
         Params memory _pancakeData
     ) internal returns (uint256 tokenId, bytes memory logData) {
-        // fetch tokens from address;
-        uint256 amount0Pulled = _pancakeData.token0.pullTokensIfNeeded(
-            _pancakeData.from,
-            _pancakeData.amount0Desired
-        );
-        uint256 amount1Pulled = _pancakeData.token1.pullTokensIfNeeded(
-            _pancakeData.from,
-            _pancakeData.amount1Desired
-        );
+        // // fetch tokens from address;
+        // uint256 amount0Pulled = _pancakeData.token0.pullTokensIfNeeded(
+        //     _pancakeData.from,
+        //     _pancakeData.amount0Desired
+        // );
+        // uint256 amount1Pulled = _pancakeData.token1.pullTokensIfNeeded(
+        //     _pancakeData.from,
+        //     _pancakeData.amount1Desired
+        // );
 
         // approve manager so it can pull tokens
-        _pancakeData.token0.approveToken(address(manager), amount0Pulled);
-        _pancakeData.token1.approveToken(address(manager), amount1Pulled);
+        _pancakeData.token0.approveToken(address(manager),  _pancakeData.amount0Desired);
+        _pancakeData.token1.approveToken(address(manager), _pancakeData.amount1Desired);
 
-        _pancakeData.amount0Desired = amount0Pulled;
-        _pancakeData.amount1Desired = amount1Pulled;
+        // _pancakeData.amount0Desired = amount0Pulled;
+        // _pancakeData.amount1Desired = amount1Pulled;
 
         uint128 liquidity;
         uint256 amount0;
         uint256 amount1;
         (tokenId, liquidity, amount0, amount1) = _pancakeMint(_pancakeData);
 
-        //send leftovers
-        _pancakeData.token0.withdrawTokens(
-            _pancakeData.from,
-            _pancakeData.amount0Desired - amount0
-        );
-        _pancakeData.token1.withdrawTokens(
-            _pancakeData.from,
-            _pancakeData.amount1Desired - amount1
-        );
+        // //send leftovers
+        // _pancakeData.token0.withdrawTokens(
+        //     _pancakeData.from,
+        //     _pancakeData.amount0Desired - amount0
+        // );
+        // _pancakeData.token1.withdrawTokens(
+        //     _pancakeData.from,
+        //     _pancakeData.amount1Desired - amount1
+        // );
 
         logData = abi.encode(
             _pancakeData,

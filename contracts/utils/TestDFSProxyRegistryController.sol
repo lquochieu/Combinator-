@@ -8,8 +8,6 @@ import "../DS/Proxy.sol";
 import "./helpers/TestUtilHelper.sol";
 import "../auth/TestAdminAuth.sol";
 
-import "hardhat/console.sol";
-
 /// @title User facing contract to manage new proxies (is owner of DFSProxyRegistry)
 contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
     /// @dev List of prebuilt proxies the users can claim to save gas
@@ -35,7 +33,6 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
     /// @dev Still need to .setOwner() in DSProxy first
     /// @dev msg.sender == DSProxy which calls this method
     function changeOwnerInDFSRegistry(address _newOwner) public {
-       
         DFSProxyRegistry(DFS_PROXY_REGISTRY_ADDR).changeMcdOwner(
             _newOwner,
             msg.sender
@@ -46,10 +43,10 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
 
     /// @notice Adds proxies to pool for users to later claim and save on gas
     function addToPool(uint256 _numNewProxies) public {
-
         for (uint256 i = 0; i < _numNewProxies; ++i) {
-            DSProxy newProxy =DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
-                .build());
+            DSProxy newProxy = DSProxy(
+                DSProxyFactory(PROXY_FACTORY_ADDR).build()
+            );
             proxyPool.push(address(newProxy));
         }
     }
@@ -64,8 +61,9 @@ contract TestDFSProxyRegistryController is TestAdminAuth, TestUtilHelper {
 
             return newProxy;
         } else {
-            DSProxy newProxy = DSProxy(DSProxyFactory(PROXY_FACTORY_ADDR)
-                .buildByAddress(_user));
+            DSProxy newProxy = DSProxy(
+                DSProxyFactory(PROXY_FACTORY_ADDR).buildByAddress(_user)
+            );
             return address(newProxy);
         }
     }

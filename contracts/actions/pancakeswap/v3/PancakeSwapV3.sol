@@ -32,8 +32,6 @@ contract PancakeSwapV3 is ActionBase, PancakeV3Helper {
     ) public payable virtual override returns (bytes32) {
         Params memory pancakeData = parseInputs(_callData);
 
-        uint256 t = 0;
-
         pancakeData.tokenIn = _parseParamAddr(
             pancakeData.tokenIn,
             _paramMapping[0],
@@ -118,16 +116,16 @@ contract PancakeSwapV3 is ActionBase, PancakeV3Helper {
     function _pancakeSwap(
         Params memory _pancakeData
     ) internal returns (uint256 amount, bytes memory logData) {
-        // fetch tokens from address
-        uint amountPulled = _pancakeData.tokenIn.pullTokensIfNeeded(
-            _pancakeData.from,
-            _pancakeData.amountIn
-        );
+        // // fetch tokens from address
+        // uint amountPulled = _pancakeData.tokenIn.pullTokensIfNeeded(
+        //     _pancakeData.from,
+        //     _pancakeData.amountIn
+        // );
 
         // approve positionManager so it can pull tokens
-        _pancakeData.tokenIn.approveToken(address(smartRouter), amountPulled);
+        _pancakeData.tokenIn.approveToken(address(smartRouter), _pancakeData.amountIn);
 
-        _pancakeData.amountIn = amountPulled;
+        // _pancakeData.amountIn = amountPulled;
 
         IV3SwapRouter.ExactInputSingleParams memory params = IV3SwapRouter
             .ExactInputSingleParams({
