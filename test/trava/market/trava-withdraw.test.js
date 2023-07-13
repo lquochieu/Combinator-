@@ -2,8 +2,8 @@ const hre = require("hardhat");
 const abiCoder = new hre.ethers.utils.AbiCoder();
 require("dotenv").config();
 
-const { Action } = require("../teststrategy/Action");
-const { getProxy } = require("../utils");
+const { Action } = require("../../teststrategy/Action");
+const { getProxy } = require("../../utils");
 
 describe("Trava-Withdraw", function () {
   this.timeout(150000);
