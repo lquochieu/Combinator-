@@ -54,7 +54,7 @@ describe("Test Pancakeswap", async function () {
     // console.log("Address ERC20Mock token A::", tokenA.address);
     // console.log("Balance of Owner::", await tokenA.balanceOf(ownerAcc.address));
     tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(
-      process.env.TOKEN_B_TEST2
+      process.env.TOKEN_CC1
     );
     console.log(
       "Balance token A of Owner::",
@@ -249,7 +249,7 @@ describe("Test Pancakeswap", async function () {
     const from = accA.address;
     const fee = 2500;
     const sqrtPriceLimitX96 = bignumber;
-    const tokenID = "4210";
+    const tokenID = "4208";
 
     const sendTokenAAction = new Action(
       "SendTokenA",

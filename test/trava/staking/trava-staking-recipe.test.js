@@ -56,7 +56,7 @@ describe("Test Pancakeswap", async function () {
     // console.log("Address ERC20Mock token A::", tokenA.address);
     // console.log("Balance of Owner::", await tokenA.balanceOf(ownerAcc.address));
     tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(
-      process.env.TOKEN_B_TEST2
+      process.env.TOKEN_CC2
     );
     console.log(
       "Balance token A of Owner::",
@@ -118,15 +118,15 @@ describe("Test Pancakeswap", async function () {
     // await addLiquidity(
     //   ownerAcc,
     //   proxy,
+    //   process.env.TOKEN_CC2,
     //   process.env.TRAVA_TOKEN_IN_STAKING,
-    //   process.env.TOKEN_B_TEST2,
     //   "2500",
     //   "-28150",
     //   "-26050",
-    //   "700000000000000000000",
-    //   "299999999999999999999",
+    //   "300000000000000000000",
+    //   "200000000000000000000",
     //   "0",
-    //   bignumber,
+    //   "0",
     //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43",
     //   "2688452425",
     //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43"
@@ -142,15 +142,15 @@ describe("Test Pancakeswap", async function () {
     // await createPool(
     //   ownerAcc,
     //   proxy,
+    //   process.env.TOKEN_CC2,
     //   process.env.TRAVA_TOKEN_IN_STAKING,
-    //   process.env.TOKEN_B_TEST2,
     //   "2500",
     //   "-28150",
     //   "-26050",
     //   "300000000000000000000",
     //   "200000000000000000000",
     //   "0",
-    //   bignumber,
+    //   "0",
     //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43",
     //   "2688452425",
     //   "0x595622cbd0fc4727df476a1172ada30a9ddf8f43",
@@ -241,7 +241,6 @@ describe("Test Pancakeswap", async function () {
     const from = accA.address;
     const fee = 2500;
     const sqrtPriceLimitX96 = 0;
-
     const swapAction = new Action(
       "PancakeSwapV3",
       process.env.PANCAKE_SWAP_V3_ADDRESS,
@@ -266,26 +265,20 @@ describe("Test Pancakeswap", async function () {
         from,
       ]
     );
-
     const stakingAction = new Action(
       "TravaStaking",
       process.env.TRAVA_STAKING_STAKE_ADDRESS,
       ["address", "address", "uint256"],
       [travaStakeTokenAddress, proxy.address, ethers.utils.parseEther("5")]
     );
-
     const callDataSwap = swapAction.encodeForRecipe()[0];
     const callDataStaking = stakingAction.encodeForRecipe()[0];
-
     actionsCallData.push(callDataSwap);
     actionsCallData.push(callDataStaking);
-
     const paramMapping = [
       [128, 129, 130, 131, 132, 133, 134, 135],
-
       [136, 137, 138],
     ];
-
     const subdataSwapTokenIn = abiCoder.encode(["address"], [tokenIn]);
     const subdataSwapTokenOut = abiCoder.encode(["address"], [tokenOut]);
     const subdataSwapAmountIn = abiCoder.encode(["uint256"], [amountIn]);
@@ -297,7 +290,6 @@ describe("Test Pancakeswap", async function () {
       ["uint160"],
       [sqrtPriceLimitX96]
     );
-
     const subdataStakeTokenAddress = abiCoder.encode(
       ["address"],
       [travaStakeTokenAddress]
@@ -310,12 +302,10 @@ describe("Test Pancakeswap", async function () {
       ["uint256"],
       [ethers.utils.parseEther("5")]
     );
-
     actionIds = [
       keccak256("PancakeSwapV3").substr(0, 10),
       keccak256("TravaStakingStake").substr(0, 10),
     ];
-
     subData = [
       subdataSwapTokenIn,
       subdataSwapTokenOut,
@@ -329,7 +319,6 @@ describe("Test Pancakeswap", async function () {
       subdataStakeOnBehalfOf,
       subdataStakeAmount,
     ];
-
     const RecipeExecutorContract = await hre.ethers.getContractAt(
       "RecipeExecutor",
       process.env.RECIPE_EXECUTOR_ADDRESS
