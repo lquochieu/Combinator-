@@ -4,10 +4,11 @@ pragma solidity 0.8.4;
 import "../../ActionBase.sol";
 import "./helpers/TravaNFTHelper.sol";
 
-contract TravaNFTBuy is ActionBase, TravaNFTHelper {
+contract TravaNFTCreateSale is ActionBase, TravaNFTHelper {
 
     struct Params {
         uint256 tokenId;
+        uint256 price;
         address from;
     }
 
@@ -26,18 +27,25 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
             _subData,
             _returnValues
         );
-        params.from = _parseParamAddr(
-            params.from,
+        params.price = _parseParamUint(
+            params.price,
             _paramMapping[1],
             _subData,
             _returnValues
         );
+        params.from = _parseParamAddr(
+            params.from,
+            _paramMapping[2],
+            _subData,
+            _returnValues
+        );
 
-        (uint256 tokenId, bytes memory logData) = _makeOrder(
+        (uint256 tokenId, bytes memory logData) = _createSale(
             params.tokenId,
+            params.price,
             params.from
         );
-        emit ActionEvent("TravaNFTBuy", logData);
+        emit ActionEvent("TravaNFTCreateSale", logData);
         return bytes32(tokenId);
     }
 
@@ -46,8 +54,12 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         bytes memory _callData
     ) public payable override {
         Params memory params = parseInputs(_callData);
-        (, bytes memory logData) = _makeOrder(params.tokenId, params.from);
-        logger.logActionDirectEvent("TravaNFTBuy", logData);
+        (, bytes memory logData) = _createSale(
+            params.tokenId,
+            params.price,
+            params.from
+        );
+        logger.logActionDirectEvent("TravaNFTCreateSale", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -57,23 +69,24 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    function _makeOrder(
+    function _createSale(
         uint256 _tokenId,
+        uint256 _price,
         address _from
     ) internal returns (uint256, bytes memory) {
-        if(_from == address(0)) {
-            _from == address(this);
+        if(INFTCore(NFT_CORE).ownerOf(_tokenId) != address(this)) {
+            require(
+                INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+                "Owner and smart wallet does not possess token"
+            );
+
+            INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
         }
         
-        require(
-            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller != _from,
-            "Seller  can't execute action to buy own NFT"
-        );
-        IMarketplace(NFT_MARKETPLACE).makeOrder(_tokenId);
+        IMarketplace(NFT_MARKETPLACE).createSale(_tokenId, _price);
 
-        INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
 
-        bytes memory logData = abi.encode(_tokenId, _from);
+        bytes memory logData = abi.encode(_tokenId, _price, _from);
         return (_tokenId, logData);
     }
 

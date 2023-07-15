@@ -4,11 +4,12 @@ pragma solidity 0.8.4;
 import "../../ActionBase.sol";
 import "./helpers/TravaNFTHelper.sol";
 
-contract TravaNFTBuy is ActionBase, TravaNFTHelper {
+contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
 
     struct Params {
-        uint256 tokenId;
         address from;
+        address to;
+        uint256 tokenId;
     }
 
     /// @inheritdoc ActionBase
@@ -20,24 +21,31 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
     ) public payable virtual override returns (bytes32) {
         Params memory params = parseInputs(_callData);
 
-        params.tokenId = _parseParamUint(
-            params.tokenId,
+        params.from = _parseParamAddr(
+            params.from,
             _paramMapping[0],
             _subData,
             _returnValues
         );
-        params.from = _parseParamAddr(
-            params.from,
+        params.to = _parseParamAddr(
+            params.to,
             _paramMapping[1],
             _subData,
             _returnValues
         );
-
-        (uint256 tokenId, bytes memory logData) = _makeOrder(
+        params.tokenId = _parseParamUint(
             params.tokenId,
-            params.from
+            _paramMapping[2],
+            _subData,
+            _returnValues
         );
-        emit ActionEvent("TravaNFTBuy", logData);
+
+        (uint256 tokenId, bytes memory logData) = _transfer(
+            params.from,
+            params.to,
+            params.tokenId
+        );
+        emit ActionEvent("TravaNFTTransfer", logData);
         return bytes32(tokenId);
     }
 
@@ -46,8 +54,12 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         bytes memory _callData
     ) public payable override {
         Params memory params = parseInputs(_callData);
-        (, bytes memory logData) = _makeOrder(params.tokenId, params.from);
-        logger.logActionDirectEvent("TravaNFTBuy", logData);
+        (, bytes memory logData) = _transfer(
+            params.from,
+            params.to,
+            params.tokenId
+        );
+        logger.logActionDirectEvent("TravaNFTTransfer", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -57,23 +69,19 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    function _makeOrder(
-        uint256 _tokenId,
-        address _from
+    function _transfer(
+        address _from,
+        address _to,
+        uint256 _tokenId
     ) internal returns (uint256, bytes memory) {
-        if(_from == address(0)) {
-            _from == address(this);
-        }
-        
         require(
-            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller != _from,
-            "Seller  can't execute action to buy own NFT"
+            INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+            "Owner does not possess token"
         );
-        IMarketplace(NFT_MARKETPLACE).makeOrder(_tokenId);
 
-        INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
+        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
 
-        bytes memory logData = abi.encode(_tokenId, _from);
+        bytes memory logData = abi.encode(_from, _to, _tokenId);
         return (_tokenId, logData);
     }
 

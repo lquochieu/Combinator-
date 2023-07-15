@@ -7,6 +7,8 @@ interface IMarketplace {
         uint256 price;
     }
 
+    function createSale(uint256 _tokenId, uint256 _price) external;
+
     function makeOrder(uint256 _tokenId) external;
 
     function cancelSale(uint256 _tokenId) external;
