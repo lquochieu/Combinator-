@@ -236,175 +236,129 @@ describe("Test Pancakeswap", async function () {
     // console.log("tx::", tx);
   });
   it("Test create sale nft ", async () => {
-    const tokenID = "4330";
+    // const tokenID = "4330";
+    // const createSaleAction = new Action(
+    //   "NFT Transfer",
+    //   process.env.TRAVA_NFT_CREATE_SALE_ADDRESS,
+    //   ["uint256", "uint256", "address"],
+    //   [tokenID, ethers.utils.parseEther("10"), ownerAcc.address]
+    // );
+    // const callDataCreateSale = createSaleAction.encodeForDsProxyCall()[1];
+    // const NFTCore = await hre.ethers.getContractAt(
+    //   "INFTCore",
+    //   process.env.TRAVA_NFT_CORE
+    // );
+    // await NFTCore.approve(proxy.address, tokenID);
+    // const tx = await proxy.execute(
+    //   process.env.TRAVA_NFT_CREATE_SALE_ADDRESS,
+    //   callDataCreateSale,
+    //   { gasLimit: 1e7 }
+    // );
+    // console.log("tx::", tx);
+  });
+  it("Test swap to trava and buy nft", async () => {
+    let triggerCallData = [];
+    let actionsCallData = [];
+    let subData = [];
+    let actionIds = [];
+
+    const tokenID = "4256";
+
+    const makeOrderAction = new Action(
+      "MakeOrder",
+      process.env.TRAVA_NFT_BUY_ADDRESS,
+      ["uint256", "address"],
+      [tokenID, accA.address]
+    );
+
     const createSaleAction = new Action(
       "NFT Transfer",
       process.env.TRAVA_NFT_CREATE_SALE_ADDRESS,
       ["uint256", "uint256", "address"],
-      [tokenID, ethers.utils.parseEther("10"), ownerAcc.address]
+      [tokenID, ethers.utils.parseEther("10"), accA.address]
     );
 
-    const callDataCreateSale = createSaleAction.encodeForDsProxyCall()[1];
+    const callDataMakeOrder = makeOrderAction.encodeForRecipe()[0];
+    const callDataCreateSale = createSaleAction.encodeForRecipe()[0];
+
+    actionsCallData.push(callDataMakeOrder);
+    actionsCallData.push(callDataCreateSale);
+
+    const paramMapping = [
+      [128, 129],
+      [130, 131, 132],
+    ];
+
+    const subdataMakeOrderTokenID = abiCoder.encode(["uint256"], [tokenID]);
+    const subdataMakeOrderRecipient = abiCoder.encode(
+      ["address"],
+      [accA.address]
+    );
+
+    const subdataCreateSaleTokenID = abiCoder.encode(["uint256"], [tokenID]);
+    const subdataCreateSaleAmount = abiCoder.encode(
+      ["uint256"],
+      [ethers.utils.parseEther("10")]
+    );
+    const subdataCreateSaleFrom = abiCoder.encode(["address"], [accA.address]);
+
+    actionIds = [
+      keccak256("TravaNFTBuy").substr(0, 10),
+      keccak256("TravaNFTCreateSale").substr(0, 10),
+    ];
+
+    subData = [
+      subdataMakeOrderTokenID,
+      subdataMakeOrderRecipient,
+      subdataCreateSaleTokenID,
+      subdataCreateSaleAmount,
+      subdataCreateSaleFrom,
+    ];
+
+    await trava
+      .connect(accA)
+      .approve(proxyA.address, ethers.utils.parseEther("50"));
 
     const NFTCore = await hre.ethers.getContractAt(
       "INFTCore",
       process.env.TRAVA_NFT_CORE
     );
 
-    await NFTCore.approve(proxy.address, tokenID);
+    // not have approve
+    await NFTCore.connect(accA).setApprovalForAll(proxyA.address, true);
 
-    const tx = await proxy.execute(
-      process.env.TRAVA_NFT_CREATE_SALE_ADDRESS,
-      callDataCreateSale,
-      { gasLimit: 1e7 }
+    console.log(
+      "Balance token A of proxyA::",
+      ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
     );
-
+    const RecipeExecutorContract = await hre.ethers.getContractAt(
+      "RecipeExecutor",
+      process.env.RECIPE_EXECUTOR_ADDRESS
+    );
+    const calldata = RecipeExecutorContract.interface.encodeFunctionData(
+      "executeRecipe",
+      [
+        {
+          name: "TravaCreateSellRecipe",
+          callData: actionsCallData,
+          subData: subData,
+          actionIds: actionIds,
+          paramMapping: paramMapping,
+        },
+      ]
+    );
+    // console.log("calldata::", calldata);
+    const tx = await proxyA
+      .connect(accA)
+      .execute(process.env.RECIPE_EXECUTOR_ADDRESS, calldata, {
+        gasLimit: 1e7,
+      });
+    await tx.wait();
     console.log("tx::", tx);
-  });
-  it("Test swap to trava and buy nft", async () => {
-    // let triggerCallData = [];
-    // let actionsCallData = [];
-    // let subData = [];
-    // let actionIds = [];
-    // const tokenIn = tokenA.address;
-    // const tokenOut = trava.address;
-    // const recipient = proxyA.address;
-    // const amountIn = ethers.utils.parseEther("5");
-    // const amountOutMinimum = 0;
-    // const from = accA.address;
-    // const fee = 2500;
-    // const sqrtPriceLimitX96 = bignumber;
-    // const tokenID = "4208";
-    // const sendTokenAAction = new Action(
-    //   "SendTokenA",
-    //   process.env.SEND_TOKEN_ADDRESS,
-    //   ["address", "address", "uint256"],
-    //   [tokenA.address, proxyA.address, ethers.utils.parseEther("5")]
-    // );
-    // const swapAction = new Action(
-    //   "PancakeSwapV3",
-    //   process.env.PANCAKE_SWAP_V3_ADDRESS,
-    //   [
-    //     "address",
-    //     "address",
-    //     "uint24",
-    //     "address",
-    //     "uint256",
-    //     "uint256",
-    //     "uint160",
-    //     "address",
-    //   ],
-    //   [
-    //     tokenIn,
-    //     tokenOut,
-    //     fee,
-    //     recipient,
-    //     amountIn,
-    //     amountOutMinimum,
-    //     sqrtPriceLimitX96,
-    //     from,
-    //   ]
-    // );
-    // const makeOrderAction = new Action(
-    //   "MakeOrder",
-    //   process.env.TRAVA_NFT_BUY_ADDRESS,
-    //   ["uint256", "address"],
-    //   [tokenID, accA.address]
-    // );
-    // const callDataSendTokenA = sendTokenAAction.encodeForRecipe()[0];
-    // const callDataSwap = swapAction.encodeForRecipe()[0];
-    // const callDataMakeOrder = makeOrderAction.encodeForRecipe()[0];
-    // actionsCallData.push(callDataSendTokenA);
-    // actionsCallData.push(callDataSwap);
-    // actionsCallData.push(callDataMakeOrder);
-    // const paramMapping = [
-    //   [128, 129, 130],
-    //   // [128, 129, 130, 131, 132, 133, 134, 135],
-    //   [131, 132, 133, 134, 135, 136, 137, 138],
-    //   [139, 140],
-    // ];
-    // const subdataSendTokenAAddress = abiCoder.encode(
-    //   ["address"],
-    //   [tokenA.address]
-    // );
-    // const subdataSendTokenARecipient = abiCoder.encode(
-    //   ["address"],
-    //   [proxyA.address]
-    // );
-    // const subdataSendTokenA = abiCoder.encode(
-    //   ["uint256"],
-    //   [ethers.utils.parseEther("5")]
-    // );
-    // const subdataSwapTokenIn = abiCoder.encode(["address"], [tokenIn]);
-    // const subdataSwapTokenOut = abiCoder.encode(["address"], [tokenOut]);
-    // const subdataSwapAmountIn = abiCoder.encode(["uint256"], [amountIn]);
-    // const subdataSwapAmountOutMinimum = abiCoder.encode(["uint256"], [0]);
-    // const subdataSwapFrom = abiCoder.encode(["address"], [from]);
-    // const subdataSwapFee = abiCoder.encode(["uint24"], [fee]);
-    // const subdataSwapRecipient = abiCoder.encode(["address"], [recipient]);
-    // const subdataSwapSqrtPriceLimitX96 = abiCoder.encode(["uint160"], [0]);
-    // const subdataMakeOrderTokenID = abiCoder.encode(["uint256"], [tokenID]);
-    // const subdataMakeOrderRecipient = abiCoder.encode(
-    //   ["address"],
-    //   [accA.address]
-    // );
-    // actionIds = [
-    //   keccak256("SendToken").substr(0, 10),
-    //   keccak256("PancakeSwapV3").substr(0, 10),
-    //   keccak256("TravaNFTBuy").substr(0, 10),
-    // ];
-    // subData = [
-    //   subdataSendTokenAAddress,
-    //   subdataSendTokenARecipient,
-    //   subdataSendTokenA,
-    //   subdataSwapTokenIn,
-    //   subdataSwapTokenOut,
-    //   subdataSwapFee,
-    //   subdataSwapRecipient,
-    //   subdataSwapAmountIn,
-    //   subdataSwapAmountOutMinimum,
-    //   subdataSwapSqrtPriceLimitX96,
-    //   subdataSwapFrom,
-    //   subdataMakeOrderTokenID,
-    //   subdataMakeOrderRecipient,
-    // ];
-    // // send 50 token A to proxyA
-    // // await tokenA
-    // //   .connect(accA)
-    // //   .transfer(proxyA.address, ethers.utils.parseEther("50"));
-    // // check amount of token A of proxyA
-    // console.log(
-    //   "Balance token A of proxyA::",
-    //   ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
-    // );
-    // const RecipeExecutorContract = await hre.ethers.getContractAt(
-    //   "RecipeExecutor",
-    //   process.env.RECIPE_EXECUTOR_ADDRESS
-    // );
-    // const calldata = RecipeExecutorContract.interface.encodeFunctionData(
-    //   "executeRecipe",
-    //   [
-    //     {
-    //       name: "TravaSwapBuyNftRecipe",
-    //       callData: actionsCallData,
-    //       subData: subData,
-    //       actionIds: actionIds,
-    //       paramMapping: paramMapping,
-    //     },
-    //   ]
-    // );
-    // // console.log("calldata::", calldata);
-    // const tx = await proxyA
-    //   .connect(accA)
-    //   .execute(process.env.RECIPE_EXECUTOR_ADDRESS, calldata, {
-    //     gasLimit: 1e7,
-    //   });
-    // await tx.wait();
-    // console.log("tx::", tx);
-    // // check amount of token A of proxyA
-    // console.log(
-    //   "Balance token A of proxyA::",
-    //   ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
-    // );
+    // check amount of token A of proxyA
+    console.log(
+      "Balance token A of proxyA::",
+      ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
+    );
   });
 });
