@@ -38,8 +38,8 @@ async function main() {
   //     const sendToken = await redeploy('SendToken', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("SEND_TOKEN_ADDRESS", sendToken.address)
 
-        const sendTokens = await redeploy('SendTokens', process.env.DFS_REGISTRY_ADDRESS);
-      writeToEnvFile("SEND_TOKENS_ADDRESS", sendTokens.address)
+  //   const sendTokens = await redeploy('SendTokens', process.env.DFS_REGISTRY_ADDRESS);
+  // writeToEnvFile("SEND_TOKENS_ADDRESS", sendTokens.address)
 
   //     const sendTokenAndUnwrap = await redeploy('SendTokenAndUnwrap', process.env.DFS_REGISTRY_ADDRESS);
   //     writeToEnvFile("SEND_TOKEN_AND_UNWRAP_ADDRESS", sendTokenAndUnwrap.address)
@@ -94,23 +94,23 @@ async function main() {
   //        ||                               Trava NFT Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
-          // const travaNFTBuy = await redeploy(
-          //   "TravaNFTBuy",
-          //   process.env.DFS_REGISTRY_ADDRESS
-          // );
-          // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
+  // const travaNFTBuy = await redeploy(
+  //   "TravaNFTBuy",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
 
-          // const travaNFTTransfer = await redeploy(
-          //   "TravaNFTTransfer",
-          //   process.env.DFS_REGISTRY_ADDRESS
-          // );
-          // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
+  // const travaNFTTransfer = await redeploy(
+  //   "TravaNFTTransfer",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
 
-          const travaNFTCreateSale = await redeploy(
-            "TravaNFTCreateSale",
-            process.env.DFS_REGISTRY_ADDRESS
-          );
-          writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
+  const travaNFTCreateSale = await redeploy(
+    "TravaNFTCreateSale",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||

@@ -74,15 +74,15 @@ contract TravaNFTCreateSale is ActionBase, TravaNFTHelper {
         uint256 _price,
         address _from
     ) internal returns (uint256, bytes memory) {
-        if(INFTCore(NFT_CORE).ownerOf(_tokenId) != address(this)) {
-            require(
-                INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
-                "Owner and smart wallet does not possess token"
-            );
+        require(
+            INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+            "Owner does not possess token"
+        );
 
-            INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
-        }
+        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
         
+        INFTCore(NFT_CORE).approve(NFT_MARKETPLACE, _tokenId);
+        // this part is not working . then need approve for sell contract
         IMarketplace(NFT_MARKETPLACE).createSale(_tokenId, _price);
 
 

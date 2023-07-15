@@ -79,7 +79,7 @@ contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
             "Owner does not possess token"
         );
 
-        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
+        INFTCore(NFT_CORE).transferFrom(_from, _to, _tokenId);
 
         bytes memory logData = abi.encode(_from, _to, _tokenId);
         return (_tokenId, logData);
