@@ -94,11 +94,23 @@ async function main() {
   //        ||                               Trava NFT Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
-  // const travaNFTBuy = await redeploy(
-  //   "TravaNFTBuy",
-  //   process.env.DFS_REGISTRY_ADDRESS
-  // );
-  // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
+          // const travaNFTBuy = await redeploy(
+          //   "TravaNFTBuy",
+          //   process.env.DFS_REGISTRY_ADDRESS
+          // );
+          // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
+
+          // const travaNFTTransfer = await redeploy(
+          //   "TravaNFTTransfer",
+          //   process.env.DFS_REGISTRY_ADDRESS
+          // );
+          // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
+
+          const travaNFTCreateSale = await redeploy(
+            "TravaNFTCreateSale",
+            process.env.DFS_REGISTRY_ADDRESS
+          );
+          writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||

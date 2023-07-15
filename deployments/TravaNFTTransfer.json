@@ -1,5 +1,5 @@
 {
-	"contractName": "TravaNFTBuy",
+	"contractName": "TravaNFTTransfer",
 	"abi": [
 		{
 			"inputs": [],
@@ -216,17 +216,22 @@
 				{
 					"components": [
 						{
-							"internalType": "uint256",
-							"name": "tokenId",
-							"type": "uint256"
-						},
-						{
 							"internalType": "address",
 							"name": "from",
 							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "to",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "tokenId",
+							"type": "uint256"
 						}
 					],
-					"internalType": "struct TravaNFTBuy.Params",
+					"internalType": "struct TravaNFTTransfer.Params",
 					"name": "params",
 					"type": "tuple"
 				}

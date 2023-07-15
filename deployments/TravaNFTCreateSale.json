@@ -1,5 +1,5 @@
 {
-	"contractName": "TravaNFTBuy",
+	"contractName": "TravaNFTCreateSale",
 	"abi": [
 		{
 			"inputs": [],
@@ -221,12 +221,17 @@
 							"type": "uint256"
 						},
 						{
+							"internalType": "uint256",
+							"name": "price",
+							"type": "uint256"
+						},
+						{
 							"internalType": "address",
 							"name": "from",
 							"type": "address"
 						}
 					],
-					"internalType": "struct TravaNFTBuy.Params",
+					"internalType": "struct TravaNFTCreateSale.Params",
 					"name": "params",
 					"type": "tuple"
 				}
