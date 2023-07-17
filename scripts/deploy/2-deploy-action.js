@@ -106,25 +106,40 @@ async function main() {
   // );
   // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
 
-  const travaNFTCreateSale = await redeploy(
-    "TravaNFTCreateSale",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
+  // const travaNFTCreateSale = await redeploy(
+  //   "TravaNFTCreateSale",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
        ||                               PancakeV2 Contract                               ||
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
    */
-  // const pancakeAddLiquidityV2 = await redeploy('PancakeAddLiquidityV2', process.env.DFS_REGISTRY_ADDRESS);
-  // writeToEnvFile("PANCAKE_ADD_LIQUIDITY_V2_ADDRESS", pancakeAddLiquidityV2.address)
+  const pancakeAddLiquidityV2 = await redeploy(
+    "PancakeAddLiquidityV2",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile(
+    "PANCAKE_ADD_LIQUIDITY_V2_ADDRESS",
+    pancakeAddLiquidityV2.address
+  );
 
-  //    const pancakeSwapV2 = await redeploy('PancakeSwapV2', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address)
+  const pancakeSwapV2 = await redeploy(
+    "PancakeSwapV2",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address);
 
-  //    const pancakeRemoveLiquidityV2 = await redeploy('PancakeRemoveLiquidityV2', process.env.DFS_REGISTRY_ADDRESS);
-  //    writeToEnvFile("PANCAKE_REMOVE_LIQUIDITY_V2_ADDRESS", pancakeRemoveLiquidityV2.address)
+  const pancakeRemoveLiquidityV2 = await redeploy(
+    "PancakeRemoveLiquidityV2",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile(
+    "PANCAKE_REMOVE_LIQUIDITY_V2_ADDRESS",
+    pancakeRemoveLiquidityV2.address
+  );
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
