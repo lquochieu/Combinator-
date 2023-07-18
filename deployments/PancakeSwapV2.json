@@ -252,11 +252,6 @@
 							"internalType": "uint256",
 							"name": "deadline",
 							"type": "uint256"
-						},
-						{
-							"internalType": "address",
-							"name": "from",
-							"type": "address"
 						}
 					],
 					"internalType": "struct PancakeSwapV2.Params",

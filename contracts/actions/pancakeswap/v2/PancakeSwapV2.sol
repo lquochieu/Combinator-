@@ -18,7 +18,6 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
         address[] path;
         address to;
         uint256 deadline;
-        address from;
     }
 
     /// @inheritdoc ActionBase
@@ -69,12 +68,7 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
             _subData,
             _returnValues
         );
-        pancakeData.from = _parseParamAddr(
-            pancakeData.from,
-            _paramMapping[t+5],
-            _subData,
-            _returnValues
-        );
+        
         (uint256[] memory amount, bytes memory logData) = _pancakeSwap(pancakeData);
         emit ActionEvent("PancakeSwapV2", logData);
         return bytes32(amount[0]);
