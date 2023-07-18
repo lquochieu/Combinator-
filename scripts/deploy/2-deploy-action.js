@@ -117,14 +117,14 @@ async function main() {
        ||                               PancakeV2 Contract                               ||
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
    */
-  const pancakeAddLiquidityV2 = await redeploy(
-    "PancakeAddLiquidityV2",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile(
-    "PANCAKE_ADD_LIQUIDITY_V2_ADDRESS",
-    pancakeAddLiquidityV2.address
-  );
+  // const pancakeAddLiquidityV2 = await redeploy(
+  //   "PancakeAddLiquidityV2",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile(
+  //   "PANCAKE_ADD_LIQUIDITY_V2_ADDRESS",
+  //   pancakeAddLiquidityV2.address
+  // );
 
   const pancakeSwapV2 = await redeploy(
     "PancakeSwapV2",
@@ -132,14 +132,14 @@ async function main() {
   );
   writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address);
 
-  const pancakeRemoveLiquidityV2 = await redeploy(
-    "PancakeRemoveLiquidityV2",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile(
-    "PANCAKE_REMOVE_LIQUIDITY_V2_ADDRESS",
-    pancakeRemoveLiquidityV2.address
-  );
+  // const pancakeRemoveLiquidityV2 = await redeploy(
+  //   "PancakeRemoveLiquidityV2",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile(
+  //   "PANCAKE_REMOVE_LIQUIDITY_V2_ADDRESS",
+  //   pancakeRemoveLiquidityV2.address
+  // );
 
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||

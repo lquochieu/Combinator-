@@ -99,16 +99,9 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
     function _pancakeSwap(
         Params memory _pancakeData
     ) internal returns (uint256[] memory amount, bytes memory logData) {
-        // fetch tokens from address
-        uint amountPulled = _pancakeData.path[0].pullTokensIfNeeded(
-            _pancakeData.from,
-            _pancakeData.amountIn
-        );
 
         // approve positionManager so it can pull tokens
-        _pancakeData.path[0].approveToken(address(pancakeRouter), amountPulled);
-
-        _pancakeData.amountIn = amountPulled;
+        _pancakeData.path[0].approveToken(address(pancakeRouter), _pancakeData.amountIn);
 
         amount = pancakeRouter.swapExactTokensForTokens(
             _pancakeData.amountIn,
