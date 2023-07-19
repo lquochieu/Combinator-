@@ -498,14 +498,14 @@ const combinator = async(owner, accA, proxy) => {
     "TravaNFTBuy",
     process.env.TRAVA_NFT_BUY_ADDRESS,
     ["uint256", "address"],
-    ["4150", owner.address] //***** Thế id của nft cần dùng vào 
+    ["4210", owner.address] //***** Thế id của nft cần dùng vào 
   );
   // Transfer cho accA
   const transferNFTAction = new Action(
     "TravaNFTTransfer",
     process.env.TRAVA_NFT_TRANSFER_ADDRESS,
     ["address", "address", "uint256"],
-    [owner.address, accA.address, "4150"] //***** Thế id của nft cần dùng vào 
+    [owner.address, accA.address, "0"] //***** Thế id của nft cần dùng vào 
   );
 
   const callDataWrapBNB = wrapBNBAction.encodeForRecipe()[0];
@@ -521,7 +521,7 @@ const combinator = async(owner, accA, proxy) => {
     [0],
     [0, 0, 0, 0, 0, 0, 0], // Chú ý mảng address cũng phải truyền parammapping theo thứ tự từng phần tử
     [0, 0],
-    [0, 0, 0]
+    [0, 0, 3]
   ];
   actionIds = [
     keccak256("WrapBnb").substr(0, 10),
