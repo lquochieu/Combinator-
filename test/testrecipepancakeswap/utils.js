@@ -505,7 +505,7 @@ const combinator = async(owner, accA, proxy) => {
     "TravaNFTTransfer",
     process.env.TRAVA_NFT_TRANSFER_ADDRESS,
     ["address", "address", "uint256"],
-    [owner.address, accA.address, "0"] //***** Thế id của nft cần dùng vào 
+    [owner.address, accA.address, "0"]
   );
 
   const callDataWrapBNB = wrapBNBAction.encodeForRecipe()[0];
