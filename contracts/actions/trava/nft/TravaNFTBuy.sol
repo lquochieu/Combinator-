@@ -3,8 +3,10 @@ pragma solidity 0.8.4;
 
 import "../../ActionBase.sol";
 import "./helpers/TravaNFTHelper.sol";
+import "../../../utils/TokenUtils.sol";
 
 contract TravaNFTBuy is ActionBase, TravaNFTHelper {
+    using TokenUtils for address;
 
     struct Params {
         uint256 tokenId;
@@ -61,14 +63,23 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         uint256 _tokenId,
         address _from
     ) internal returns (uint256, bytes memory) {
-        if(_from == address(0)) {
+        if (_from == address(0)) {
             _from == address(this);
         }
-        
+
         require(
-            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller != _from,
+            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller !=
+                _from,
             "Seller  can't execute action to buy own NFT"
         );
+
+        address travaToken = TRAVA_TOKEN;
+
+        travaToken.pullTokensIfNeeded(
+            _from,
+            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).price
+        );
+
         IMarketplace(NFT_MARKETPLACE).makeOrder(_tokenId);
 
         INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
