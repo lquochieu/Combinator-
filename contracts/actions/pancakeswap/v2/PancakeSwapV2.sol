@@ -59,19 +59,19 @@ contract PancakeSwapV2 is ActionBase,  PancakeV2Helper{
 
         pancakeData.to = _parseParamAddr(
             pancakeData.to,
-            _paramMapping[t + 3],
+            _paramMapping[t + 2],
             _subData,
             _returnValues
         );
         pancakeData.deadline = _parseParamUint(
             pancakeData.deadline,
-            _paramMapping[t + 4],
+            _paramMapping[t + 3],
             _subData,
             _returnValues
         );
         pancakeData.from = _parseParamAddr(
             pancakeData.from,
-            _paramMapping[t+5],
+            _paramMapping[t+4],
             _subData,
             _returnValues
         );
