@@ -1,6 +1,6 @@
 // Tạo 2 token -> tạo 1 pool vói 2 token -> Test action 1 là addLiquidity cả 2 token đó -> Test action 2 là increaseLiquidity 1 đồng -> Test action 3 là swap -> Test action 4 là collect lãi do 1 thằng khác đã swap ở bước trước > Test aciton 5 là removeLiquidity
 
-const { getProxy, addLiquidity, increaseLiquidity, createPool, collectLiquidity, removeLiquidity, swapExactTokenForToken, swapExactInputSingle, combinatorPancakeswap } = require("./utils");
+const { getProxy, addLiquidity, increaseLiquidity, createPool, collectLiquidity, removeLiquidity, swapExactTokenForToken, swapExactInputSingle, combinatorPancakeswap, combinator } = require("./utils");
 
 // Account Owner support 2 token
 // Account A swap
@@ -22,8 +22,9 @@ describe("Test Pancakeswap", async function() {
     // await tokenA.deployed();
     // console.log("Address ERC20Mock token A::", tokenA.address);
     // console.log("Balance of Owner::", await tokenA.balanceOf(ownerAcc.address));
-    const tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_A_TEST2);
-    console.log("Balance token A of Owner::", await tokenA.balanceOf(ownerAcc.address));
+    
+    // const tokenA = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_A_TEST2);
+    // console.log("Balance token A of Owner::", await tokenA.balanceOf(ownerAcc.address));
     
     // Mint cho Owner 1000 token B
     // const tokenBInstance = await ethers.getContractFactory('ERC20Mock');
@@ -31,8 +32,9 @@ describe("Test Pancakeswap", async function() {
     // await tokenB.deployed();
     // console.log("Address ERC20Mock token B::", tokenB.address);
     // console.log("Balance token B of Owner::", await tokenB.balanceOf(ownerAcc.address));
-    const tokenB = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_B_TEST2);
-    console.log("Balance token B of Owner::", await tokenB.balanceOf(ownerAcc.address));
+    
+    // const tokenB = (await hre.ethers.getContractFactory("ERC20Mock")).attach(process.env.TOKEN_B_TEST2);
+    // console.log("Balance token B of Owner::", await tokenB.balanceOf(ownerAcc.address));
 
     proxy = await getProxy(ownerAcc.address);
     console.log(`Proxy address:: ${proxy.address} with balance ${hre.ethers.utils.formatEther(await ethers.provider.getBalance(proxy.address))} TBNB`);
@@ -172,9 +174,14 @@ describe("Test Pancakeswap", async function() {
     // );
   });
 
-  it("Test Swap Combinator", async() => {
-    // Gom thứ tự: Owner create 2 token và cung vào pool -> Owner increase liquidity -> Owner gọi swap luôn trên pool của chính mình -> Owner remove liquidity -> Owner gọi collect pool đó
-    await combinatorPancakeswap(ownerAcc, proxy);
+  // it("Test Swap Combinator", async() => {
+  //   // Gom thứ tự: Owner create 2 token và cung vào pool -> Owner increase liquidity -> Owner gọi swap luôn trên pool của chính mình -> Owner remove liquidity -> Owner gọi collect pool đó
+  //   await combinatorPancakeswap(ownerAcc, proxy);
+  // }).timeout(100000000000);
+
+  it("Test pancake trava", async() => {
+    // Owner swap tbnb sang trava, sau đó dùng trava để buy nft rồi gửi nft đó cho accA
+    await combinator(ownerAcc, accA, proxy);
   }).timeout(100000000000);
 
 });
