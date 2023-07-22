@@ -94,17 +94,23 @@ async function main() {
   //        ||                               Trava NFT Contract                                   ||
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
+  // const travaNFTTransfer = await redeploy(
+  //   "TravaNFTTransfer",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
+  
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT  Marketplace Contract                                   ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+
   // const travaNFTBuy = await redeploy(
   //   "TravaNFTBuy",
   //   process.env.DFS_REGISTRY_ADDRESS
   // );
   // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
 
-  // const travaNFTTransfer = await redeploy(
-  //   "TravaNFTTransfer",
-  //   process.env.DFS_REGISTRY_ADDRESS
-  // );
-  // writeToEnvFile("TRAVA_NFT_TRANSFER_ADDRESS", travaNFTTransfer.address);
 
   // const travaNFTCreateSale = await redeploy(
   //   "TravaNFTCreateSale",
@@ -112,6 +118,62 @@ async function main() {
   // );
   // writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
 
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT  Manager Contrac                       ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+
+  // const travaNFTManagerMint = await redeploy(
+  //   "TravaNFTManagerMint",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_MANAGER_MINT_ADDRESS", travaNFTManagerMint.address);
+
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT farm Contract                          ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+
+  // const travaNFTVaultClaimReward = await redeploy(
+  //   "TravaNFTVaultClaimReward",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_VAULT_CLAIM_REWARD_ADDRESS", travaNFTVaultClaimReward.address);
+
+  // const travaNFTVaultRedeem = await redeploy(
+  //   "TravaNFTVaultRedeem",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_VAULT_REDEEM_ADDRESS", travaNFTVaultRedeem.address);
+
+  // const travaNFTVaultStake = await redeploy(
+  //   "TravaNFTVaultStake",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_VAULT_STAKE_ADDRESS", travaNFTVaultStake.address);
+
+    //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT Auction Contract                          ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
+
+  const travaNFTAuctionCreateAuction = await redeploy(
+    "TravaNFTAuctionCreateAuction",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_AUCTION_CREATE_AUCTION_ADDRESS", travaNFTAuctionCreateAuction.address);
+
+  const travaNFTAuctionMakeBid = await redeploy(
+    "TravaNFTAuctionMakeBid",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS", travaNFTAuctionMakeBid.address);
+
+
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //        ||                               Trava NFT  Expedition Contract                                   ||
+  //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
+  //    */
   /*
        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
        ||                               PancakeV2 Contract                               ||
@@ -126,11 +188,11 @@ async function main() {
   //   pancakeAddLiquidityV2.address
   // );
 
-  const pancakeSwapV2 = await redeploy(
-    "PancakeSwapV2",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address);
+  // const pancakeSwapV2 = await redeploy(
+  //   "PancakeSwapV2",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("PANCAKE_SWAP_V2_ADDRESS", pancakeSwapV2.address);
 
   // const pancakeRemoveLiquidityV2 = await redeploy(
   //   "PancakeRemoveLiquidityV2",

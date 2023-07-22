@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "../../ActionBase.sol";
-import "./helpers/TravaNFTHelper.sol";
-import "../../../utils/TokenUtils.sol";
+import "../../../ActionBase.sol";
+import "./helpers/TravaNFTAuctionHelper.sol";
 
-contract TravaNFTBuy is ActionBase, TravaNFTHelper {
-    using TokenUtils for address;
-
+contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
     struct Params {
         uint256 tokenId;
+        uint256 startingBid;
+        uint256 duration;
         address from;
     }
 
@@ -28,18 +27,34 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
             _subData,
             _returnValues
         );
-        params.from = _parseParamAddr(
-            params.from,
+        params.startingBid = _parseParamUint(
+            params.startingBid,
             _paramMapping[1],
             _subData,
             _returnValues
         );
 
-        (uint256 tokenId, bytes memory logData) = _makeOrder(
+        params.duration = _parseParamUint(
+            params.duration,
+            _paramMapping[2],
+            _subData,
+            _returnValues
+        );
+
+        params.from = _parseParamAddr(
+            params.from,
+            _paramMapping[2],
+            _subData,
+            _returnValues
+        );
+
+        (uint256 tokenId, bytes memory logData) = _createAuction(
             params.tokenId,
+            params.startingBid,
+            params.duration,
             params.from
         );
-        emit ActionEvent("TravaNFTBuy", logData);
+        emit ActionEvent("TravaNFTAuctionCreateAuction", logData);
         return bytes32(tokenId);
     }
 
@@ -48,8 +63,13 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         bytes memory _callData
     ) public payable override {
         Params memory params = parseInputs(_callData);
-        (, bytes memory logData) = _makeOrder(params.tokenId, params.from);
-        logger.logActionDirectEvent("TravaNFTBuy", logData);
+        (, bytes memory logData) = _createAuction(
+            params.tokenId,
+            params.startingBid,
+            params.duration,
+            params.from
+        );
+        logger.logActionDirectEvent("TravaNFTAuctionCreateAuction", logData);
     }
 
     /// @inheritdoc ActionBase
@@ -59,32 +79,29 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
 
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
-    function _makeOrder(
+    function _createAuction(
         uint256 _tokenId,
+        uint256 _startingBid,
+        uint256 _duration,
         address _from
     ) internal returns (uint256, bytes memory) {
         if (_from == address(0)) {
-            _from == address(this);
+            _from = address(this);
         }
 
         require(
-            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).nftSeller !=
-                _from,
-            "Seller  can't execute action to buy own NFT"
+            INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+            "Owner does not possess token"
         );
 
-        address travaToken = TRAVA_TOKEN;
+        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
 
-        travaToken.pullTokensIfNeeded(
-            _from,
-            IMarketplace(NFT_MARKETPLACE).getTokenOrder(_tokenId).price
-        );
+        INFTCore(NFT_CORE).approve(NFT_AUCTION, _tokenId);
+        // this part is not working . then need approve for sell contract
+        INFTAuction(NFT_AUCTION).createAuction(_tokenId, _startingBid, _duration);
+       
+        bytes memory logData = abi.encode(_tokenId, _startingBid, _duration, _from);
 
-        IMarketplace(NFT_MARKETPLACE).makeOrder(_tokenId);
-
-        INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
-
-        bytes memory logData = abi.encode(_tokenId, _from);
         return (_tokenId, logData);
     }
 
