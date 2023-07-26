@@ -39,7 +39,7 @@ contract TravaGovernanceCreateLock is ActionBase, TravaGovernanceHelper {
             _subData,
             _returnValues
         );
-        
+
         params.lock_duration = _parseParamUint(
             params.lock_duration,
             _paramMapping[2],
@@ -91,19 +91,17 @@ contract TravaGovernanceCreateLock is ActionBase, TravaGovernanceHelper {
         uint lock_duration,
         address to
     ) internal returns (uint, bytes memory) {
-        uint tokenId = IVotingEscrow(token).create_lock_for(
-            token, 
-            value,
-            lock_duration,
-            to
-        );
-
-        bytes memory logData = abi.encode(
+        if (value == type(uint256).max) {
+            value = token.getBalance(to);
+        }
+        uint tokenId = IVotingEscrow(VE_TRAVA).create_lock_for(
             token,
             value,
             lock_duration,
             to
         );
+
+        bytes memory logData = abi.encode(token, value, lock_duration, to);
         return (tokenId, logData);
     }
 
@@ -112,5 +110,4 @@ contract TravaGovernanceCreateLock is ActionBase, TravaGovernanceHelper {
     ) public pure returns (Params memory params) {
         params = abi.decode(_callData, (Params));
     }
-
 }

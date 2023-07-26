@@ -116,6 +116,11 @@ contract PancakeSwapV3 is ActionBase, PancakeV3Helper {
     function _pancakeSwap(
         Params memory _pancakeData
     ) internal returns (uint256 amount, bytes memory logData) {
+        // if we set srcAmount to max, take the whole proxy balance
+        if (_pancakeData.amountIn == type(uint256).max) {
+            _pancakeData.amountIn = _pancakeData.tokenIn.getBalance(address(this));
+        }
+
         // // fetch tokens from address
         // uint amountPulled = _pancakeData.tokenIn.pullTokensIfNeeded(
         //     _pancakeData.from,
