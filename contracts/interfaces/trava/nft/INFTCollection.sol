@@ -7,6 +7,7 @@
 pragma solidity 0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol";
+import "./INFTCore.sol";
 
 interface INFTCollection is IERC721EnumerableUpgradeable {
   function viewCollectionRarity(uint256 collectionId) external view returns (uint8);

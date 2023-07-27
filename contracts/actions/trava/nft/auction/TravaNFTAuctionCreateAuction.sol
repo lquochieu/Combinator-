@@ -90,13 +90,13 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
         }
 
         require(
-            INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+            INFTCore(NFT_COLLECTION).ownerOf(_tokenId) == _from,
             "Owner does not possess token"
         );
 
-        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
+        INFTCore(NFT_COLLECTION).transferFrom(_from, address(this), _tokenId);
 
-        INFTCore(NFT_CORE).approve(NFT_AUCTION, _tokenId);
+        INFTCore(NFT_COLLECTION).approve(NFT_AUCTION, _tokenId);
         // this part is not working . then need approve for sell contract
         INFTAuction(NFT_AUCTION).createAuction(_tokenId, _startingBid, _duration);
        
