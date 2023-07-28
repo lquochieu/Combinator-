@@ -9,12 +9,14 @@ const abiCoder = new hre.ethers.utils.AbiCoder();
 describe("Test trava make bid", function () {
   this.timeout("1500000000000");
   it("Test trava make bid", async () => {
-    const tokenId = 53;
-    const bidPrice = hre.ethers.utils.parseEther("2000");
+    const tokenId = 84;
+    const bidPrice = hre.ethers.utils.parseEther("20000");
     //const from = process.env.PUBLIC_KEY;
     //const proxy = await getProxy(process.env.PUBLIC_KEY);
     let accA = (await hre.ethers.getSigners())[1];
     let proxyA = await getProxy(accA.address);
+
+    //Approve cho proxy A toan bo token trava
     //await approve(process.env.TRAVA_TOKEN_IN_MARKET, proxyA, accA);
     console.log(
       process.env.TRAVA_TOKEN_IN_MARKET,
