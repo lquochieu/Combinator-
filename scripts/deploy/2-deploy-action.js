@@ -105,11 +105,11 @@ async function main() {
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
 
-  // const travaNFTBuy = await redeploy(
-  //   "TravaNFTBuy",
-  //   process.env.DFS_REGISTRY_ADDRESS
-  // );
-  // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
+  const travaNFTBuy = await redeploy(
+    "TravaNFTBuy",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
 
 
   const travaNFTCreateSale = await redeploy(
