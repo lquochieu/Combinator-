@@ -36,42 +36,42 @@
 //             _returnValues
 //         );
 
-//         (uint256 tokenId, bytes memory logData) = _mint(
-//             params.to,
-//             params.option
-//         );
-//         emit ActionEvent("TravaNFTMint", logData);
-//         return bytes32(tokenId);
+//         // (uint256 tokenId, bytes memory logData) = _mint(
+//         //     params.to,
+//         //     params.option
+//         // );
+//         // emit ActionEvent("TravaNFTMint", logData);
+//         // return bytes32(tokenId);
 //     }
 
-//     /// @inheritdoc ActionBase
-//     function executeActionDirect(
-//         bytes memory _callData
-//     ) public payable override {
-//         Params memory params = parseInputs(_callData);
-//         (, bytes memory logData) = _mint(
-//             params.to,
-//             params.option
-//         );
-//         logger.logActionDirectEvent("TravaNFTMint", logData);
-//     }
+//     // /// @inheritdoc ActionBase
+//     // function executeActionDirect(
+//     //     bytes memory _callData
+//     // ) public payable override {
+//     //     Params memory params = parseInputs(_callData);
+//     //     (, bytes memory logData) = _mint(
+//     //         params.to,
+//     //         params.option
+//     //     );
+//     //     logger.logActionDirectEvent("TravaNFTMint", logData);
+//     // }
 
-//     /// @inheritdoc ActionBase
-//     function actionType() public pure virtual override returns (uint8) {
-//         return uint8(ActionType.STANDARD_ACTION);
-//     }
+//     // /// @inheritdoc ActionBase
+//     // function actionType() public pure virtual override returns (uint8) {
+//     //     return uint8(ActionType.STANDARD_ACTION);
+//     // }
 
-//     //////////////////////////// ACTION LOGIC ////////////////////////////
+//     // //////////////////////////// ACTION LOGIC ////////////////////////////
 
-//     function _mint(
-//         address _to,
-//         uint256 _option
-//     ) internal returns (uint256, bytes memory) {
+//     // function _mint(
+//     //     address _to,
+//     //     uint256 _option
+//     // ) internal returns (uint256, bytes memory) {
         
 
-//         bytes memory logData = abi.encode(_tokenId, _from);
-//         return (_tokenId, logData);
-//     }
+//     //     bytes memory logData = abi.encode(_tokenId, _from);
+//     //     return (_tokenId, logData);
+//     // }
 
 //     function parseInputs(
 //         bytes memory _callData

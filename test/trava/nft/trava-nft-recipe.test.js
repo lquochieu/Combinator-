@@ -210,7 +210,7 @@ describe("Test Pancakeswap", async function () {
     // // check balance of proxyA
     // console.log("Balance trava of accA::", await trava.balanceOf(accA.address));
     // const proxyA = await getProxy(accA.address);
-    // // const txT = await trava.transfer(
+    // // const txT = await trava.transfer(T
     // //   accA.address,
     // //   ethers.utils.parseEther("50")
     // // );
