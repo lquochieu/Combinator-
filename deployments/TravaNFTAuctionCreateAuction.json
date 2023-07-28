@@ -227,7 +227,17 @@
 						},
 						{
 							"internalType": "uint256",
-							"name": "duration",
+							"name": "cellingPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "endTime",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "method",
 							"type": "uint256"
 						},
 						{

@@ -8,7 +8,9 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
     struct Params {
         uint256 tokenId;
         uint256 startingBid;
-        uint256 duration;
+        uint256 cellingPrice;
+        uint256 endTime;
+        uint256 method;
         address from;
     }
 
@@ -34,16 +36,30 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
             _returnValues
         );
 
-        params.duration = _parseParamUint(
-            params.duration,
+        params.cellingPrice = _parseParamUint(
+            params.cellingPrice,
             _paramMapping[2],
+            _subData,
+            _returnValues
+        );
+
+        params.endTime = _parseParamUint(
+            params.endTime,
+            _paramMapping[3],
+            _subData,
+            _returnValues
+        );
+
+        params.method = _parseParamUint(
+            params.method,
+            _paramMapping[4],
             _subData,
             _returnValues
         );
 
         params.from = _parseParamAddr(
             params.from,
-            _paramMapping[2],
+            _paramMapping[5],
             _subData,
             _returnValues
         );
@@ -51,7 +67,9 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
         (uint256 tokenId, bytes memory logData) = _createAuction(
             params.tokenId,
             params.startingBid,
-            params.duration,
+            params.cellingPrice,
+            params.endTime,
+            params.method,
             params.from
         );
         emit ActionEvent("TravaNFTAuctionCreateAuction", logData);
@@ -66,7 +84,9 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
         (, bytes memory logData) = _createAuction(
             params.tokenId,
             params.startingBid,
-            params.duration,
+            params.cellingPrice,
+            params.endTime,
+            params.method,
             params.from
         );
         logger.logActionDirectEvent("TravaNFTAuctionCreateAuction", logData);
@@ -82,7 +102,9 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
     function _createAuction(
         uint256 _tokenId,
         uint256 _startingBid,
-        uint256 _duration,
+        uint256 _ceilingPrice,
+        uint256 _endTime,
+        uint256 _method,
         address _from
     ) internal returns (uint256, bytes memory) {
         if (_from == address(0)) {
@@ -98,9 +120,22 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
 
         INFTCore(NFT_COLLECTION).approve(NFT_AUCTION, _tokenId);
         // this part is not working . then need approve for sell contract
-        INFTAuction(NFT_AUCTION).createAuction(_tokenId, _startingBid, _duration);
-       
-        bytes memory logData = abi.encode(_tokenId, _startingBid, _duration, _from);
+        INFTAuctionWithProposal(NFT_AUCTION).createAuction(
+            _tokenId,
+            _startingBid,
+            _ceilingPrice,
+            _endTime,
+            _method
+        );
+
+        bytes memory logData = abi.encode(
+            _tokenId,
+            _startingBid,
+            _ceilingPrice,
+            _endTime,
+            _method,
+            _from
+        );
 
         return (_tokenId, logData);
     }

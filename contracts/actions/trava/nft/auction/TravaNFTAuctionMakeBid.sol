@@ -7,7 +7,7 @@ import "./helpers/TravaNFTAuctionHelper.sol";
 
 contract TravaNFTAuctionMakeBid is ActionBase, TravaNFTAuctionHelper {
     using TokenUtils for address;
-    
+
     struct Params {
         uint256 tokenId;
         uint256 bidPrice;
@@ -81,12 +81,17 @@ contract TravaNFTAuctionMakeBid is ActionBase, TravaNFTAuctionHelper {
             _from = address(this);
         }
 
+        // if amount is set to max, take the whole _from balance
+        if (_bidPrice == type(uint256).max) {
+            _bidPrice = PAYMENT_GOVERNOR.getBalance(_from);
+        }
+
         // pull tokens to proxy so we can supply
         PAYMENT_GOVERNOR.pullTokensIfNeeded(_from, _bidPrice);
 
         // this part is not working . then need approve for sell contract
-        INFTAuction(NFT_AUCTION).makeBid(_tokenId, _bidPrice);
-       
+        INFTAuctionWithProposal(NFT_AUCTION).makeBid(_tokenId, _bidPrice);
+
         bytes memory logData = abi.encode(_tokenId, _bidPrice, _from);
 
         return (_tokenId, logData);
