@@ -19,8 +19,7 @@ library TokenUtils {
 
 
     address public constant WBNB_ADDR = 0x910CB19698Eac48a6AB7Ccc9542B756f2Bdd67C6;
-    address public constant BNB_ADDR =
-        0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    address public constant BNB_ADDR = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
 
     function approveToken(
         address _tokenAddr,

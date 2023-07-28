@@ -479,13 +479,20 @@ const combinator = async(owner, accA, proxy) => {
   await approve(process.env.TRAVA_TOKEN_IN_MARKET, proxy.address);
   await approveForAllNFT(process.env.TRAVA_NFT_CORE, proxy.address);
 
-  // Wrap bnb sang wbnb, wbnb nằm trong smart wallet => bỏ
-  // const wrapBNBAction = new Action(
-  //   "WrapBnb", 
-  //   process.env.WRAP_BNB_ADDRESS, 
-  //   ['uint256'], 
-  //   ["10000000000000000"]
-  // )
+  // Wrap bnb sang wbnb, wbnb nằm trong smart wallet 
+  const wrapBNBAction = new Action(
+    "WrapBnb", 
+    process.env.WRAP_BNB_ADDRESS, 
+    ['uint256'], 
+    ["10000000000000000"]
+  )
+  // Send wbnb từ SW về ví mình
+  const sendTokenAction = new Action(
+    "SendToken",
+    process.env.SEND_TOKEN_ADDRESS,
+    ["address", "address", "uint256"],
+    [process.env.TOKEN_B_TEST, owner.address, "10000000000000000"]
+  );
   // swap wbnb sang trava, trava nhận được sẽ gửi vào tk owner luôn thì SM k bị dư.
   // tài khoản người dùng phải có wbnb sẵn và approve rồi mói gọi được
   const swapAction = new Action(
@@ -494,40 +501,44 @@ const combinator = async(owner, accA, proxy) => {
     ["uint256", "uint256", "address[]", "address", "uint256", "address"],
     ["10000000000000000", "0", [process.env.TOKEN_B_TEST, process.env.TRAVA_TOKEN_IN_MARKET], owner.address, "2688452425", owner.address]
   );
-  // // Buy nft, tk người dùng phải có trava và approve rồi mới gọi được
-  // const buyNFTAction = new Action(
-  //   "TravaNFTBuy",
-  //   process.env.TRAVA_NFT_BUY_ADDRESS,
-  //   ["uint256", "address", "address"],
-  //   ["4129", owner.address, proxy.address] //***** Thế id của nft cần dùng vào 
-  // );
+  // Buy nft, tk người dùng phải có trava và approve rồi mới gọi được
+  const buyNFTAction = new Action(
+    "TravaNFTBuy",
+    process.env.TRAVA_NFT_BUY_ADDRESS,
+    ["uint256", "address", "address"],
+    ["4210", owner.address, owner.address] //***** Thế id của nft cần dùng vào 
+  );
   // Transfer NFT cho accA
   const transferNFTAction = new Action(
     "TravaNFTTransfer",
     process.env.TRAVA_NFT_TRANSFER_ADDRESS,
     ["address", "address", "uint256"],
-    [owner.address, accA.address, "5435"]
+    [owner.address, accA.address, 0]
   );
 
-  // const callDataWrapBNB = wrapBNBAction.encodeForRecipe()[0];
+  const callDataWrapBNB = wrapBNBAction.encodeForRecipe()[0];
+  const sendToken = sendTokenAction.encodeForRecipe()[0];
   const callDataSwap = swapAction.encodeForRecipe()[0];
-  // const callDataBuyNFT = buyNFTAction.encodeForRecipe()[0];
+  const callDataBuyNFT = buyNFTAction.encodeForRecipe()[0];
   const callDataTransferNFT = transferNFTAction.encodeForRecipe()[0];
-  // actionsCallData.push(callDataWrapBNB);
+  actionsCallData.push(callDataWrapBNB);
+  actionsCallData.push(sendToken);
   actionsCallData.push(callDataSwap);
-  // actionsCallData.push(callDataBuyNFT);
+  actionsCallData.push(callDataBuyNFT);
   actionsCallData.push(callDataTransferNFT);
   
   let paramMapping = [
-    // [0],
+    [0],
+    [0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0], // Chú ý mảng address cũng phải truyền parammapping theo thứ tự từng phần tử
-    // [0, 0, 0],
-    [0, 0, 0]
+    [0, 0, 0],
+    [0, 0, 4]
   ];
   actionIds = [
-    // keccak256("WrapBnb").substr(0, 10),
+    keccak256("WrapBnb").substr(0, 10),
+    keccak256("SendToken").substr(0, 10),
     keccak256("PancakeSwapV2").substr(0, 10),
-    // keccak256("TravaNFTBuy").substr(0, 10),
+    keccak256("TravaNFTBuy").substr(0, 10),
     keccak256("TravaNFTTransfer").substr(0, 10)
   ];
 
@@ -561,6 +572,7 @@ const combinator = async(owner, accA, proxy) => {
 
   tx = await tx.wait();
   console.log("txHash", tx.transactionHash);
+
   console.log("After:: Balance wbnb of Owner::", await wbnb.balanceOf(owner.address));
   console.log("After:: Balance trava of Owner::", await trava.balanceOf(owner.address));
   
