@@ -105,18 +105,18 @@ async function main() {
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
 
-  // const travaNFTBuy = await redeploy(
-  //   "TravaNFTBuy",
-  //   process.env.DFS_REGISTRY_ADDRESS
-  // );
-  // writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
+  const travaNFTBuy = await redeploy(
+    "TravaNFTBuy",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_BUY_ADDRESS", travaNFTBuy.address);
 
 
-  // const travaNFTCreateSale = await redeploy(
-  //   "TravaNFTCreateSale",
-  //   process.env.DFS_REGISTRY_ADDRESS
-  // );
-  // writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
+  const travaNFTCreateSale = await redeploy(
+    "TravaNFTCreateSale",
+    process.env.DFS_REGISTRY_ADDRESS
+  );
+  writeToEnvFile("TRAVA_NFT_CREATE_SALE_ADDRESS", travaNFTCreateSale.address);
 
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //        ||                               Trava NFT  Manager Contrac                       ||
@@ -157,17 +157,17 @@ async function main() {
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||
   //    */
 
-  const travaNFTAuctionCreateAuction = await redeploy(
-    "TravaNFTAuctionCreateAuction",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_NFT_AUCTION_CREATE_AUCTION_ADDRESS", travaNFTAuctionCreateAuction.address);
+  // const travaNFTAuctionCreateAuction = await redeploy(
+  //   "TravaNFTAuctionCreateAuction",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_AUCTION_CREATE_AUCTION_ADDRESS", travaNFTAuctionCreateAuction.address);
 
-  const travaNFTAuctionMakeBid = await redeploy(
-    "TravaNFTAuctionMakeBid",
-    process.env.DFS_REGISTRY_ADDRESS
-  );
-  writeToEnvFile("TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS", travaNFTAuctionMakeBid.address);
+  // const travaNFTAuctionMakeBid = await redeploy(
+  //   "TravaNFTAuctionMakeBid",
+  //   process.env.DFS_REGISTRY_ADDRESS
+  // );
+  // writeToEnvFile("TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS", travaNFTAuctionMakeBid.address);
 
 
   //        ||++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++||

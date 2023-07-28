@@ -5,7 +5,6 @@ import "../../../ActionBase.sol";
 import "../helpers/TravaNFTHelper.sol";
 
 contract TravaNFTCreateSale is ActionBase, TravaNFTHelper {
-
     struct Params {
         uint256 tokenId;
         uint256 price;
@@ -79,12 +78,13 @@ contract TravaNFTCreateSale is ActionBase, TravaNFTHelper {
             "Owner does not possess token"
         );
 
-        INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
-        
+        if (_from != address(this)) {
+            INFTCore(NFT_CORE).transferFrom(_from, address(this), _tokenId);
+        }
+
         INFTCore(NFT_CORE).approve(NFT_MARKETPLACE, _tokenId);
         // this part is not working . then need approve for sell contract
         IMarketplace(NFT_MARKETPLACE).createSale(_tokenId, _price);
-
 
         bytes memory logData = abi.encode(_tokenId, _price, _from);
         return (_tokenId, logData);

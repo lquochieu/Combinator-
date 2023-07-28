@@ -11,6 +11,7 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
     struct Params {
         uint256 tokenId;
         address from;
+        address to;
     }
 
     /// @inheritdoc ActionBase
@@ -34,10 +35,17 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
             _subData,
             _returnValues
         );
+        params.to = _parseParamAddr(
+            params.to,
+            _paramMapping[1],
+            _subData,
+            _returnValues
+        );
 
         (uint256 tokenId, bytes memory logData) = _makeOrder(
             params.tokenId,
-            params.from
+            params.from,
+            params.to
         );
         emit ActionEvent("TravaNFTBuy", logData);
         return bytes32(tokenId);
@@ -48,7 +56,11 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
         bytes memory _callData
     ) public payable override {
         Params memory params = parseInputs(_callData);
-        (, bytes memory logData) = _makeOrder(params.tokenId, params.from);
+        (, bytes memory logData) = _makeOrder(
+            params.tokenId,
+            params.from,
+            params.to
+        );
         logger.logActionDirectEvent("TravaNFTBuy", logData);
     }
 
@@ -61,7 +73,8 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
 
     function _makeOrder(
         uint256 _tokenId,
-        address _from
+        address _from,
+        address _to
     ) internal returns (uint256, bytes memory) {
         if (_from == address(0)) {
             _from == address(this);
@@ -84,7 +97,9 @@ contract TravaNFTBuy is ActionBase, TravaNFTHelper {
 
         marketPlace.makeOrder(_tokenId);
 
-        INFTCore(NFT_CORE).transferFrom(address(this), _from, _tokenId);
+        if (_to != address(this)) {
+            INFTCore(NFT_CORE).transferFrom(address(this), _to, _tokenId);
+        }
 
         bytes memory logData = abi.encode(_tokenId, _from);
         return (_tokenId, logData);
