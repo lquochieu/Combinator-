@@ -9,8 +9,8 @@ const abiCoder = new hre.ethers.utils.AbiCoder();
 describe("Test trava make bid", function () {
   this.timeout("150000000000000000000");
   it("Test trava make bid", async () => {
-    const tokenId = 84;
-    const bidPrice = hre.ethers.utils.parseEther("25000");
+    const tokenId = 85;
+    const bidPrice = hre.ethers.utils.parseEther("2000");
     //const from = process.env.PUBLIC_KEY;
     //const proxy = await getProxy(process.env.PUBLIC_KEY);
     let accA = (await hre.ethers.getSigners())[1];
@@ -48,6 +48,6 @@ describe("Test trava make bid", function () {
         gasLimit: 20000000,
       });
     await tx.wait();
-    //console.log(travaMakeBidContract.address);
+    console.log(travaMakeBidContract.address);
   });
 });

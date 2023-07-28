@@ -10,8 +10,9 @@ const abiCoder = new hre.ethers.utils.AbiCoder();
 describe("Test trava auction", function () {
   this.timeout("1500000000000");
   it("Test trava create auction", async () => {
-    const tokenId = 84;
-    const startingBid = hre.ethers.utils.parseEther("25000");
+    //remaing 2 token 85 and 86 ,thuc hien xong cái create xong test cái make bid
+    const tokenId = 85;
+    const startingBid = hre.ethers.utils.parseEther("1000");
     const duration = 172800;
     const from = process.env.PUBLIC_KEY;
     const proxy = await getProxy(process.env.PUBLIC_KEY);
