@@ -203,37 +203,28 @@ describe("Test Pancakeswap", async function () {
   });
 
   it("Test proxy buy nft", async () => {
-    // // transfer 50 token A to proxy
-    // const trava = (await hre.ethers.getContractFactory("ERC20Mock")).attach(
-    //   process.env.TRAVA_TOKEN_IN_MARKET
-    // );
-    // // check balance of proxyA
     // console.log("Balance trava of accA::", await trava.balanceOf(accA.address));
     // const proxyA = await getProxy(accA.address);
-    // // const txT = await trava.transfer(
-    // //   accA.address,
-    // //   ethers.utils.parseEther("50")
-    // // );
-    // // console.log("txT::", txT);
-    // const tokenID = "4210";
+    // //
+    // const tokenID = "5433";
     // const makeOrder = new Action(
     //   "MakeOrder",
     //   process.env.TRAVA_NFT_BUY_ADDRESS,
-    //   ["uint256", "address"],
-    //   [tokenID, accA.address]
+    //   ["uint256", "address", "address"],
+    //   [tokenID, accA.address, accA.address]
     // );
     // const callDataMakeOrder = makeOrder.encodeForDsProxyCall()[1];
-    // // console.log("callDataMakeOrder::", callDataMakeOrder);
-    // // approve token A for proxy
-    // await trava
-    //   .connect(accA)
-    //   .approve(proxyA.address, ethers.utils.parseEther("50"));
-    // const tx = await proxyA
+    // // // approve for proxyA
+    // // await trava
+    // //   .connect(accA)
+    // //   .approve(proxyA.address, ethers.utils.parseEther("50"));
+    // let tx = await proxyA
     //   .connect(accA)
     //   .execute(process.env.TRAVA_NFT_BUY_ADDRESS, callDataMakeOrder, {
     //     gasLimit: 1e7,
     //   });
-    // console.log("tx::", tx);
+    // // tx = await tx.wait();
+    // console.log("tx :", tx);
   });
   it("Test create sale nft ", async () => {
     // const tokenID = "4330";
@@ -256,19 +247,19 @@ describe("Test Pancakeswap", async function () {
     // );
     // console.log("tx::", tx);
   });
-  it("Test swap to trava and buy nft", async () => {
+  it("Test buy nft , after sell it", async () => {
     let triggerCallData = [];
     let actionsCallData = [];
     let subData = [];
     let actionIds = [];
 
-    const tokenID = "4256";
+    const tokenID = "4129";
 
     const makeOrderAction = new Action(
       "MakeOrder",
       process.env.TRAVA_NFT_BUY_ADDRESS,
-      ["uint256", "address"],
-      [tokenID, accA.address]
+      ["uint256", "address", "address"],
+      [tokenID, accA.address, accA.address]
     );
 
     const createSaleAction = new Action(
@@ -285,11 +276,11 @@ describe("Test Pancakeswap", async function () {
     actionsCallData.push(callDataCreateSale);
 
     const paramMapping = [
-      [128, 129],
-      [130, 131, 132],
+      [128, 129, 130],
+      [131, 132, 133],
     ];
-
     const subdataMakeOrderTokenID = abiCoder.encode(["uint256"], [tokenID]);
+    const subdataMakeOrderFrom = abiCoder.encode(["address"], [accA.address]);
     const subdataMakeOrderRecipient = abiCoder.encode(
       ["address"],
       [accA.address]
@@ -309,28 +300,30 @@ describe("Test Pancakeswap", async function () {
 
     subData = [
       subdataMakeOrderTokenID,
+      subdataCreateSaleFrom,
       subdataMakeOrderRecipient,
       subdataCreateSaleTokenID,
       subdataCreateSaleAmount,
       subdataCreateSaleFrom,
     ];
 
-    await trava
-      .connect(accA)
-      .approve(proxyA.address, ethers.utils.parseEther("50"));
+    // await trava
+    //   .connect(accA)
+    //   .approve(proxyA.address, ethers.utils.parseEther("50"));
 
     const NFTCore = await hre.ethers.getContractAt(
       "INFTCore",
       process.env.TRAVA_NFT_CORE
     );
+    // // not have approve
+    // await NFTCore.connect(accA).setApprovalForAll(proxyA.address, true);
+    // console.log(
+    //   "Balance token A of proxyA::",
+    //   ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
+    // );
 
-    // not have approve
-    await NFTCore.connect(accA).setApprovalForAll(proxyA.address, true);
+    await NFTCore.connect(accA).approve(proxyA.address, tokenID);
 
-    console.log(
-      "Balance token A of proxyA::",
-      ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
-    );
     const RecipeExecutorContract = await hre.ethers.getContractAt(
       "RecipeExecutor",
       process.env.RECIPE_EXECUTOR_ADDRESS
@@ -356,9 +349,5 @@ describe("Test Pancakeswap", async function () {
     await tx.wait();
     console.log("tx::", tx);
     // check amount of token A of proxyA
-    console.log(
-      "Balance token A of proxyA::",
-      ethers.utils.formatEther(await tokenA.balanceOf(proxyA.address))
-    );
   });
 });
