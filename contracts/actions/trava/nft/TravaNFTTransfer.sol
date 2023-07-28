@@ -74,6 +74,10 @@ contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
         address _to,
         uint256 _tokenId
     ) internal returns (uint256, bytes memory) {
+        if(_from == address(0)) {
+            _from == address(this);
+        }
+        
         require(
             INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
             "Owner does not possess token"

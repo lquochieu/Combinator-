@@ -73,6 +73,9 @@ contract TravaNFTCreateSale is ActionBase, TravaNFTHelper {
         uint256 _price,
         address _from
     ) internal returns (uint256, bytes memory) {
+        if(_from == address(0)) {
+            _from = address(this);
+        }
         require(
             INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
             "Owner does not possess token"

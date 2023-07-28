@@ -116,7 +116,9 @@ contract TravaNFTAuctionCreateAuction is ActionBase, TravaNFTAuctionHelper {
             "Owner does not possess token"
         );
 
-        INFTCore(NFT_COLLECTION).transferFrom(_from, address(this), _tokenId);
+        if(_from != address(this)) {
+            INFTCore(NFT_COLLECTION).transferFrom(_from, address(this), _tokenId);
+        }
 
         INFTCore(NFT_COLLECTION).approve(NFT_AUCTION, _tokenId);
         // this part is not working . then need approve for sell contract
