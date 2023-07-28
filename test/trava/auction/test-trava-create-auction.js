@@ -11,7 +11,7 @@ describe("Test trava auction", function () {
   this.timeout("1500000000000");
   it("Test trava create auction", async () => {
     const tokenId = 84;
-    const startingBid = hre.ethers.utils.parseEther("10000");
+    const startingBid = hre.ethers.utils.parseEther("25000");
     const duration = 172800;
     const from = process.env.PUBLIC_KEY;
     const proxy = await getProxy(process.env.PUBLIC_KEY);
@@ -39,17 +39,19 @@ describe("Test trava auction", function () {
       "TravaNFTAuctionCreateAuction",
       process.env.TRAVA_NFT_AUCTION_CREATE_AUCTION_ADDRESS
     );
+    console.log(process.env.TRAVA_NFT_AUCTION_CREATE_AUCTION_ADDRESS);
 
-    // let tx = await proxy["execute(address,bytes)"](
-    //   travaCreateAuctionContract.address,
-    //   calldata,
-    //   {
-    //     gasPrice: 20000000,
-    //   }
-    // );
+    let tx = await proxy["execute(address,bytes)"](
+      travaCreateAuctionContract.address,
+      calldata,
+      {
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
+      }
+    );
 
-    // tx = await tx.wait();
-    // console.log("tx", tx);
+    tx = await tx.wait();
+    console.log("tx", tx);
     //console.log("tx", tx);
   });
 });

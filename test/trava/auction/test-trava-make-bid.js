@@ -7,10 +7,10 @@ const { keccak256 } = require("web3-utils");
 const abiCoder = new hre.ethers.utils.AbiCoder();
 
 describe("Test trava make bid", function () {
-  this.timeout("1500000000000");
+  this.timeout("150000000000000000000");
   it("Test trava make bid", async () => {
     const tokenId = 84;
-    const bidPrice = hre.ethers.utils.parseEther("20000");
+    const bidPrice = hre.ethers.utils.parseEther("25000");
     //const from = process.env.PUBLIC_KEY;
     //const proxy = await getProxy(process.env.PUBLIC_KEY);
     let accA = (await hre.ethers.getSigners())[1];
@@ -28,7 +28,7 @@ describe("Test trava make bid", function () {
       "TravaNFTAuctionMakeBid",
       process.env.TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS,
       ["uint256", "uint256", "address"],
-      [tokenId, bidPrice, accA.address]
+      [tokenId, bidPrice, proxyA.address]
     );
     console.log(process.env.TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS);
     console.log(tokenId, bidPrice, accA.address);
@@ -40,12 +40,14 @@ describe("Test trava make bid", function () {
       "TravaNFTAuctionMakeBid",
       process.env.TRAVA_NFT_AUCTION_MAKE_BID_ADDRESS
     );
+
     const tx = await proxyA
       .connect(accA)
       .execute(travaMakeBidContract.address, calldata, {
-        gasPrice: 20000000,
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
       });
     await tx.wait();
-    console.log(travaMakeBidContract.address);
+    //console.log(travaMakeBidContract.address);
   });
 });

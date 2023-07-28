@@ -13,7 +13,8 @@ const approveForAllNFT = async (tokenAddr, to, signer) => {
     if (signer) {
       const nftContractSigner = nftContract.connect(signer);
       await nftContractSigner.setApprovalForAll(to, true, {
-        gasPrice: 20000000,
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
       });
 
       const allowance = await nftContract.isApprovedForAll(from, to);
@@ -22,7 +23,8 @@ const approveForAllNFT = async (tokenAddr, to, signer) => {
       console.log(tokenAddr, to);
       console.log("vao day");
       const result = await nftContract.setApprovalForAll(to, true, {
-        gasPrice: 20000000,
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
       });
       console.log("result:", result);
 
@@ -43,11 +45,13 @@ const approve = async (tokenAddr, to, signer) => {
       const tokenContractSigner = tokenContract.connect(signer);
       // eslint-disable-next-line max-len
       await tokenContractSigner.approve(to, hre.ethers.constants.MaxUint256, {
-        gasPrice: 2000000,
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
       });
     } else {
       await tokenContract.approve(to, hre.ethers.constants.MaxUint256, {
-        gasPrice: 2000000,
+        gasPrice: 1000000000,
+        gasLimit: 20000000,
       });
     }
   }
