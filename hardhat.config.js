@@ -170,7 +170,7 @@ module.exports = {
       // gas: 25e6,
     },
     bscTestnet: {
-      url: "https://bsc-testnet.publicnode.com",
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       // gasPrice: 20e9,
       // gas: 2e6,
