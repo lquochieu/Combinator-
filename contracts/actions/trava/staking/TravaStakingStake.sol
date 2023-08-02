@@ -11,6 +11,7 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
     using TokenUtils for address;
 
     struct Params {
+        address stakingPool;
         address stakedToken;
         address onBehalfOf;
         uint256 amount;
@@ -24,28 +25,36 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
         bytes32[] memory _returnValues
     ) public payable virtual override returns (bytes32) {
         Params memory params = parseInputs(_callData);
+        
+        params.stakingPool = _parseParamAddr(
+            params.stakingPool,
+            _paramMapping[0],
+            _subData,
+            _returnValues
+        );
 
         params.stakedToken = _parseParamAddr(
             params.stakedToken,
-            _paramMapping[0],
+            _paramMapping[1],
             _subData,
             _returnValues
         );
 
         params.onBehalfOf = _parseParamAddr(
             params.onBehalfOf,
-            _paramMapping[1],
+            _paramMapping[2],
             _subData,
             _returnValues
         );
         params.amount = _parseParamUint(
             params.amount,
-            _paramMapping[2],
+            _paramMapping[3],
             _subData,
             _returnValues
         );
 
         (uint256 stakeAmount, bytes memory logData) = _stake(
+            params.stakingPool,
             params.stakedToken,
             params.onBehalfOf,
             params.amount
@@ -60,6 +69,7 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
     ) public payable override {
         Params memory params = parseInputs(_callData);
         (, bytes memory logData) = _stake(
+            params.stakingPool,
             params.stakedToken,
             params.onBehalfOf,
             params.amount
@@ -75,6 +85,7 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
     //////////////////////////// ACTION LOGIC ////////////////////////////
 
     function _stake(
+        address _stakingPool,
         address _stakedToken,
         address _onBehalfOf,
         uint256 _amount
