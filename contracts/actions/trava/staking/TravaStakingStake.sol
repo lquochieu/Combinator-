@@ -104,10 +104,10 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
         pullTokensIfNeeded(_stakedToken, _onBehalfOf, _amount);
 
         // approve trava pool to pull stakedTokens
-        IBEP20(_stakedToken).approve(address(_onBehalfOf), _amount);
+        IBEP20(_stakedToken).approve(_stakingPool, _amount);
 
         // deposit in behalf of the proxy
-        IStakedToken(_stakedToken).stake(
+        IStakedToken(_stakingPool).stake(
             _onBehalfOf,
             _amount
         );

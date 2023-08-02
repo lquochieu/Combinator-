@@ -48,7 +48,7 @@ describe("Test Pancakeswap", async function () {
       )} TBNB`
     );
 
-    travaStakeTokenAddress = "0x1120E28F5D9eeABfC18afE9600315c6c184b9fcF";
+    travaStakeTokenAddress = process.env.TRAVA_TOKEN_IN_STAKING;
     // Mint cho Owner 1000 token A
     // const tokenAInstance = await ethers.getContractFactory('ERC20Mock');
     // const tokenA = await tokenAInstance.deploy("Token A", "TKA");

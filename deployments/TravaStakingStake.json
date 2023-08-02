@@ -217,6 +217,11 @@
 					"components": [
 						{
 							"internalType": "address",
+							"name": "stakingPool",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
 							"name": "stakedToken",
 							"type": "address"
 						},
