@@ -5,14 +5,14 @@ pragma solidity 0.8.4;
 import "../../../utils/TokenUtils.sol";
 import "../../ActionBase.sol";
 import "./helpers/TravaStakingHelper.sol";
+import "../../../utils/SafeBEP20.sol";
 
 /// @title Supply a token to an Trava market
 contract TravaStakingStake is ActionBase, TravaStakingHelper {
-    using TokenUtils for address;
+    using SafeBEP20 for IBEP20;
 
     struct Params {
         address stakingPool;
-        address stakedToken;
         address onBehalfOf;
         uint256 amount;
     }
@@ -33,29 +33,21 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
             _returnValues
         );
 
-        params.stakedToken = _parseParamAddr(
-            params.stakedToken,
-            _paramMapping[1],
-            _subData,
-            _returnValues
-        );
-
         params.onBehalfOf = _parseParamAddr(
             params.onBehalfOf,
-            _paramMapping[2],
+            _paramMapping[1],
             _subData,
             _returnValues
         );
         params.amount = _parseParamUint(
             params.amount,
-            _paramMapping[3],
+            _paramMapping[2],
             _subData,
             _returnValues
         );
 
         (uint256 stakeAmount, bytes memory logData) = _stake(
             params.stakingPool,
-            params.stakedToken,
             params.onBehalfOf,
             params.amount
         );
@@ -70,7 +62,6 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
         Params memory params = parseInputs(_callData);
         (, bytes memory logData) = _stake(
             params.stakingPool,
-            params.stakedToken,
             params.onBehalfOf,
             params.amount
         );
@@ -86,10 +77,10 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
 
     function _stake(
         address _stakingPool,
-        address _stakedToken,
         address _onBehalfOf,
         uint256 _amount
     ) internal returns (uint256, bytes memory) {
+        address _stakedToken = IStakedToken(_stakingPool).STAKED_TOKEN();
         // if amount is set to max, take the whole _from balance
         if (_amount == type(uint256).max) {
             _amount = IBEP20(_stakedToken).balanceOf(_onBehalfOf);
@@ -142,7 +133,7 @@ contract TravaStakingStake is ActionBase, TravaStakingHelper {
             _from != address(this) &&
             _amount != 0
         ) {
-            IBEP20(_token).transferFrom(_from, address(this), _amount);
+            IBEP20(_token).safeTransfer(address(this), _amount);
         }
 
         return _amount;

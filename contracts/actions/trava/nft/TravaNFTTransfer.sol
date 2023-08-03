@@ -5,11 +5,11 @@ import "../../ActionBase.sol";
 import "./helpers/TravaNFTHelper.sol";
 
 contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
-
     struct Params {
         address from;
         address to;
         uint256 tokenId;
+        address nftCore;
     }
 
     /// @inheritdoc ActionBase
@@ -40,10 +40,18 @@ contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
             _returnValues
         );
 
+        params.nftCore = _parseParamAddr(
+            params.nftCore,
+            _paramMapping[3],
+            _subData,
+            _returnValues
+        );
+
         (uint256 tokenId, bytes memory logData) = _transfer(
             params.from,
             params.to,
-            params.tokenId
+            params.tokenId,
+            params.nftCore
         );
         emit ActionEvent("TravaNFTTransfer", logData);
         return bytes32(tokenId);
@@ -57,7 +65,8 @@ contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
         (, bytes memory logData) = _transfer(
             params.from,
             params.to,
-            params.tokenId
+            params.tokenId,
+            params.nftCore
         );
         logger.logActionDirectEvent("TravaNFTTransfer", logData);
     }
@@ -72,18 +81,19 @@ contract TravaNFTTransfer is ActionBase, TravaNFTHelper {
     function _transfer(
         address _from,
         address _to,
-        uint256 _tokenId
+        uint256 _tokenId,
+        address _nftCore
     ) internal returns (uint256, bytes memory) {
-        if(_from == address(0)) {
+        if (_from == address(0)) {
             _from == address(this);
         }
-        
+
         require(
-            INFTCore(NFT_CORE).ownerOf(_tokenId) == _from,
+            INFTCore(_nftCore).ownerOf(_tokenId) == _from,
             "Owner does not possess token"
         );
 
-        INFTCore(NFT_CORE).transferFrom(_from, _to, _tokenId);
+        INFTCore(_nftCore).transferFrom(_from, _to, _tokenId);
 
         bytes memory logData = abi.encode(_from, _to, _tokenId);
         return (_tokenId, logData);

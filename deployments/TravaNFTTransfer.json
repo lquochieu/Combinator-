@@ -229,6 +229,11 @@
 							"internalType": "uint256",
 							"name": "tokenId",
 							"type": "uint256"
+						},
+						{
+							"internalType": "address",
+							"name": "nftCore",
+							"type": "address"
 						}
 					],
 					"internalType": "struct TravaNFTTransfer.Params",
